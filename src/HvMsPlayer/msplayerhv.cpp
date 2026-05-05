@@ -95,14 +95,14 @@ void MsPlayerHV::SetModeForWavSaves(int mode)
     if (mode>0 && mode<7)//2.65
     {
         SAVE_SAMPLE_RATE = SAVE_SAMPLE_RATE_11025;
-#if defined _LINUX_
+#if defined _LINUX_ || defined _MACOS_
         Rawplayer::pa_sa_rate = 44100;
 #endif
     }
     else
     {
         SAVE_SAMPLE_RATE = SAVE_SAMPLE_RATE_12000;
-#if defined _LINUX_
+#if defined _LINUX_ || defined _MACOS_
         Rawplayer::pa_sa_rate = 48000;
 #endif
     }
@@ -113,7 +113,7 @@ void MsPlayerHV::SetSoundDevice(QString dev_in_number,int bpsamp,int buffer)
     Rawplayer::defaultdevice = dev_in_p;
     Rawplayer::buffering = buffer;
     s_bitpersample = bpsamp;
-#if defined _LINUX_
+#if defined _LINUX_ || defined _MACOS_
     Rawplayer::s_bitpersamplelin = bpsamp;
 #endif
     //qDebug()<<"MsPlayerHV========"<<Rawplayer::defaultdevice<<dev_in_number<<bpsamp;
@@ -691,7 +691,6 @@ void MsPlayerHV::SetVolume(int volume)
 {
     GenMessage::setvolume_all(volume);
 }
-
 
 
 

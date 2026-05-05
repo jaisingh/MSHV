@@ -13,20 +13,32 @@
 #define VER_MS TOSTR0(VERSION_MAJOR) "." TOSTR0(VERSION_MINOR) "." TOSTR0(VERSION_PATCH)
 //#define VER_MS "2.65"
 
+#define APP_DISPLAY_NAME "MSHV"
+#define APP_VERSION VER_MS
+#define APP_PROTOCOL_ID "MSHV"
+#define APP_USER_AGENT APP_PROTOCOL_ID "/" APP_VERSION
+
 #if defined _WIN64_
 #define _WIN32_
 #endif
 #if defined(_WIN32_) && !defined(_WIN64_)  // r008 Only For Testers SP9HWY
-#define APP_NAME "MSHV version " VER_MS " 32-bit"// r006 Only For Testers  r008
+#define APP_NAME APP_DISPLAY_NAME " version " APP_VERSION " 32-bit"// r006 Only For Testers  r008
 #define UNICODE //HV FOR WCHAR* LPCSTR
 #endif
 #if defined _WIN64_
-#define APP_NAME "MSHV version " VER_MS " 64-bit"// r002 For Test
+#define APP_NAME APP_DISPLAY_NAME " version " APP_VERSION " 64-bit"// r002 For Test
 #define UNICODE //HV FOR WCHAR* LPCSTR
 #endif
 
 #if defined _LINUX_
-#define APP_NAME "MSHV version " VER_MS    //c11++ intervaly -> "MSHV version " VER_MS
+#define APP_NAME APP_DISPLAY_NAME " version " APP_VERSION    //c11++ intervaly -> "MSHV version " VER_MS
+#endif
+#if defined _MACOS_
+#undef APP_DISPLAY_NAME
+#undef APP_VERSION
+#define APP_DISPLAY_NAME "MSHV OSX Build"
+#define APP_VERSION VER_MS "-osx"
+#define APP_NAME APP_DISPLAY_NAME " version " APP_VERSION
 #endif
 
 #define DATA_HEIGHT         150

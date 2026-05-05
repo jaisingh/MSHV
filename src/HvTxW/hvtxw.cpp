@@ -444,8 +444,13 @@ HvTxW::HvTxW(QString inst,QString path,int lid,bool f,int x,int y,QWidget * pare
     Slider_Rx_level = new HvSlider_V_Identif(0,100,0,0,p1,p0,p2,p9,p10);
     Slider_Rx_level->SetValue(50);
     QLabel *l_trx = new QLabel("RX");
+#if defined _MACOS_
+    l_trxdp = new QLabel("+20");
+    l_trxdm = new QLabel("-40");
+#else
     l_trxdp = new QLabel("+20");//+20dB 1.78
     l_trxdm = new QLabel("-20");//-20dB 1.78
+#endif
     if (dsty) l_trxdp->setStyleSheet("QLabel{color:rgb(255,200,200);}");
     else l_trxdp->setStyleSheet("QLabel{color:rgb(150,0,0);}");
     if (dsty) l_trxdm->setStyleSheet("QLabel{color:rgb(220,220,255);}");
@@ -5491,5 +5496,4 @@ void HvTxW::ExternalFindLocFromDB(QString call)
     QString loc = TMsDb->CheckBD(call); //emit EmitLocFromDB(loc);
     TRadioAndNetW->SetLocFromDB(loc);
 }
-
 

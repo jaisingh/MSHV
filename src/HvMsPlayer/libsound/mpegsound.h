@@ -397,7 +397,7 @@ public:
     //static bool defaultdrv;//hv
     static int buffering;
     
-#if defined _LINUX_ 
+#if defined _LINUX_ || defined _MACOS_
     static int pa_sa_rate;  
     static int s_bitpersamplelin; 
     //static int  setvolume_lin(int volume);
@@ -438,6 +438,12 @@ private:
     bool lin_resetsoundtype();
     bool lin_putblock(void *buffer,int size);
     snd_pcm_format_t check_formats(snd_pcm_t *h, snd_pcm_hw_params_t *hware);
+#endif
+#if defined _MACOS_
+    void lin_destroy();
+    bool lin_initialize(char *device_name,int);
+    bool lin_resetsoundtype();
+    bool lin_putblock(void *buffer,int size);
 #endif
     int buffer_size;
     int write_position;

@@ -22,6 +22,52 @@ static const double ORG_SAMPLE_RATE_12000 = 12000.0;
 
 //#include <QtGui>
 
+#if !defined(FFTW_NO_Complex) && defined(_Complex_I) && defined(complex) && defined(I)
+#define HV_FFTW_COMPLEX_SCALAR 1
+#endif
+
+static inline void hv_set_fft_sample(fftw_complex &sample, double value)
+{
+#if defined(HV_FFTW_COMPLEX_SCALAR)
+    sample = value + 0.0 * I;
+#else
+    sample[0] = value;
+    sample[1] = 0.0;
+#endif
+}
+
+static inline void hv_scale_fft_sample(fftw_complex &sample, double factor)
+{
+#if defined(HV_FFTW_COMPLEX_SCALAR)
+    sample *= factor;
+#else
+    sample[0] *= factor;
+    sample[1] *= factor;
+#endif
+}
+
+static inline double hv_fft_sample_abs(const fftw_complex &sample)
+{
+#if defined(HV_FFTW_COMPLEX_SCALAR)
+    return cabs(sample);
+#else
+    return hypot(sample[0], sample[1]);
+#endif
+}
+
+static inline double hv_rx_level_db(int val)
+{
+    if (val < 0) val = 0;
+    if (val > 100) val = 100;
+#if defined _MACOS_
+    // macOS inputs are typically much hotter than the legacy Linux/Windows path.
+    // Extend the attenuation range so useful settings are not packed at the bottom.
+    return -40.0 + (60.0 * (double)val / 100.0);
+#else
+    return -20.0 + (40.0 * (double)val / 100.0);
+#endif
+}
+
 MsCore::MsCore()
 {
     //facalcvd = 1.0;
@@ -83,6 +129,9 @@ MsCore::MsCore()
     //strncpy(rad_sound_state.dev_capt_name, "hw:0,0", SC_SIZE_L); //2.65  default pulse
     strncpy(rad_sound_state.dev_capt_name, "pulse: default", SC_SIZE_L);
 #endif
+#if defined _MACOS_
+    strncpy(rad_sound_state.dev_capt_name, "Default Input", SC_SIZE_L);
+#endif
 #if defined _WIN32_  //Primary Sound Capture Driver or "0"
     strncpy(rad_sound_state.dev_capt_name, "Primary Sound Capture Driver", SC_SIZE_L);//
 #endif
@@ -112,6 +161,9 @@ MsCore::MsCore()
    	}
 #endif
 #if defined _LINUX_
+    rad_open_sound();
+#endif
+#if defined _MACOS_
     rad_open_sound();
 #endif
 
@@ -157,8 +209,7 @@ MsCore::~MsCore()
 }
 void MsCore::SetInLevel(int val)
 {
-    //s_in_level = pow(10, ((double)(val - 50)/4)/20);	// +- 12.5db
-    s_in_level = pow(10, ((double)(val - 50)/2.5)/20.0);// +- 20db 1.78
+    s_in_level = pow(10.0, hv_rx_level_db(val) / 20.0);
     //qDebug()<<s_in_level;
 }
 void MsCore::close_sound()
@@ -178,6 +229,9 @@ void MsCore::close_sound()
     }
 #endif
 #if defined _LINUX_
+    rad_close_sound();
+#endif
+#if defined _MACOS_
     rad_close_sound();
 #endif
 }
@@ -418,6 +472,12 @@ void MsCore::FastResetSoundCardIn_p()// for pure sound cards
         rad_open_sound();
     }
 #endif
+#if defined _MACOS_
+    if (!ftci) //tci
+    {
+        rad_open_sound();
+    }
+#endif
 
     record_app();            //fftw
 
@@ -511,6 +571,12 @@ void MsCore::SetupSettings_(QString dev_in_number,int bpsampl,int latency,int ca
                 if (c_retry>120) break;
             }
         }
+    }
+#endif
+#if defined _MACOS_
+    if (!ftci) //tci
+    {
+        rad_open_sound();
     }
 #endif
 
@@ -690,7 +756,7 @@ void MsCore::decode_fft_size_samples(int *data_mono, int count)
                 sum += val;
             }
 
-            ptWriteFft->samples[ptWriteFft->index] = ((double)data_mono[i]*0.0000390625);//2.70 =0.0000390625 old=0.01
+            hv_set_fft_sample(ptWriteFft->samples[ptWriteFft->index], ((double)data_mono[i]*0.0000390625));//2.70 =0.0000390625 old=0.01
             //if (ptWriteFft->index >= fft_size-1)
             //qDebug()<<"ptWriteFft->index"<<ptWriteFft->index;
             if (++(ptWriteFft->index) >= fft_size)
@@ -770,7 +836,7 @@ void MsCore::Get_Graph(int smiter)
         return;
     }
     for (i = 0; i < fft_size; ++i)	// multiply by window
-        ptFft->samples[i] *= fft_window[i];
+        hv_scale_fft_sample(ptFft->samples[i], fft_window[i]);
     //ptFft->samples[i] = ptFft->samples[i]*fft_window[i];
 
     fftw_execute(ptFft->plan_dsp);	// Calculate FFT
@@ -793,13 +859,13 @@ void MsCore::Get_Graph(int smiter)
 c6:
             if (!retry)//2.45
             {
-                fft_avg[k] += cabs(ptFft->samples[i+beg_size]);
+                fft_avg[k] += hv_fft_sample_abs(ptFft->samples[i+beg_size]);
             }
             else
             {
                 retry = false;
-                double p0 = cabs(ptFft->samples[i+beg_size]);
-                double p1 = cabs(ptFft->samples[i+beg_size+1]);
+                double p0 = hv_fft_sample_abs(ptFft->samples[i+beg_size]);
+                double p1 = hv_fft_sample_abs(ptFft->samples[i+beg_size+1]);
                 fft_avg[k] = (p0+p1)/2.0;
             }
             if ((double)i>(double)k*d_koef)// tova pri nedostig
@@ -822,7 +888,7 @@ c6:
         if ( n == 0 ) n=1;//HV za da risuva i pod 20 seconds ina4e n = 0 stava            
         for (i = 0, k = 0; k < s_data_height; ++k)
         {
-            for (j = 0; j < n; ++j) fft_avg[k] += cabs(ptFft->samples[i++]);        	
+            for (j = 0; j < n; ++j) fft_avg[k] += hv_fft_sample_abs(ptFft->samples[i++]);            
        	}
     }
     //qDebug()<<"fft_avg="<<k;
@@ -898,6 +964,9 @@ void MsCore::Refresh_t()
 #if defined _LINUX_
             alsa_read_sound();
 #endif
+#if defined _MACOS_
+            alsa_read_sound();
+#endif
         }
     }
     else
@@ -905,4 +974,3 @@ void MsCore::Refresh_t()
 
     emit Refresh_time();
 }
-

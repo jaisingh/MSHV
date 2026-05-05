@@ -7,6 +7,11 @@
 
 //#include <QtGui>
 
+#if defined _MACOS_
+#include <QAudio>
+#include <QAudioDeviceInfo>
+#endif
+
 #if defined _WIN32_
 QString ConvertToStr_t(LPCTSTR name)
 {
@@ -24,6 +29,14 @@ BOOL CALLBACK DSEnumProc_x(LPGUID,LPCTSTR lpszDesc,LPCTSTR,LPVOID)
         lst_f_win<<ConvertToStr_t(lpszDesc); //qDebug()<<ConvertToStr_t(lpszDesc)<<ConvertToStr_t(s);
     }
     return true;
+}
+#endif
+
+#if defined _MACOS_
+static void hv_append_unique_device(QStringList *devices, const QString &name)
+{
+    if (!name.isEmpty() && !devices->contains(name))
+        devices->append(name);
 }
 #endif
  
@@ -639,6 +652,31 @@ next_card:
     //qDebug()<<"oss_block: "<<g_block_oss;
 #endif
 ///////////////////////alsa/////////////////////////////////////////////
+#if defined _MACOS_
+    QStringList input_devices;
+    QStringList output_devices;
+    QList<QAudioDeviceInfo> inputs = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
+    QList<QAudioDeviceInfo> outputs = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
+
+    hv_append_unique_device(&input_devices, "Default Input");
+    hv_append_unique_device(&output_devices, "Default Output");
+
+    for (int i = 0; i < inputs.count(); ++i)
+        hv_append_unique_device(&input_devices, inputs.at(i).deviceName());
+    for (int i = 0; i < outputs.count(); ++i)
+        hv_append_unique_device(&output_devices, outputs.at(i).deviceName());
+
+    if (!input_devices.isEmpty()) DevBoxIn->addItems(input_devices);
+    if (!output_devices.isEmpty()) DevBoxOut->addItems(output_devices);
+
+    if (DevBoxIn->count() < 1 || DevBoxOut->count() < 1)
+    {
+        QMessageBox::critical(this, "MSHV",
+                              "No sound device detected\n"
+                              "Close application and check\nmicrophone and output permissions.",
+                              QMessageBox::Close);
+    }
+#endif
 #if defined _WIN32_
     DWORD pv;  // Can be any 32-bit type.
 
@@ -845,6 +883,9 @@ void SettingsMs::OutDeviceChanged(QString)
         //qDebug()<<"OutDeviceChanged="<<card_out;
         //dev_out mast bi in numbers
 #endif
+#if defined _MACOS_
+        emit OutDevChanged(DevBoxOut->currentText(),b0.toInt(),OutBuf->currentText().toInt());
+#endif
     }
 }
 void SettingsMs::InChannelChanget(bool)
@@ -899,6 +940,12 @@ void SettingsMs::InDeviceChanged(QString)
         //qDebug()<<"SendDevDrv="<<card;
         // qDebug()<<CardBufferPolls->currentText().toInt();
 #endif
+#if defined _MACOS_
+        emit InDevChanged(DevBoxIn->currentText(),b0.toInt(),/*SampleRate->currentText(),*/
+                          CardLatency->currentText().toInt(),
+                          CardBufferPolls->currentText().toInt(),(int)rb_right_ch->isChecked(),SB_Refresh->value(),
+                          SB_Refresh_lm->value());
+#endif
 #if defined _WIN32_
         //qDebug()<<"Send SettingsMs="<<DevBoxIn->currentText();
         emit InDevChanged(DevBoxIn->currentText(),b0.toInt(),/*SampleRate->currentText(),*/
@@ -910,5 +957,3 @@ void SettingsMs::InDeviceChanged(QString)
         //}
     }
 }
-
-

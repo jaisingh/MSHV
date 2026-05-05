@@ -1,7 +1,7 @@
 			//for the future -> "http://www.eqsl.cc/qslcard/importADIF.cfm
             /*res = "POST /qslcard/importADIF.cfm HTTP/1.1\r\n";
             res.append("Host: eqsl.cc\r\n");
-            tmp = "User-Agent: MSHV/"+QString(VER_MS)+"\r\n";
+            tmp = "User-Agent: " APP_USER_AGENT "\r\n";
             res.append(tmp.toUtf8());*/
             //res.append("Accept: */*\r\n");
             /*res.append("Content-Type: application/x-www-form-urlencoded\r\n");
@@ -93,7 +93,7 @@ void RadioAndNetW::UplEQSLAdif()
             adiftrim.remove(adiftrim.size()-1,1);//remove last \n  //adiftrim = adiftrim.trimmed();
             QByteArray res = "POST /"+LeEQSLPost->text().toUtf8()+" HTTP/1.1\r\n";
             res.append("Host: "+LeEQSLServer->text().toUtf8()+"\r\n");
-            QString tmp = "User-Agent: MSHV/"+QString(VER_MS)+"\r\n";
+            QString tmp = "User-Agent: " APP_USER_AGENT "\r\n";
             res.append(tmp.toUtf8());
             res.append("Accept: */*\r\n");
             res.append("Content-Type: application/x-www-form-urlencoded\r\n");

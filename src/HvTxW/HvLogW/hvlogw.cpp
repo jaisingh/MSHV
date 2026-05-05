@@ -4099,7 +4099,7 @@ void HvLogW::ExportToAdif(QString ident,int f_sel_or_all,bool pbarr)
     QTextStream out(&file);
 
     //all_exp=0 sel_exp=1  save_all_for_ext_log_prog=2 append_all_for_ext_log_prog=3
-    QString verr  = (QString)VER_MS;
+    QString verr  = (QString)APP_VERSION;
     QString headd = (QString)APP_NAME+" ADIF Export\n<ADIF_VER:5>3.1.0\n<PROGRAMID:4>MSHV\n"
                     "<PROGRAMVERSION:"+QString("%1").arg(verr.count())+">"+verr+"\n<EOH>\n";
 

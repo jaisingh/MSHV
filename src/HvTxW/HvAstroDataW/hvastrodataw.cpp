@@ -567,6 +567,7 @@ void tmoonsub_(double *day, double *glat, double *glong, double *moonalt,
 
 
 #include "hvastrodataw.h"
+#include "hvappfiles.h"
 #include <QFile>
 #include <QTextStream>
 #include <QCoreApplication>
@@ -581,7 +582,7 @@ HvAstroDataW::HvAstroDataW(int x,int y,QWidget *parent)
     setWindowIcon(QPixmap(":pic/ms_ico.png"));
 
 
-	azel_path = (QCoreApplication::applicationDirPath())+"/settings/azel.dat";
+	azel_path = HvAppWritablePath("settings/azel.dat");
 	f_txrx = false;
 	
     //setFixedSize(240,390);

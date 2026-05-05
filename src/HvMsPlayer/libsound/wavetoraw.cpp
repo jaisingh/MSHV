@@ -4,7 +4,7 @@
 
 // Wavetoraw.cc
 // Server which strips wave header.
-#include <malloc.h>
+#include <stdlib.h>
 
 #include "mpegsound.h"
 #include <QMessageBox>
@@ -135,4 +135,3 @@ bool Wavetoraw::testwave(char *buffer)
     seterrorcode(SOUND_ERROR_BAD);
     return false;
 }
-

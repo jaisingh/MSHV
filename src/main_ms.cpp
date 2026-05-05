@@ -7,6 +7,7 @@
 #define _SHKY_H_
 #define _BANDS_H_
 #include "main_ms.h"
+#include "../hvappfiles.h"
 
 #include <QScreen>
 #include <QWindow>
@@ -26,8 +27,8 @@ static int lid = 0;
 static int styid = 0;
 void _ReadSSAndSet_()
 {
-    QString app_p = (QCoreApplication::applicationDirPath());
-    QFile file(app_p+"/settings/ms_start");
+    HvPrepareAppDataLayout();
+    QFile file(HvAppWritablePath("settings/ms_start"));
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return;
     QString langid = "0";
     QString styleid = "0";
@@ -153,7 +154,7 @@ Main_Ms::Main_Ms(QString inst0,QWidget * parent)
     f_rx_glob_ = false;
 
     setWindowTitle(APP_NAME + InstName);  //qDebug()<<QCoreApplication::applicationName();
-    App_Path = (QCoreApplication::applicationDirPath());
+    App_Path = HvAppWritableRoot();
 
     dsty = false;
     if (styid==1) dsty = true;
@@ -952,7 +953,7 @@ Main_Ms::Main_Ms(QString inst0,QWidget * parent)
 
     HvAboutMsHv *THvAboutMsHv = new HvAboutMsHv(tr("About"),APP_NAME,App_Path,lid,this);
     QAction *Help_abaut;
-    Help_abaut = new QAction(QPixmap(":pic/ms_ico.png"),tr("About")+" MSHV",this);
+    Help_abaut = new QAction(QPixmap(":pic/ms_ico.png"),tr("About")+" "+(QString)APP_DISPLAY_NAME,this);
     connect(Help_abaut, SIGNAL(triggered()), THvAboutMsHv, SLOT(exec()));
     Help_m->addAction(Help_abaut);
 

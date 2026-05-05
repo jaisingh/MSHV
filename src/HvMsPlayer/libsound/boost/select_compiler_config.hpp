@@ -40,9 +40,9 @@
 #   define BOOST_COMPILER_CONFIG "boost/config/compiler/intel.hpp"
 
 #elif defined __clang__ && !defined(__CUDACC__) && !defined(__ibmxl__)
-// when using clang and cuda at same time, you want to appear as gcc
-//  Clang C++ emulates GCC, so it has to appear early.
-#   define BOOST_COMPILER_CONFIG "boost/config/compiler/clang.hpp"
+// This vendored boost subset ships gcc.hpp but not clang.hpp. Clang follows
+// the GCC configuration path closely enough for this embedded copy.
+#   define BOOST_COMPILER_CONFIG "gcc.hpp"
 
 #elif defined __DMC__
 //  Digital Mars C++
@@ -145,4 +145,3 @@
 #include <boost/config/compiler/visualc.hpp>
 
 #endif
-

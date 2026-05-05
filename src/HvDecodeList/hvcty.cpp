@@ -3,6 +3,7 @@
  * May be used under the terms of the GNU General Public License (GPL)
  */
 #include "hvcty.h"
+#include "hvappfiles.h"
 #include <QTextStream>
 
 //#include <QtGui>
@@ -52,8 +53,7 @@ QStringList HvCty::GetCountries()
 }
 void HvCty::ReadCtyDat()
 {
-    QString path = (QCoreApplication::applicationDirPath());
-    path.append("/settings/database/cty.dat");
+    QString path = HvAppWritablePath("settings/database/cty.dat");
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly)) return;
     QTextStream in(&file);
@@ -422,4 +422,3 @@ bool HvCty::ShowPFXDecode(QString call,QStringList ls,bool ispfx, QString pfx)
     }
     return res;
 }
-

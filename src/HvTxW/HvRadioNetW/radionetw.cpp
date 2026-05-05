@@ -1588,7 +1588,7 @@ RadioAndNetW::RadioAndNetW(QString inst,QString path,bool indsty,int x,int y,QWi
     connect(TEditRadInfo, SIGNAL(EmitSetInfo(QStringList,int)), this, SLOT(StInfoChanged(QStringList,int)));
 
     psk_Reporter = new PSKReporter(false, QString
-                                   {"MSHV v" + QString(VER_MS)
+                                   {APP_DISPLAY_NAME " v" APP_VERSION
                                    }
                                    .simplified (),"",4739);
     connect(cb_start_stop_psk_rpt, SIGNAL(toggled(bool)), this, SLOT(StartStopReport(bool)));
@@ -1612,7 +1612,7 @@ RadioAndNetW::RadioAndNetW(QString inst,QString path,bool indsty,int x,int y,QWi
     //qDebug()<<"Time===========================";
 
     if (!inst.isEmpty()) inst = " -"+inst;
-    m_messageClientBroad = new MessageClient {"MSHV"+inst,VER_MS,"",2237,true,this};
+    m_messageClientBroad = new MessageClient {"MSHV"+inst,APP_VERSION,"",2237,true,this};
     //m_messageClientBroad = new MessageClient {"MSHV ID:14MHz",VER_MS,"",2237,true,this};
     connect(m_messageClientBroad, SIGNAL(error(QString)), this, SLOT(networkErrorUDPBrodcast(QString)));
     connect(m_messageClientBroad, SIGNAL(replay()), this, SLOT(replayDecodes()));
@@ -1978,7 +1978,7 @@ void RadioAndNetW::SendOtpCheckDataGram()
         {
             QByteArray res = "GET /"+otp_formated_msg[otp_pos_ch_read].toUtf8()+" HTTP/1.1\r\n";
             res.append("Host: "+LeOtpServer->text().toUtf8()+"\r\n");
-            QString tmp = "User-Agent: MSHV/"+QString(VER_MS)+"\r\n";
+            QString tmp = "User-Agent: " APP_USER_AGENT "\r\n";
             res.append(tmp.toUtf8());
             res.append("Accept: */*\r\n\r\n");
             socet_tcp_otp->write(res); //qDebug()<<"MSHV Send-->"; qDebug()<<otp_pos_ch_read;//<<res.data();
@@ -2147,7 +2147,7 @@ void RadioAndNetW::UplEQSLAdif()
             if (!s.isEmpty()) adiftrim.insert(adiftrim.count()-5,"<QSLMSG:"+QString("%1").arg(s.count())+">"+s);//<EOR>
             QByteArray res = "POST /"+LeEQSLPost->text().toUtf8()+" HTTP/1.1\r\n";
             res.append("Host: "+LeEQSLServer->text().toUtf8()+"\r\n");
-            QString tmp = "User-Agent: MSHV/"+QString(VER_MS)+"\r\n";
+            QString tmp = "User-Agent: " APP_USER_AGENT "\r\n";
             res.append(tmp.toUtf8());
             res.append("Accept: */*\r\n");
             res.append("Content-Type: application/x-www-form-urlencoded\r\n");
@@ -2301,7 +2301,7 @@ void RadioAndNetW::UplQRZLogAdif()
             adiftrim.remove(adiftrim.size()-1,1);//remove last \n  //adiftrim = adiftrim.trimmed();
             QByteArray res = "POST /"+LeQRZLogPost->text().toUtf8()+" HTTP/1.1\r\n";
             res.append("Host: "+LeQRZLogServer->text().toUtf8()+"\r\n");
-            QString tmp = "User-Agent: MSHV/"+QString(VER_MS)+"\r\n";
+            QString tmp = "User-Agent: " APP_USER_AGENT "\r\n";
             res.append(tmp.toUtf8());
             res.append("Accept: */*\r\n");
             res.append("Content-Type: application/x-www-form-urlencoded\r\n");
@@ -2423,7 +2423,7 @@ void RadioAndNetW::CheckClubLogError(int b,int e)
         QFile file(file_cl_error);
         if (!file.open(QIODevice::Text | QIODevice::Append)) return;
         QTextStream out(&file);
-        QString verr  = (QString)VER_MS;
+        QString verr  = (QString)APP_VERSION;
         QString headd = (QString)APP_NAME+" ADIF Export\n<ADIF_VER:5>3.1.0\n<PROGRAMID:4>MSHV\n"
                         "<PROGRAMVERSION:"+QString("%1").arg(verr.count())+">"+verr+"\n<EOH>\n";
         //if (file.size()>8192)
@@ -2498,7 +2498,7 @@ void RadioAndNetW::UplClubLogAdif()
                 adiftrim.remove(adiftrim.size()-1,1);//remove last \n  //adiftrim = adiftrim.trimmed();
                 QByteArray res = "POST /"+LeClubLogPost0->text().toUtf8()+" HTTP/1.1\r\n";
                 res.append("Host: "+LeClubLogServer->text().toUtf8()+"\r\n");
-                QString tmp = "User-Agent: MSHV/"+QString(VER_MS)+"\r\n";
+                QString tmp = "User-Agent: " APP_USER_AGENT "\r\n";
                 res.append(tmp.toUtf8());
                 res.append("Accept: */*\r\n");
                 res.append("Content-Type: application/x-www-form-urlencoded\r\n");
@@ -2532,7 +2532,7 @@ void RadioAndNetW::UplClubLogAdif()
                 QByteArray bound = "--MSHV-"+tmpf.toUtf8();
                 QByteArray resf = "POST /"+LeClubLogPost1->text().toUtf8()+" HTTP/1.1\r\n";
                 resf.append("Host: "+LeClubLogServer->text().toUtf8()+"\r\n");
-                tmpf = "User-Agent: MSHV/"+QString(VER_MS)+"\r\n";
+                tmpf = "User-Agent: " APP_USER_AGENT "\r\n";
                 resf.append(tmpf.toUtf8());
                 resf.append("Accept: */*\r\n");
                 tmpf = QDateTime::currentDateTimeUtc().toString("yyyyMMddhhmm");
@@ -3943,7 +3943,6 @@ void RadioAndNetW::ReadSettings()
         CbOTPServers->setCurrentIndex(0);
     }
 }
-
 
 
 

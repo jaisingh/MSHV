@@ -56,6 +56,12 @@ int main(int argc, char ** argv)
 {
     //QApplication::setDesktopSettingsAware(false); remove desktop settings
     QApplication app(argc,argv);
+    QCoreApplication::setApplicationVersion(APP_VERSION);
+#if defined _MACOS_
+    QCoreApplication::setOrganizationName("PaardCo");
+    QCoreApplication::setApplicationName("MSHV");
+    QGuiApplication::setApplicationDisplayName(APP_DISPLAY_NAME);
+#endif
     /* no used just test
     ExceptionCatchingApplication app(argc, argv);
     try
@@ -103,7 +109,11 @@ int main(int argc, char ** argv)
     bool f_once = true;
     int time_ms = 3000;
     splash = new QSplashScreen(QPixmap(":/pic/mshv_splash.png"));
-    QLabel *label = new QLabel(app.translate("main","Software version")+" "+(QString)VER_MS);
+#if defined _MACOS_
+    QLabel *label = new QLabel((QString)APP_NAME);
+#else
+    QLabel *label = new QLabel(app.translate("main","Software version")+" "+(QString)APP_VERSION);
+#endif
     label->setStyleSheet("QLabel {color :rgb(158, 204, 241); font: 10pt;}");
     QVBoxLayout *vl = new QVBoxLayout();
     vl->setContentsMargins (5, 22, 5, 5);
@@ -138,7 +148,7 @@ int main(int argc, char ** argv)
         usleep(300000);	// 10 times
         if (time5.elapsed()>time_ms/2 && f_once) //if (time5.elapsed()>time_ms/2)
         {
-            label->setText(app.translate("main","Starting")+" MSHV");//label->setText(dot+app.translate("main","Starting")+" MSHV"+dot);
+            label->setText(app.translate("main","Starting")+" "+(QString)APP_DISPLAY_NAME);//label->setText(dot+app.translate("main","Starting")+" MSHV"+dot);
             f_once = false;
             app.processEvents(); //dot.append('.');
         }
