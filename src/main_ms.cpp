@@ -1663,7 +1663,11 @@ Main_Ms::Main_Ms(QString inst0,QWidget * parent)
 
     connect(THvTxW, SIGNAL(StndOutLevel(int)), TMsPlayerHV, SLOT(SetVolume(int)));
     THvTxW->SetInLevel("50");//corect sliders from 100 to 50%
+#if defined _MACOS_
+    THvTxW->SetOutLevel("90");
+#else
     THvTxW->SetOutLevel("95");//corect sliders from 100 to 95%
+#endif
 
     f_is_moved_to_prev_desk_pos = false;
 

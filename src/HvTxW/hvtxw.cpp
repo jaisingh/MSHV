@@ -428,7 +428,14 @@ HvTxW::HvTxW(QString inst,QString path,int lid,bool f,int x,int y,QWidget * pare
     V_tx_1->setAlignment(l_trxmi,Qt::AlignCenter);
     V_tx_1->setAlignment(Qt::AlignVCenter);
     connect(Slider_Tx_level, SIGNAL(SendValue(int,int)), this, SLOT(StndOutLevel_s(int,int)));
-    for (int i = 0; i<COUNT_BANDS; ++i) s_tx_level[i]=95;//2.54
+    for (int i = 0; i<COUNT_BANDS; ++i)
+    {
+#if defined _MACOS_
+        s_tx_level[i]=90;
+#else
+        s_tx_level[i]=95;//2.54
+#endif
+    }
 
     QPixmap p9,p10;
     if (dsty)

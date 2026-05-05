@@ -19,6 +19,23 @@ static const double ORG_SAMPLE_RATE_11025 = 11025.0;
 static const double ORG_SAMPLE_RATE_12000 = 12000.0;
 static double vol_win = 1.0;
 
+static double hv_tx_output_scale(int volume)
+{
+    if (volume <= 0) return 0.0;
+    if (volume >= 100) return 1.0;
+
+#if defined _MACOS_
+    // Give macOS much more travel at the low end so direct-rig and amp
+    // setups both land in a usable part of the existing 0-100 slider.
+    static const double TX_ATTENUATION_RANGE_DB = 50.0;
+    double norm = (double)volume / 100.0;
+    double gain_db = -TX_ATTENUATION_RANGE_DB * (1.0 - norm);
+    return pow(10.0, gain_db / 20.0);
+#else
+    return (4.615583 - log(101 - volume)) / 4.615583;  // to4nost 0.0001002;
+#endif
+}
+
 //#define DEB_LIMI0
 #if defined DEB_LIMI0
 static int max_0 = 0;
@@ -96,7 +113,7 @@ GenMessage::~GenMessage()
 }
 int GenMessage::setvolume_all(int volume)
 {
-    vol_win = (4.615583-log(101-volume))/4.615583;  // to4nost 0.0001002;
+    vol_win = hv_tx_output_scale(volume);
     return 0;
 }
 bool GenMessage::initialize(char *msg,int mod_ident,double tx_freq,int period_t,int bpsampl,bool msf,QString sfmta,QString otptk)//,int &ntxslot QString mygridl
@@ -300,4 +317,3 @@ void GenMessage::setcurrentpoint(int p)
     else currentpoint=p*pcmsize;
 }
 */
-
