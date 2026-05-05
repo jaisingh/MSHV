@@ -3,6 +3,7 @@
  * May be used under the terms of the GNU General Public License (GPL)
  */
 #include "cpuwudget.h"
+#include <QThread>
 //#define MAX_H_DISPLY_CPU 2
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -148,6 +149,11 @@ CpuWudget::~CpuWudget()
 #endif
 void CpuWudget::ScanForCpus()
 {
+#if defined _MACOS_
+    // Keep the macOS port Qt-native: use Qt's reported concurrency to size FT threading.
+    int cpu_count = QThread::idealThreadCount();
+    if (cpu_count > 0) s_cpu_c = cpu_count;
+#endif
 #if defined _LINUX_
 #if defined _FREEBSDHV_
     QProcess cmd;
@@ -229,7 +235,6 @@ void CpuWudget::ScanForCpus()
     s_cpu_c = cpu_count;
 #endif
 }
-
 
 
 
