@@ -1,0 +1,6 @@
+.DS_Store
+.qmake.stash
+Makefile
+mshv_mac_plugin_import.cpp
+build/macos/
+release/macos/
