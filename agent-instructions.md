@@ -222,6 +222,10 @@ Auto Logging Info Settings now capture:
 - `SOTA` reference
 - existing propagation / satellite / RX frequency / comment fields
 
+Auto Logging Info Settings also include:
+
+- `Enable POTA/SOTA Logging`
+
 The implementation rules are:
 
 - store the activation metadata per QSO instead of treating it as global station state
@@ -229,6 +233,7 @@ The implementation rules are:
 - carry the activation grid in the existing `My grid` UDP field
 - carry park and summit identifiers in the existing logged-QSO `Comments` field
 - carry the structured activity data in the ADIF broadcast and ADIF export/import path
+- preserve the configured POTA and SOTA defaults when the activation toggle is turned off, but do not apply them to newly logged QSOs until it is turned back on
 
 The comment composition rule is:
 

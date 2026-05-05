@@ -1312,6 +1312,9 @@ HvLogW::HvLogW(QString inst,QString app_path, bool indsty,int x,int y,QWidget *w
 
     cb_enable_ali = new QCheckBox(tr("Enable Auto Logging Info"));
     connect(cb_enable_ali,SIGNAL(toggled(bool)),this,SIGNAL(EmitCBEnableAliChanged(bool)));//clicked 2.75
+    cb_enable_actlog = new QCheckBox(tr("Enable POTA/SOTA Logging"));
+    cb_enable_actlog->setChecked(true);
+    connect(cb_enable_actlog,SIGNAL(toggled(bool)),this,SLOT(SetAutoActLogEnabled(bool)));
 
     QHBoxLayout *H_p= new QHBoxLayout();
     H_p->setContentsMargins(0,0,0,0);
@@ -1360,12 +1363,14 @@ HvLogW::HvLogW(QString inst,QString app_path, bool indsty,int x,int y,QWidget *w
     QHBoxLayout *H_add_log_activity= new QHBoxLayout();
     H_add_log_activity->setContentsMargins(0,0,0,0);
     H_add_log_activity->setSpacing(4);
+    H_add_log_activity->addWidget(cb_enable_actlog);
     H_add_log_activity->addWidget(l_add_grid);
     H_add_log_activity->addWidget(add_to_log_le_my_grid);
     H_add_log_activity->addWidget(l_add_pota);
     H_add_log_activity->addWidget(add_to_log_le_my_pota_ref);
     H_add_log_activity->addWidget(l_add_sota);
     H_add_log_activity->addWidget(add_to_log_le_my_sota_ref);
+    SetAutoActLogEnabled(true);
 
     QGroupBox *GB_001 = new QGroupBox(tr("Auto Logging Info")+":");
     QVBoxLayout *lgb001 = new QVBoxLayout();
@@ -3247,8 +3252,16 @@ void HvLogW::OkAddToLog()
 	if (!f_off_auto_comm) add_to_log_le->clear();//2.76.3
     addtolog_freq = add_to_log_le_frq->text();
     addtolog_my_grid = add_to_log_le_my_grid->text();
-    addtolog_my_pota_ref = add_to_log_le_my_pota_ref->text();
-    addtolog_my_sota_ref = add_to_log_le_my_sota_ref->text();
+    if (IsAutoActLogEnabled())
+    {
+        addtolog_my_pota_ref = add_to_log_le_my_pota_ref->text();
+        addtolog_my_sota_ref = add_to_log_le_my_sota_ref->text();
+    }
+    else
+    {
+        addtolog_my_pota_ref = "";
+        addtolog_my_sota_ref = "";
+    }
 
     int id = add_to_log_cb_prop->currentIndex();
     addtolog_prop = s_id_prop_mod[id];//None
@@ -3347,8 +3360,13 @@ void HvLogW::StartAddToDialog(QStringList in_lst)
         }
     }
     QString act_grid = add_to_log_le_my_grid->text().trimmed();
-    QString act_pota = NormalizeActivationRef(add_to_log_le_my_pota_ref->text());
-    QString act_sota = NormalizeActivationRef(add_to_log_le_my_sota_ref->text());
+    QString act_pota = "";
+    QString act_sota = "";
+    if (IsAutoActLogEnabled())
+    {
+        act_pota = NormalizeActivationRef(add_to_log_le_my_pota_ref->text());
+        act_sota = NormalizeActivationRef(add_to_log_le_my_sota_ref->text());
+    }
     if (!act_grid.isEmpty()) str_n.append(tr("Location Grid")+" "+act_grid+" ");
     if (!act_pota.isEmpty()) str_n.append("POTA "+act_pota+" ");
     if (!act_sota.isEmpty()) str_n.append("SOTA "+act_sota+" ");
@@ -3401,6 +3419,11 @@ void HvLogW::SetAutoLogInfo()//2.75
     add_to_log_le->setHidden(false);
     b_add_to_log_ok->setHidden(false);
     b_add_to_log_cacel->setText(tr("Cancel"));//f_addtolog = true; HV no use for this function
+}
+void HvLogW::SetAutoActLogEnabled(bool f)
+{
+    add_to_log_le_my_pota_ref->setEnabled(f);
+    add_to_log_le_my_sota_ref->setEnabled(f);
 }
 /*QString HvLogW::GetFREQall(int id, int l_row) //ID 0=ADIF, 1=LOGEDQSO, 2=Cabrillo
 {
@@ -3719,6 +3742,10 @@ void HvLogW::SetDistUnit(bool f)
 {
     f_km_mi = f;
 }
+bool HvLogW::IsAutoActLogEnabled() const
+{
+    return cb_enable_actlog->isChecked();
+}
 void HvLogW::NormalizeLogEntry(QStringList &lst)
 {
     if (lst.count() < MIN_CCOUNT) return;
@@ -3849,8 +3876,16 @@ bool HvLogW::Insert(QStringList lst, bool save_changes,bool warning_msg,int show
         if (le_rx_freq->isEnabled()) lst[24] = le_rx_freq->text();//rx freq 2.75
         else lst[24] = "";  
         lst[25] = add_to_log_le_my_grid->text();
-        lst[26] = add_to_log_le_my_pota_ref->text();
-        lst[27] = add_to_log_le_my_sota_ref->text();
+        if (IsAutoActLogEnabled())
+        {
+            lst[26] = add_to_log_le_my_pota_ref->text();
+            lst[27] = add_to_log_le_my_sota_ref->text();
+        }
+        else
+        {
+            lst[26] = "";
+            lst[27] = "";
+        }
         if (f_off_auto_comm) lst[12] = add_to_log_le->text();//2.76.3         
     }
 
@@ -4459,6 +4494,8 @@ QString HvLogW::GetPropSettings()//2.75
     str.append(add_to_log_le_my_pota_ref->text());
     str.append("#");
     str.append(add_to_log_le_my_sota_ref->text());
+    str.append("#");
+    str.append(QString("%1").arg(cb_enable_actlog->isChecked()));
     return str;
 }
 void HvLogW::SetPropSettings(QString s)
@@ -4478,6 +4515,8 @@ void HvLogW::SetPropSettings(QString s)
         if (ls.count()>6) add_to_log_le_my_grid->setText(ls.at(6));
         if (ls.count()>7) add_to_log_le_my_pota_ref->setText(ls.at(7));
         if (ls.count()>8) add_to_log_le_my_sota_ref->setText(ls.at(8));
+        if (ls.count()>9) cb_enable_actlog->setChecked(ls.at(9)=="1");
+        else cb_enable_actlog->setChecked(true);
     }
 }
 void HvLogW::RefreshCbTrmN(int i)

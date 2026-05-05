@@ -252,6 +252,7 @@ private slots:
     void End_Edit();
     //void SetEditText();
     void SetCorrContact(QStringList list,int index_edit);
+    void SetAutoActLogEnabled(bool);
     void Find();
     void DefaultSort();
     void SortClicked(int);
@@ -338,6 +339,7 @@ private:
     QLabel *l_comment;
     bool f_off_auto_comm;//2.76.3
     QLineEdit *add_to_log_le;
+    QCheckBox *cb_enable_actlog;
     QLineEdit *add_to_log_le_my_grid;
     QLineEdit *add_to_log_le_my_pota_ref;
     QLineEdit *add_to_log_le_my_sota_ref;
@@ -408,6 +410,7 @@ private:
     QString s_band;	
     HvProgressD *THvProgrD; 
     QMenuBar *Min_Menu;
+    bool IsAutoActLogEnabled() const;
     void SetManQsoText();
     void SetEditText();
 	void CheckLogCount();
