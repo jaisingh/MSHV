@@ -133,7 +133,7 @@ private:
     double endcorrectionft8[2200]; //(NFILT/2+1)  NFILT=4000; 4000/2+1=2001
     double BestIdtft8(double *dd,double f0,double dt,double idt,double complex *cref,
                       double complex *cfilt,double complex *cw_subs,double *endcorr,
-                      double *xdd,double complex *cx);
+                      double *xdd,double complex *cx,double *t_dd);
     void subtractft8(double *dd,int *itone,double f0,double dt,bool lrefinedt);
     void sfox_remove_ft8(double *dd);//,int npts
 
@@ -256,7 +256,7 @@ private:
     double endcorrectionft8[2200]; //(NFILT/2+1)  NFILT=4000; 4000/2+1=2001
     double BestIdtft8(double *dd,double f0,double dt,double idt,double complex *cref,
                       double complex *cfilt,double complex *cw_subs,double *endcorr,
-                      double *xdd,double complex *cx);
+                      double *xdd,double complex *cx,double *t_dd);
     void subtractft8(double *dd,int *itone,double f0,double dt,bool refdt);
 
     bool first_ft8b_2;
@@ -1384,6 +1384,5 @@ protected:
 
 };
 #endif
-
 
 

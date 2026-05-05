@@ -1227,7 +1227,7 @@ void DecoderSFox::gen_ft8cwaveRx(int *i4tone,double f_tx,double complex *cwave)
 #define K_SUB 1.9962 //2.70
 double DecoderSFox::BestIdtft8(double *dd,double f0,double dt,double idt,double complex *cref,
                                double complex *cfilt,double complex *cw_subs,double *endcorr,
-                               double *xdd,double complex *cx)
+                               double *xdd,double complex *cx,double *t_dd)
 {
     double sqq=0.0;
     const int NFRAME=1920*79;//=151680
@@ -1258,9 +1258,6 @@ double DecoderSFox::BestIdtft8(double *dd,double f0,double dt,double idt,double 
         cfilt[revv]*=endcorr[i];
         revv--;
     }
-
-    double t_dd[180300];
-    //for (int i = 0; i < NMAX; ++i) t_dd[i]=0.0;
 
     int c_beg = nstart-1;
     if (c_beg<0) c_beg = abs(c_beg);
@@ -1365,12 +1362,14 @@ void DecoderSFox::subtractft8(double *dd,int *itone,double f0,double dt,bool lre
     {
         double *xdd = new double[180300];//NFFT=180200
         double complex *cx = new double complex[90400];//NFFT/2=90000
-        double sqa = BestIdtft8(dd,f0,dt,-90,cref,cfilt,cw_subsft8,endcorrectionft8,xdd,cx);
-        double sqb = BestIdtft8(dd,f0,dt,+90,cref,cfilt,cw_subsft8,endcorrectionft8,xdd,cx);
-        double sq0 = BestIdtft8(dd,f0,dt,  0,cref,cfilt,cw_subsft8,endcorrectionft8,xdd,cx);
+        double *t_dd = new double[180300];
+        double sqa = BestIdtft8(dd,f0,dt,-90,cref,cfilt,cw_subsft8,endcorrectionft8,xdd,cx,t_dd);
+        double sqb = BestIdtft8(dd,f0,dt,+90,cref,cfilt,cw_subsft8,endcorrectionft8,xdd,cx,t_dd);
+        double sq0 = BestIdtft8(dd,f0,dt,  0,cref,cfilt,cw_subsft8,endcorrectionft8,xdd,cx,t_dd);
         double dx  = pomAll.peakup(sqa,sq0,sqb);
         if (fabs(dx)>1.0) f_du_sub = false; //no subtract
         else idt=(int)(90.0*dx);//subtract
+        delete [] t_dd;
         delete [] xdd;
         delete [] cx;
         //if (!f_du_sub) qDebug()<<"idt="<<fabs(dx);
@@ -2776,4 +2775,3 @@ void DecoderSFox::sfox_decode(double *dd,double nfa0,double nfb0,double fqso,boo
     }
     delete [] c0;
 }
-

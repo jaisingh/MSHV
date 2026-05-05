@@ -5,7 +5,7 @@
 //#include "decoderms.h"
 #include "decoderpom.h"
 #include <QRegExp>
-#include <unistd.h>
+#include <pthread.h>
 
 //#include <QtGui>
 //// F2A ///
@@ -28,27 +28,18 @@
 
 //static int retr = 0;
 //static int cplu = 0;
-#define SLPAMIN  2000 //2000 importent SLPAMIN > SLPASTEP
-#define SLPASTEP 1000 //1000 importent SLPAMIN > SLPASTEP
-static bool _block_th_all_ = false;        //need to be static for all
-static int _wait_t_ = SLPAMIN - SLPASTEP;  //need to be static for all
-static int setup_c2c_d2c_(bool &wait,fftw_plan &p,double complex *a,int nfft,int isign,int iform,double *d = 0)
+static pthread_mutex_t g_fftw_plan_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+static void setup_c2c_d2c_(fftw_plan &p,double complex *a,int nfft,int isign,int iform,double *d = 0)
 {
-    if (_block_th_all_ || !wait)
-    {
-        _wait_t_ += SLPASTEP;
-        wait = true; //retr++; qDebug()<<"retry---->"<<retr<<_wait_t_;
-        return _wait_t_;
-    }
-    _block_th_all_ = true; //if (cplu == 0) qDebug()<<"----------------------"; cplu++; qDebug()<<"PLANS="<<cplu<<nfft;
+    pthread_mutex_lock(&g_fftw_plan_mutex);
 
     if 		(isign==-1 && iform==1) p=fftw_plan_dft_1d(nfft,a,a,FFTW_FORWARD,FFTW_ESTIMATE_PATIENT);
     else if (isign==1 &&  iform==1) p=fftw_plan_dft_1d(nfft,a,a,FFTW_BACKWARD,FFTW_ESTIMATE_PATIENT);
     else if (isign==-1 && iform==0) p=fftw_plan_dft_r2c_1d(nfft,d,a,FFTW_ESTIMATE_PATIENT);
     else if (isign==1 && iform==-1) p=fftw_plan_dft_c2r_1d(nfft,a,d,FFTW_ESTIMATE_PATIENT);
 
-    _block_th_all_ = false;
-    return 0;
+    pthread_mutex_unlock(&g_fftw_plan_mutex);
 }
 #define NPAMA_ 2048
 #define NPAMAX 1441000  //q65 max=1440000 PI4 max 768000
@@ -85,13 +76,7 @@ void HvThr::four2a_c2c(double complex *a,double complex *a1,fftw_plan *pc,int &c
         nn_c2c[z]=nfft;
         ns_c2c[z]=isign;
         nf_c2c[z]=iform;
-        int slpp = 1000;
-        bool wait = false; //if (nthreads==1) wait = false; ??? hv
-        while (slpp!=0)
-        {
-            usleep(slpp);
-            slpp = setup_c2c_d2c_(wait,pc[z],a1,nfft,isign,iform);
-        }
+        setup_c2c_d2c_(pc[z],a1,nfft,isign,iform);
         cpc++;  //qDebug()<<"c2c====="<<cpc<<nfft;
     }
 
@@ -142,13 +127,7 @@ void HvThr::four2a_d2c(double complex *a,double complex *a1,double *d,double *d1
         nn_d2c[z]=nfft;
         ns_d2c[z]=isign;
         nf_d2c[z]=iform;
-        int slpp = 1000;
-        bool wait = false; //if (nthreads==1) wait = false; ??? hv
-        while (slpp!=0)
-        {
-            usleep(slpp);
-            slpp = setup_c2c_d2c_(wait,pd[z],a1,nfft,isign,iform,d1);
-        }
+        setup_c2c_d2c_(pd[z],a1,nfft,isign,iform,d1);
         cpd++;  //qDebug()<<"d2c="<<cpd<<nfft;
     }
 
@@ -170,16 +149,26 @@ void HvThr::DestroyPlans(fftw_plan *pc,int &cpc,fftw_plan *pd,int &cpd,bool imid
     if (cpc > NPLIM || imid)
     {
         //qDebug()<<"Plans C2C="<<cpc;
-        for (int z = 0; z < cpc; ++z) fftw_destroy_plan(pc[z]);
+        pthread_mutex_lock(&g_fftw_plan_mutex);
+        for (int z = 0; z < cpc; ++z)
+        {
+            fftw_destroy_plan(pc[z]);
+            pc[z] = 0;
+        }
+        pthread_mutex_unlock(&g_fftw_plan_mutex);
         cpc = 0;
-        _wait_t_ = SLPAMIN - SLPASTEP;
     }
     if (cpd > NPLIM || imid)
     {
         //qDebug()<<"Plans D2C="<<cpd;
-        for (int z = 0; z < cpd; ++z) fftw_destroy_plan(pd[z]);
+        pthread_mutex_lock(&g_fftw_plan_mutex);
+        for (int z = 0; z < cpd; ++z)
+        {
+            fftw_destroy_plan(pd[z]);
+            pd[z] = 0;
+        }
+        pthread_mutex_unlock(&g_fftw_plan_mutex);
         cpd = 0;
-        _wait_t_ = SLPAMIN - SLPASTEP;
     }
 }
 //// END class HvThr ///
@@ -2980,4 +2969,3 @@ void PomFt::decode174_91_ft2a(double *llr,int maxosd,int norder,bool *apmask,boo
     nharderror=-1;
 }*/
 //// END POMFT ///
-

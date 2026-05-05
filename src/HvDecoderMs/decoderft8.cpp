@@ -374,7 +374,7 @@ void DecoderFt8::gen_ft8cwaveRx(int *i4tone,double f_tx,double complex *cwave)
 }
 double DecoderFt8::BestIdtft8(double *dd,double f0,double dt,double idt,double complex *cref,
                               double complex *cfilt,double complex *cw_subs,double *endcorr,
-                              double *xdd,double complex *cx)
+                              double *xdd,double complex *cx,double *t_dd)
 {
     double sqq=0.0;
     const int NFRAME=1920*79;//=151680
@@ -405,9 +405,6 @@ double DecoderFt8::BestIdtft8(double *dd,double f0,double dt,double idt,double c
         cfilt[revv]*=endcorr[i];
         revv--;
     }
-
-    double t_dd[180300];
-    //for (int i = 0; i < NMAX; ++i) t_dd[i]=0.0;
 
     int c_beg = nstart-1;
     if (c_beg<0) c_beg = abs(c_beg);
@@ -480,12 +477,14 @@ void DecoderFt8::subtractft8(double *dd,int *itone,double f0,double dt,bool lref
     {
         double *xdd = new double[180300];//NFFT=180200
         double complex *cx = new double complex[90400];//NFFT/2=90000
-        double sqa = BestIdtft8(dd,f0,dt,-90,cref,cfilt,cw_subsft8,endcorrectionft8,xdd,cx);
-        double sqb = BestIdtft8(dd,f0,dt,+90,cref,cfilt,cw_subsft8,endcorrectionft8,xdd,cx);
-        double sq0 = BestIdtft8(dd,f0,dt,  0,cref,cfilt,cw_subsft8,endcorrectionft8,xdd,cx);
+        double *t_dd = new double[180300];
+        double sqa = BestIdtft8(dd,f0,dt,-90,cref,cfilt,cw_subsft8,endcorrectionft8,xdd,cx,t_dd);
+        double sqb = BestIdtft8(dd,f0,dt,+90,cref,cfilt,cw_subsft8,endcorrectionft8,xdd,cx,t_dd);
+        double sq0 = BestIdtft8(dd,f0,dt,  0,cref,cfilt,cw_subsft8,endcorrectionft8,xdd,cx,t_dd);
         double dx  = pomAll.peakup(sqa,sq0,sqb);
         if (fabs(dx)>1.0) f_du_sub = false; //no subtract
         else idt=(int)(90.0*dx);//subtract
+        delete [] t_dd;
         delete [] xdd;
         delete [] cx;
         //if (!f_du_sub) qDebug()<<"idt="<<fabs(dx);
@@ -2956,7 +2955,6 @@ void DecoderFt8::ft8_decode(double *dd,int c_dd,double f0a,double f0b,double fqs
     
     delete [] s_;
 }
-
 
 
 

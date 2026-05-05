@@ -2430,8 +2430,8 @@ void DecoderMs::StrtDec4()
 {
     usleep(21000); //qDebug()<<"4";
     if      (s_mode == 11) DecFt8_4->ft8_decode(static_dat4,s_static_dat_count,(_f04_-CORFT8),_f05_,s_nfqso_all,have_dec4_,id3decFt,s_f00,s_f01);
-    else if (s_mode == 13) DecFt4_4->ft4_decode(static_dat4,(_f04_-CORFT4),_f05_,s_f00,s_f01,s_nfqso_all,have_dec3_);
-    else if (s_mode == 18) DecFt2_4->ft2_decode(static_dat4,(_f04_-CORFT2),_f05_,s_f00,s_f01,s_nfqso_all,have_dec3_);
+    else if (s_mode == 13) DecFt4_4->ft4_decode(static_dat4,(_f04_-CORFT4),_f05_,s_f00,s_f01,s_nfqso_all,have_dec4_);
+    else if (s_mode == 18) DecFt2_4->ft2_decode(static_dat4,(_f04_-CORFT2),_f05_,s_f00,s_f01,s_nfqso_all,have_dec4_);
     end_dec4_ = true;
     TryEndThr();
 }
@@ -2439,9 +2439,9 @@ static double _f06_ = 3200;
 void DecoderMs::StrtDec5()
 {
     usleep(22000); //qDebug()<<"5";
-    if      (s_mode == 11) DecFt8_5->ft8_decode(static_dat5,s_static_dat_count,(_f05_-CORFT8),_f06_,s_nfqso_all,have_dec4_,id3decFt,s_f00,s_f01);
-    else if (s_mode == 13) DecFt4_5->ft4_decode(static_dat5,(_f05_-CORFT4),_f06_,s_f00,s_f01,s_nfqso_all,have_dec3_);
-    else if (s_mode == 18) DecFt2_5->ft2_decode(static_dat5,(_f05_-CORFT2),_f06_,s_f00,s_f01,s_nfqso_all,have_dec3_);
+    if      (s_mode == 11) DecFt8_5->ft8_decode(static_dat5,s_static_dat_count,(_f05_-CORFT8),_f06_,s_nfqso_all,have_dec5_,id3decFt,s_f00,s_f01);
+    else if (s_mode == 13) DecFt4_5->ft4_decode(static_dat5,(_f05_-CORFT4),_f06_,s_f00,s_f01,s_nfqso_all,have_dec5_);
+    else if (s_mode == 18) DecFt2_5->ft2_decode(static_dat5,(_f05_-CORFT2),_f06_,s_f00,s_f01,s_nfqso_all,have_dec5_);
     end_dec5_ = true;
     TryEndThr();
 }
