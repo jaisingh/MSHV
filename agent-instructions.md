@@ -57,6 +57,7 @@ These commits are the current committed baseline for the macOS port:
 - `3a51c34` `Brand macOS build as MSHV OSX Build`
 - `7363a53` `Adjust macOS RX input level scaling`
 - `9f9eae6` `Rebase macOS port onto MSHV v2.76.6`
+- `43524bf` `Stabilize macOS FT8 decoder threading`
 
 ## Confirmed Upstream Layout
 
@@ -362,6 +363,43 @@ Current behavior:
 - on non-macOS platforms, the previous effective range is preserved
 - the RX slider labels show `+20` at the top and `-40` at the bottom on macOS
 - slider midpoint is now about `-10 dB` instead of `0 dB`
+
+### FT8 decoder threading stability
+
+Commit `43524bf` addresses a macOS FT8 decode crash seen in recent diagnostic reports.
+
+Current behavior:
+
+- FFTW plan creation and destruction in the decoder are serialized with a pthread mutex instead of a global busy-wait flag
+- large FT8 and SuperFox scratch buffers used in subtraction paths no longer sit on worker-thread stacks
+- decode thread result bookkeeping for later worker slots no longer writes to the wrong `have_dec*` flags
+
+Observed crash signatures that motivated this fix:
+
+- `SIGABRT` / `pointer being freed was not allocated` in the FT8 subtract path
+- `SIGBUS` stack-guard faults in FT8 decoder worker threads
+
+### TX output level scaling
+
+The current macOS TX level law is intentionally less aggressive at the low end than upstream.
+
+Current behavior:
+
+- macOS TX output now maps the `0..100` slider through a `50 dB` attenuation curve
+- low slider values have substantially more usable travel when driving an external amplifier
+- non-macOS platforms keep the previous TX scaling behavior
+- the macOS default TX output level is `90` instead of `95`
+
+### Macro activity presets for portable operation
+
+The macros dialog now supports portable-activity CQ presets in the same activity selector used by FT, MSK, and Q65 macros.
+
+Current behavior:
+
+- the `Activity Type` selector includes `POTA` and `SOTA`
+- default generated CQ macros become `CQ POTA <MYCALL> <GRID4>` or `CQ SOTA <MYCALL> <GRID4>`
+- the selected portable activity is persisted in `settings/ms_macros`
+- the CQ type also propagates into the multi-answer CQ selector and decoder word hints so the FT/Q65 path treats these as intentional CQ variants instead of plain `CQ`
 
 ## Build and Refresh Commands
 
