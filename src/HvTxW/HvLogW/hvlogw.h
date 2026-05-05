@@ -156,6 +156,9 @@ private:
     //HvInLe *le_rxsn;
     HvInLe *le_loc;
     QLineEdit *le_comment;
+    QLineEdit *le_my_grid;
+    QLineEdit *le_my_pota_ref;
+    QLineEdit *le_my_sota_ref;
     HvInLe *le_freq;
     QComboBox *cb_prop;
     QComboBox *cb_sat_mod;
@@ -281,7 +284,7 @@ private:
 	QAction *ac_use_adif_save;
 	HvQthLoc THvQthLoc;
 	bool f_km_mi;
-	QString CalcDistance(QString);
+	QString CalcDistance(QString,QString my_grid = "");
 	int beg_append;
 	bool save_in_new_format;
 	bool fsave_busy; 
@@ -292,6 +295,8 @@ private:
     void GetMarkTextAllFromLog_p(QString band,QString mode);
     QString ExtractAdifRecord(QString in,QString str);
     //QString GetFREQall(int,int);
+    void NormalizeLogEntry(QStringList &lst);
+    QString ResolveMyGrid(QString my_grid) const;
     QString MakeAdifString(int l_row);
     QStringList MakeLoggedQSO(int l_row);
     void ExportToAdif(QString ident,int f_sel_or_all,bool pbarr);
@@ -333,12 +338,18 @@ private:
     QLabel *l_comment;
     bool f_off_auto_comm;//2.76.3
     QLineEdit *add_to_log_le;
+    QLineEdit *add_to_log_le_my_grid;
+    QLineEdit *add_to_log_le_my_pota_ref;
+    QLineEdit *add_to_log_le_my_sota_ref;
     QPushButton *b_add_to_log_ok;
     QPushButton *b_add_to_log_cacel;
     void StartAddToDialog(QStringList in_lst);
     QString addtolog_comment;
     QString addtolog_freq;
     QString addtolog_prop;
+    QString addtolog_my_grid;
+    QString addtolog_my_pota_ref;
+    QString addtolog_my_sota_ref;
     QString addtolog_txsn;
     QString addtolog_rxsn;
     QString addtolog_txex;

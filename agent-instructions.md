@@ -211,6 +211,63 @@ Key implementation choices already made:
 - copy bundled `settings` into the app resources path
 - move writable runtime data on macOS to `QStandardPaths::AppDataLocation`
 
+## Logging Activity Metadata
+
+As of 2026-05-05, the log path also carries activation-specific metadata for portable operations.
+
+Auto Logging Info Settings now capture:
+
+- `Location Grid`
+- `POTA` reference
+- `SOTA` reference
+- existing propagation / satellite / RX frequency / comment fields
+
+The implementation rules are:
+
+- store the activation metadata per QSO instead of treating it as global station state
+- keep the WSJT-X `QSO Logged` UDP payload schema unchanged for compatibility
+- carry the activation grid in the existing `My grid` UDP field
+- carry park and summit identifiers in the existing logged-QSO `Comments` field
+- carry the structured activity data in the ADIF broadcast and ADIF export/import path
+
+The comment composition rule is:
+
+- append `POTA <ref>` when a POTA reference is present
+- append `SOTA <ref>` when a SOTA reference is present
+- do not append a duplicate token if the comment already contains it
+
+The ADIF behavior is now:
+
+- export as ADIF `3.1.7`
+- use per-QSO `MY_GRIDSQUARE` when present, otherwise fall back to the configured station grid
+- export `MY_POTA_REF` for POTA activations
+- export `MY_SOTA_REF` for SOTA activations
+- export compatibility `MY_SIG` / `MY_SIG_INFO`
+- when both POTA and SOTA are present, keep both dedicated fields and use the generic `MY_SIG` / `MY_SIG_INFO` pair for POTA
+
+The import behavior is now:
+
+- read `MY_GRIDSQUARE`
+- read `MY_POTA_REF`
+- read `MY_SOTA_REF`
+- fall back to `MY_SIG` / `MY_SIG_INFO` when the dedicated POTA or SOTA field is absent
+
+The local `.edim` log format now persists three added columns:
+
+- column `25`: `My Grid`
+- column `26`: `My POTA`
+- column `27`: `My SOTA`
+
+The new `.edim` format marker is:
+
+- `[QSORecords; MSHV LOG FILE ID=20260505-2766]`
+
+Validation notes used for this implementation:
+
+- the sample POTA output in `~/Downloads/US-0212.adi` includes `MY_GRIDSQUARE`, `MY_POTA_REF`, `MY_SIG`, `MY_SIG_INFO`, and a comment of the form `POTA US-0212`
+- official ADIF field support confirms `MY_SOTA_REF` and `MY_POTA_REF`
+- the generic `MY_SIG` / `MY_SIG_INFO` pair is retained for compatibility with tools that still key activity uploads from those fields
+
 ## Verified macOS Fixes
 
 ### Audio and device handling

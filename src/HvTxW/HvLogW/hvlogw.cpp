@@ -15,6 +15,45 @@
 //#include <QtGui>
 //#include <limits>
 #include <QCoreApplication>
+
+namespace
+{
+QString NormalizeActivationGrid(QString grid)
+{
+    return grid.trimmed().toUpper();
+}
+
+QString NormalizeActivationRef(QString ref)
+{
+    return ref.trimmed().toUpper();
+}
+
+QString AppendCommentToken(QString comment, QString token)
+{
+    token = token.trimmed();
+    if (token.isEmpty()) return comment.trimmed();
+
+    QString out = comment.trimmed();
+    if (out.contains(token, Qt::CaseInsensitive)) return out;
+
+    if (!out.isEmpty()) out.append(" ");
+    out.append(token);
+    return out;
+}
+
+QString ComposeActivationComment(QString comment, QString pota_ref, QString sota_ref)
+{
+    QString out = comment.trimmed();
+
+    pota_ref = NormalizeActivationRef(pota_ref);
+    sota_ref = NormalizeActivationRef(sota_ref);
+
+    if (!pota_ref.isEmpty()) out = AppendCommentToken(out, "POTA "+pota_ref);
+    if (!sota_ref.isEmpty()) out = AppendCommentToken(out, "SOTA "+sota_ref);
+
+    return out;
+}
+}
 HvProgressD::HvProgressD(QWidget * parent)
         : QProgressDialog(parent)
 {
@@ -109,7 +148,8 @@ HvLogList::HvLogList(bool indsty,QWidget *parent)
     //<<"Band"<<"Freq kHz"<<"Prop"<<"Comment";
     list_A <<tr("Date")<<tr("Start")<<"Date End"<<tr("End")<<tr("Callsign")<<tr("Locator")<<"TXRpt"<<"RXRpt"<<tr("Mode")
     <<tr("Band")<<"Freq kHz"<<tr("Prop")<<tr("Comment")<<"secSta"<<"TXSn"<<"RXSn"<<"TXExch"<<"RXExch"<<"Cid"
-    <<"Cmt"<<"secDnd"<<tr("Distance")<<tr("Satellite")<<tr("Sat Mode")<<"RX Freq MHz";
+    <<"Cmt"<<"secDnd"<<tr("Distance")<<tr("Satellite")<<tr("Sat Mode")<<"RX Freq MHz"
+    <<tr("My Grid")<<tr("My POTA")<<tr("My SOTA");
     model.setHorizontalHeaderLabels(list_A);
 
     THvHeader->setSectionResizeMode(QHeaderView::Fixed);//qt5
@@ -147,9 +187,9 @@ HvLogList::HvLogList(bool indsty,QWidget *parent)
     THvHeader->resizeSection(22, 74); //Satellite					        22
     THvHeader->resizeSection(23, 72); //Sat Mode					        23
     THvHeader->resizeSection(24, 90); //RX Freq MHz					        24
-    //THvHeader->resizeSection(25, 75); //reserve					        25
-    //THvHeader->resizeSection(26, 75); //reserve					        26
-    //THvHeader->resizeSection(27, 75); //reserve					        27
+    THvHeader->resizeSection(25, 82); //My Grid					            25
+    THvHeader->resizeSection(26, 90); //My POTA					            26
+    THvHeader->resizeSection(27, 90); //My SOTA					            27
     //THvHeader->resizeSection(28, 75); //reserve					        28
 
     //THvHeader->moveSection(21,6);
@@ -208,6 +248,9 @@ void HvLogList::HideSections()
     THvHeader->hideSection(18); //contest id hiden
     THvHeader->hideSection(19); //contest MULTI-TWO hiden
     THvHeader->hideSection(20); //enum seconds end 00-59 hiden
+    THvHeader->hideSection(25); //my grid hidden
+    THvHeader->hideSection(26); //my pota hidden
+    THvHeader->hideSection(27); //my sota hidden
 }
 void HvLogList::paintEvent(QPaintEvent *event)
 {
@@ -577,6 +620,27 @@ HvEditW::HvEditW(QString name,QString bt_cancel_txt,QString bt_corr_txt,bool ind
     QValidator *validator2 = new QRegExpValidator(rx2,this);
     le_comment->setValidator(validator2);
 
+    QLabel *l_my_grid = new QLabel(tr("My Grid")+":");
+    le_my_grid = new QLineEdit();
+    le_my_grid->setMaxLength(6);
+    QRegExp rx_grid("^[A-Za-z0-9]*$");
+    QValidator *validator_grid = new QRegExpValidator(rx_grid,this);
+    le_my_grid->setValidator(validator_grid);
+
+    QLabel *l_my_pota = new QLabel("POTA:");
+    le_my_pota_ref = new QLineEdit();
+    le_my_pota_ref->setMaxLength(40);
+    QRegExp rx_pota("^[A-Za-z0-9,@/-]*$");
+    QValidator *validator_pota = new QRegExpValidator(rx_pota,this);
+    le_my_pota_ref->setValidator(validator_pota);
+
+    QLabel *l_my_sota = new QLabel("SOTA:");
+    le_my_sota_ref = new QLineEdit();
+    le_my_sota_ref->setMaxLength(20);
+    QRegExp rx_sota("^[A-Za-z0-9/-]*$");
+    QValidator *validator_sota = new QRegExpValidator(rx_sota,this);
+    le_my_sota_ref->setValidator(validator_sota);
+
     /*QLabel *l_eqslmsg = new QLabel(tr("eQSL MSG")+":");
     //l_comment->setFixedWidth(50);
     QLineEdit *le_eqslmsg = new QLineEdit();
@@ -603,6 +667,16 @@ HvEditW::HvEditW(QString name,QString bt_cancel_txt,QString bt_corr_txt,bool ind
     H_c->addWidget(le_comment);
     //H_c->addWidget(l_eqslmsg);
     //H_c->addWidget(le_eqslmsg);
+
+    QHBoxLayout *H_activity = new QHBoxLayout();
+    H_activity->setContentsMargins(1,1,1,1);
+    H_activity->setSpacing(3);
+    H_activity->addWidget(l_my_grid);
+    H_activity->addWidget(le_my_grid);
+    H_activity->addWidget(l_my_pota);
+    H_activity->addWidget(le_my_pota_ref);
+    H_activity->addWidget(l_my_sota);
+    H_activity->addWidget(le_my_sota_ref);
 
     QRegExp rx1("^[1-9][0-9]*$");//^[2-9][0-9]{6}$ Out of 7 digits 1 is consumed by first position 2-9 and then next 6 digits can be from 0-9
     QValidator *validator1 = new QRegExpValidator(rx1, this);
@@ -695,6 +769,7 @@ HvEditW::HvEditW(QString name,QString bt_cancel_txt,QString bt_corr_txt,bool ind
     //V_l->setAlignment(H_dtm,Qt::AlignLeft);
     V_l->addLayout(H_b);
     V_l->addLayout(H_c);
+    V_l->addLayout(H_activity);
     V_l->addLayout(H_sat);
     V_l->addLayout(H_cont);
     setLayout(V_l);
@@ -912,7 +987,8 @@ void HvEditW::CorrContact()
     <<le_txrst->getText()<<le_rxrst->getText()<<Cb_mode->currentText()<<Cb_band->currentText()<<le_freq->getText()
     <<propt<<le_comment->text()<<s_enum_sec_sta<<le_txsn->text()<<le_rxsn->text()<<le_txex->text()<<le_rxex->text()
     <<QString("%1").arg(pos_cont[cb_cont_id->currentIndex()])<<QString("%1").arg(cb_cabrillo_trmN->currentIndex())
-    <<s_enum_sec_end<<s_dist<<satn<<satm<<satr;
+    <<s_enum_sec_end<<s_dist<<satn<<satm<<satr
+    <<le_my_grid->text()<<le_my_pota_ref->text()<<le_my_sota_ref->text();
 
     emit SendCorrContact(list, index_edit);
 
@@ -1020,6 +1096,12 @@ void HvEditW::SetEdit(QStringList list, int index)
     if (index1 >= 0) cb_sat_mod->setCurrentIndex(index1);//Sat Mode
     else cb_sat_mod->setCurrentIndex(0);
     le_rx_freq->setText(list.at(24));//RX Freq
+    if (list.count()>25) le_my_grid->setText(list.at(25));
+    else le_my_grid->clear();
+    if (list.count()>26) le_my_pota_ref->setText(list.at(26));
+    else le_my_pota_ref->clear();
+    if (list.count()>27) le_my_sota_ref->setText(list.at(27));
+    else le_my_sota_ref->clear();
 }
 
 //#define _CONT_NAME_
@@ -1254,6 +1336,37 @@ HvLogW::HvLogW(QString inst,QString app_path, bool indsty,int x,int y,QWidget *w
     H_add_log_comm->addWidget(l_comment);
     H_add_log_comm->addWidget(add_to_log_le);
 
+    QLabel *l_add_grid = new QLabel(tr("Location Grid")+":");
+    add_to_log_le_my_grid = new QLineEdit();
+    add_to_log_le_my_grid->setMaxLength(6);
+    QRegExp rx_grid("^[A-Za-z0-9]*$");
+    QValidator *validator_grid = new QRegExpValidator(rx_grid,this);
+    add_to_log_le_my_grid->setValidator(validator_grid);
+
+    QLabel *l_add_pota = new QLabel("POTA:");
+    add_to_log_le_my_pota_ref = new QLineEdit();
+    add_to_log_le_my_pota_ref->setMaxLength(40);
+    QRegExp rx_pota("^[A-Za-z0-9,@/-]*$");
+    QValidator *validator_pota = new QRegExpValidator(rx_pota,this);
+    add_to_log_le_my_pota_ref->setValidator(validator_pota);
+
+    QLabel *l_add_sota = new QLabel("SOTA:");
+    add_to_log_le_my_sota_ref = new QLineEdit();
+    add_to_log_le_my_sota_ref->setMaxLength(20);
+    QRegExp rx_sota("^[A-Za-z0-9/-]*$");
+    QValidator *validator_sota = new QRegExpValidator(rx_sota,this);
+    add_to_log_le_my_sota_ref->setValidator(validator_sota);
+
+    QHBoxLayout *H_add_log_activity= new QHBoxLayout();
+    H_add_log_activity->setContentsMargins(0,0,0,0);
+    H_add_log_activity->setSpacing(4);
+    H_add_log_activity->addWidget(l_add_grid);
+    H_add_log_activity->addWidget(add_to_log_le_my_grid);
+    H_add_log_activity->addWidget(l_add_pota);
+    H_add_log_activity->addWidget(add_to_log_le_my_pota_ref);
+    H_add_log_activity->addWidget(l_add_sota);
+    H_add_log_activity->addWidget(add_to_log_le_my_sota_ref);
+
     QGroupBox *GB_001 = new QGroupBox(tr("Auto Logging Info")+":");
     QVBoxLayout *lgb001 = new QVBoxLayout();
     lgb001->setContentsMargins(8,5,8,5);
@@ -1262,6 +1375,7 @@ HvLogW::HvLogW(QString inst,QString app_path, bool indsty,int x,int y,QWidget *w
     lgb001->addLayout(H_sat);
     lgb001->addLayout(H_freq);
     lgb001->addLayout(H_add_log_comm);
+    lgb001->addLayout(H_add_log_activity);
     GB_001->setLayout(lgb001);
 
     QHBoxLayout *H_add_log_fp_prop= new QHBoxLayout();
@@ -2406,6 +2520,14 @@ void HvLogW::AddExtrnalAdif()
 
         QString prop_m = ExtractAdifRecord(line,"<PROP_MODE:");
         QString comm = ExtractAdifRecord(line,"<COMMENT:");
+        QString my_grid = ExtractAdifRecord(line,"<MY_GRIDSQUARE:");
+        QString my_pota_ref = ExtractAdifRecord(line,"<MY_POTA_REF:");
+        QString my_sota_ref = ExtractAdifRecord(line,"<MY_SOTA_REF:");
+        QString my_sig = ExtractAdifRecord(line,"<MY_SIG:");
+        QString my_sig_info = ExtractAdifRecord(line,"<MY_SIG_INFO:");
+        my_sig = my_sig.toUpper();
+        if (my_pota_ref.isEmpty() && my_sig=="POTA") my_pota_ref = my_sig_info;
+        if (my_sota_ref.isEmpty() && my_sig=="SOTA") my_sota_ref = my_sig_info;
 
         QString satn = ExtractAdifRecord(line,"<SAT_NAME:");
         QString satm = ExtractAdifRecord(line,"<SAT_MODE:");
@@ -2494,7 +2616,7 @@ void HvLogW::AddExtrnalAdif()
         t_list<<str_date<<tss_s<<str_date_end<<tss_end<<calls<<hgrid<<tx_rst
         <<rx_rst<<mode_disp<<str_band<<str_frq<<prop_m<<comm<<enum_sec_sta
         <<tx_sn<<rx_sn<<log_tx_exch<<log_rx_exch<<log_cont_id<<trmN<<enum_sec_end<<dist
-        <<satn<<satm<<frrx;
+        <<satn<<satm<<frrx<<my_grid<<my_pota_ref<<my_sota_ref;
 
         Insert(t_list,false,false,0,false,false);
         added_qso++;
@@ -2811,6 +2933,9 @@ void HvLogW::SetManQsoText()
     list << ""; //Satellite				             22
     list << ""; //Sat Mode				             23
     list << ""; //RX Freq				             24
+    list << ""; //My Grid                            25
+    list << ""; //My POTA                            26
+    list << ""; //My SOTA                            27
 
     AddManQsoW->SetEdit(list,index_n);
     THvLogList->scrollToBottom();
@@ -2987,10 +3112,10 @@ void HvLogW::keyPressEvent(QKeyEvent *event)
     }
     else QWidget::keyPressEvent(event);
 }
-#define MIN_CCOUNT 25
+#define MIN_CCOUNT 28
 //const QString _LOG_ID_ = "[QSORecords; MSHV LOG FILE ID=20201024-248]";//count=25
 //const QString _LOG_ID_ = "[QSORecords; MSHV LOG FILE ID=20210617-257]";//count=25 add distance need full log refresh
-const QString _LOG_ID_ = "[QSORecords; MSHV LOG FILE ID=20231018-273]";//2.73 count=29
+const QString _LOG_ID_ = "[QSORecords; MSHV LOG FILE ID=20260505-2766]";//2.76.6 count=28
 void HvLogW::ReadEDI(QString path,bool pbarr,bool check_format)
 {
     QFile file(path);
@@ -3075,11 +3200,14 @@ void HvLogW::ReadEDI(QString path,bool pbarr,bool check_format)
             QString dist = list.at(21);
             QString rxfrq = list.at(24);
             if (fcount25 && rxfrq=="24") rxfrq = "";
+            QString my_grid = list.at(25);
+            QString my_pota_ref = list.at(26);
+            QString my_sota_ref = list.at(27);
 
             t_list<<str_date<<tss_s<<str_date_end<<tss_end<<list.at(4)<<list.at(8)<<list.at(6)
             <<list.at(7)<<mode_disp<<str_band<<list.at(10)<<list.at(12)<<list.at(11)<<enum_sec_sta
             <<list.at(13)<<list.at(14)<<list.at(15)<<list.at(16)<<cont_id<<trmN<<enum_sec_end<<dist
-            <<list.at(22)<<list.at(23)<<rxfrq;
+            <<list.at(22)<<list.at(23)<<rxfrq<<my_grid<<my_pota_ref<<my_sota_ref;
 
             Insert(t_list,false,false,0,false,false);//0=show_cont_id 0=no, 1=sn, 2=exch 3=sn+exch
             list.clear();
@@ -3118,6 +3246,9 @@ void HvLogW::OkAddToLog()
     addtolog_comment = add_to_log_le->text();
 	if (!f_off_auto_comm) add_to_log_le->clear();//2.76.3
     addtolog_freq = add_to_log_le_frq->text();
+    addtolog_my_grid = add_to_log_le_my_grid->text();
+    addtolog_my_pota_ref = add_to_log_le_my_pota_ref->text();
+    addtolog_my_sota_ref = add_to_log_le_my_sota_ref->text();
 
     int id = add_to_log_cb_prop->currentIndex();
     addtolog_prop = s_id_prop_mod[id];//None
@@ -3187,6 +3318,21 @@ void HvLogW::StartAddToDialog(QStringList in_lst)
             add_to_log_le_rxex->setText(in_lst.at(i));
             continue;
         }
+        else if (i==25 && !in_lst.at(i).isEmpty())
+        {
+            add_to_log_le_my_grid->setText(in_lst.at(i));
+            continue;
+        }
+        else if (i==26 && !in_lst.at(i).isEmpty())
+        {
+            add_to_log_le_my_pota_ref->setText(in_lst.at(i));
+            continue;
+        }
+        else if (i==27 && !in_lst.at(i).isEmpty())
+        {
+            add_to_log_le_my_sota_ref->setText(in_lst.at(i));
+            continue;
+        }
 
         // no problem 13, 20, empty enum sec start end
         if (i!=2 && i!=18 && i!=19)//stop date end hiden 2 and 18 cont id and 19contest MULTI-TWO hiden
@@ -3200,6 +3346,12 @@ void HvLogW::StartAddToDialog(QStringList in_lst)
             str_n.append(" ");
         }
     }
+    QString act_grid = add_to_log_le_my_grid->text().trimmed();
+    QString act_pota = NormalizeActivationRef(add_to_log_le_my_pota_ref->text());
+    QString act_sota = NormalizeActivationRef(add_to_log_le_my_sota_ref->text());
+    if (!act_grid.isEmpty()) str_n.append(tr("Location Grid")+" "+act_grid+" ");
+    if (!act_pota.isEmpty()) str_n.append("POTA "+act_pota+" ");
+    if (!act_sota.isEmpty()) str_n.append("SOTA "+act_sota+" ");
     //qDebug()<<in_lst;
     add_to_log_txt->setText(tr("Do you want to add the following entry in the log?")+"\n"+str_n);
     // b_add_to_log_cacel->setFocus();
@@ -3304,11 +3456,26 @@ QString HvLogW::MakeAdifString(int l_row)
 {
     QString s;
     QString out;
+    QString qso_my_grid = ResolveMyGrid(THvLogList->model.item(l_row, 25)->text());
+    QString qso_my_pota_ref = NormalizeActivationRef(THvLogList->model.item(l_row, 26)->text());
+    QString qso_my_sota_ref = NormalizeActivationRef(THvLogList->model.item(l_row, 27)->text());
 
     s = s_my_call;//STATION_CALLSIGN
     out.append("<STATION_CALLSIGN:"+QString("%1").arg(s.count())+">"+s);
-    s = s_my_grid;//MY_GRIDSQUARE
+    s = qso_my_grid;//MY_GRIDSQUARE
     out.append("<MY_GRIDSQUARE:"+QString("%1").arg(s.count())+">"+s);
+    if (!qso_my_pota_ref.isEmpty()) out.append("<MY_POTA_REF:"+QString("%1").arg(qso_my_pota_ref.count())+">"+qso_my_pota_ref);
+    if (!qso_my_sota_ref.isEmpty()) out.append("<MY_SOTA_REF:"+QString("%1").arg(qso_my_sota_ref.count())+">"+qso_my_sota_ref);
+    if (!qso_my_pota_ref.isEmpty())
+    {
+        out.append("<MY_SIG:4>POTA");
+        out.append("<MY_SIG_INFO:"+QString("%1").arg(qso_my_pota_ref.count())+">"+qso_my_pota_ref);
+    }
+    else if (!qso_my_sota_ref.isEmpty())
+    {
+        out.append("<MY_SIG:4>SOTA");
+        out.append("<MY_SIG_INFO:"+QString("%1").arg(qso_my_sota_ref.count())+">"+qso_my_sota_ref);
+    }
 
     s = THvLogList->model.item(l_row, 4)->text();            //call
     out.append("<CALL:"+QString("%1").arg(s.count())+">"+s);
@@ -3529,7 +3696,7 @@ QStringList HvLogW::MakeLoggedQSO(int l_row)
     ls << dt_start;                                              //10 qso_date on  time_on
     ls << "";												     //11 operator_call
     ls << s_my_call;//.toUtf8(); 								 //12 my_call
-    ls << s_my_grid;//.toUtf8(); 								 //13 my_grid
+    ls << ResolveMyGrid(THvLogList->model.item(l_row, 25)->text());//.toUtf8();  //13 my_grid
     ls << THvLogList->model.item(l_row, 16)->text();			 //14 16-my tx exch contest exchange_sent
     ls << THvLogList->model.item(l_row, 17)->text();			 //15 17-my rx exch contest exchange_rcvd
     ls << THvLogList->model.item(l_row, 11)->text();			 //16 //11  Propagation //2.46
@@ -3552,13 +3719,29 @@ void HvLogW::SetDistUnit(bool f)
 {
     f_km_mi = f;
 }
-QString HvLogW::CalcDistance(QString hloc)
+void HvLogW::NormalizeLogEntry(QStringList &lst)
+{
+    if (lst.count() < MIN_CCOUNT) return;
+
+    lst[25] = NormalizeActivationGrid(lst.at(25));
+    lst[26] = NormalizeActivationRef(lst.at(26));
+    lst[27] = NormalizeActivationRef(lst.at(27));
+    lst[12] = ComposeActivationComment(lst.at(12),lst.at(26),lst.at(27));
+}
+QString HvLogW::ResolveMyGrid(QString my_grid) const
+{
+    my_grid = NormalizeActivationGrid(my_grid);
+    if (!my_grid.isEmpty()) return my_grid;
+    return NormalizeActivationGrid(s_my_grid);
+}
+QString HvLogW::CalcDistance(QString hloc,QString my_grid)
 {
     QString res = "";
-    if (!THvQthLoc.isValidLocator(hloc) || !THvQthLoc.isValidLocator(s_my_grid)) return res;
+    QString use_my_grid = ResolveMyGrid(my_grid);
+    if (!THvQthLoc.isValidLocator(hloc) || !THvQthLoc.isValidLocator(use_my_grid)) return res;
 
     QString c_test_loc = THvQthLoc.CorrectLocator(hloc);
-    QString c_my_loc = THvQthLoc.CorrectLocator(s_my_grid);
+    QString c_my_loc = THvQthLoc.CorrectLocator(use_my_grid);
 
     double dlong1 = THvQthLoc.getLon(c_my_loc);
     double dlat1  = THvQthLoc.getLat(c_my_loc);
@@ -3633,6 +3816,9 @@ bool HvLogW::Insert(QStringList lst, bool save_changes,bool warning_msg,int show
             lst[12] = addtolog_comment;// comment           
             lst[11] = addtolog_prop;   // prop
             lst[10] = addtolog_freq;
+            lst[25] = addtolog_my_grid;
+            lst[26] = addtolog_my_pota_ref;
+            lst[27] = addtolog_my_sota_ref;
             lst[14] = addtolog_txsn;
             lst[15] = addtolog_rxsn;
             lst[16] = addtolog_txex;
@@ -3662,12 +3848,17 @@ bool HvLogW::Insert(QStringList lst, bool save_changes,bool warning_msg,int show
         else lst[23] = "";
         if (le_rx_freq->isEnabled()) lst[24] = le_rx_freq->text();//rx freq 2.75
         else lst[24] = "";  
+        lst[25] = add_to_log_le_my_grid->text();
+        lst[26] = add_to_log_le_my_pota_ref->text();
+        lst[27] = add_to_log_le_my_sota_ref->text();
         if (f_off_auto_comm) lst[12] = add_to_log_le->text();//2.76.3         
     }
 
+    NormalizeLogEntry(lst);
+
     if (lst.at(21).isEmpty())//readEDI readADIF ....
     {
-        QString distt = CalcDistance(lst.at(5)); //qDebug()<<s_my_grid<<lst.at(5)<<distt;
+        QString distt = CalcDistance(lst.at(5),lst.at(25)); //qDebug()<<s_my_grid<<lst.at(5)<<distt;
         lst.replace(21,distt);
     }
     THvLogList->InsertItem_hv(lst);
@@ -3703,7 +3894,8 @@ bool HvLogW::Insert(QStringList lst, bool save_changes,bool warning_msg,int show
 }
 void HvLogW::AddManQsoToList(QStringList list,int)
 {
-    QString distt = CalcDistance(list.at(5));
+    NormalizeLogEntry(list);
+    QString distt = CalcDistance(list.at(5),list.at(25));
     list.replace(21,distt);
     THvLogList->InsertItem_hv(list);
 
@@ -3725,7 +3917,8 @@ void HvLogW::AddManQsoToList(QStringList list,int)
 }
 void HvLogW::SetCorrContact(QStringList list,int index_edit)
 {
-    QString distt = CalcDistance(list.at(5));
+    NormalizeLogEntry(list);
+    QString distt = CalcDistance(list.at(5),list.at(25));
     list.replace(21,distt);
     THvLogList->SetItem_hv(list,index_edit);
 
@@ -3926,9 +4119,9 @@ void HvLogW::SaveEDI(QString path,bool fappend)
         out  <<THvLogList->model.item(j, 22)->text()<<";";//Satellite                 22
         out  <<THvLogList->model.item(j, 23)->text()<<";";//Sat Mode                  23
         out  <<THvLogList->model.item(j, 24)->text()<<";";//RX Freq                   24
-        out  <<";";  //free reserve from 2.73 HV                                      25
-        out  <<";";  //free reserve from 2.73 HV                                      26
-        out  <<";"; //free reserve from 2.73 HV                                       27
+        out  <<THvLogList->model.item(j, 25)->text()<<";";//My Grid                   25
+        out  <<THvLogList->model.item(j, 26)->text()<<";";//My POTA                   26
+        out  <<THvLogList->model.item(j, 27)->text()<<";";//My SOTA                   27
         //out  <<""; //free reserve from 2.73 HV                                      28
         out<<"\n";
     }
@@ -4100,7 +4293,7 @@ void HvLogW::ExportToAdif(QString ident,int f_sel_or_all,bool pbarr)
 
     //all_exp=0 sel_exp=1  save_all_for_ext_log_prog=2 append_all_for_ext_log_prog=3
     QString verr  = (QString)APP_VERSION;
-    QString headd = (QString)APP_NAME+" ADIF Export\n<ADIF_VER:5>3.1.0\n<PROGRAMID:4>MSHV\n"
+    QString headd = (QString)APP_NAME+" ADIF Export\n<ADIF_VER:5>3.1.7\n<PROGRAMID:4>MSHV\n"
                     "<PROGRAMVERSION:"+QString("%1").arg(verr.count())+">"+verr+"\n<EOH>\n";
 
     if (f_sel_or_all==3)
@@ -4260,6 +4453,12 @@ QString HvLogW::GetPropSettings()//2.75
     str.append(QString("%1").arg(cb_enable_ali->isChecked()));
     str.append("#");
     str.append(add_to_log_le->text());//2.76.3
+    str.append("#");
+    str.append(add_to_log_le_my_grid->text());
+    str.append("#");
+    str.append(add_to_log_le_my_pota_ref->text());
+    str.append("#");
+    str.append(add_to_log_le_my_sota_ref->text());
     return str;
 }
 void HvLogW::SetPropSettings(QString s)
@@ -4275,7 +4474,10 @@ void HvLogW::SetPropSettings(QString s)
     	if (index >= 0) cb_sat_mod->setCurrentIndex(index);
         le_rx_freq->setText(ls.at(3));
         if (ls.at(4)=="1") cb_enable_ali->setChecked(true);
-        add_to_log_le->setText(ls.at(5));//2.76.3 
+        add_to_log_le->setText(ls.at(5));//2.76.3
+        if (ls.count()>6) add_to_log_le_my_grid->setText(ls.at(6));
+        if (ls.count()>7) add_to_log_le_my_pota_ref->setText(ls.at(7));
+        if (ls.count()>8) add_to_log_le_my_sota_ref->setText(ls.at(8));
     }
 }
 void HvLogW::RefreshCbTrmN(int i)

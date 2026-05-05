@@ -1889,13 +1889,15 @@ void HvTxW::AddToLog_p(bool direct_save_to_log)//false direct save to log off;  
     {
         lst<<s_log_data_now<<s_log_time_now<<s_log_data_now<<s_log_time_now<<le_his_call->getText()<<his_loc_t
         <<rsttxx<<rstrxx<<ModeStr(s_mode)
-        <<s_band<<tfrq<<""<<comm<<""<<txsn<<rxsn<<txex<<rxex<<cont_id<<s_trmN<<""<<""<<""<<""<<"";
+        <<s_band<<tfrq<<""<<comm<<""<<txsn<<rxsn<<txex<<rxex<<cont_id<<s_trmN<<""<<""<<""<<""<<""
+        <<""<<""<<"";
     }
     else
     {
         lst<<s_log_data_start<<s_log_time_start<<s_log_data_now<<s_log_time_now<<le_his_call->getText()<<his_loc_t
         <<rsttxx<<rstrxx<<ModeStr(s_mode)
-        <<s_band<<tfrq<<""<<comm<<""<<txsn<<rxsn<<txex<<rxex<<cont_id<<s_trmN<<""<<""<<""<<""<<"";
+        <<s_band<<tfrq<<""<<comm<<""<<txsn<<rxsn<<txex<<rxex<<cont_id<<s_trmN<<""<<""<<""<<""<<""
+        <<""<<""<<"";
     }
 
     f_add_to_log_started = true;
@@ -2006,14 +2008,16 @@ void HvTxW::AddToLogMultiAnswerQSO(QStringList l)
         //MA have format rpt
         lst<<s_log_data_now<<s_log_time_now<<s_log_data_now<<s_log_time_now<<l.at(1)<<his_loc_t
         <<l.at(3)<<l.at(4)<<ModeStr(s_mode)
-        <<s_band<<tfrq<<""<<comm<<""<<txsn<<l.at(6)<<txex<<l.at(7)<<l.at(8)<<s_trmN<<""<<""<<""<<""<<"";
+        <<s_band<<tfrq<<""<<comm<<""<<txsn<<l.at(6)<<txex<<l.at(7)<<l.at(8)<<s_trmN<<""<<""<<""<<""<<""
+        <<""<<""<<"";
     }
     else
     {
         //MA have format rpt
         lst<<data_start<<time_start<<s_log_data_now<<s_log_time_now<<l.at(1)<<his_loc_t
         <<l.at(3)<<l.at(4)<<ModeStr(s_mode)
-        <<s_band<<tfrq<<""<<comm<<""<<txsn<<l.at(6)<<txex<<l.at(7)<<l.at(8)<<s_trmN<<""<<""<<""<<""<<"";
+        <<s_band<<tfrq<<""<<comm<<""<<txsn<<l.at(6)<<txex<<l.at(7)<<l.at(8)<<s_trmN<<""<<""<<""<<""<<""
+        <<""<<""<<"";
     }
 
     if (THvLogW->Insert(lst,true,false,0,true,true))//0=show_cont_id 0=no, 1=sn, 2=exch 3=sn+exch
@@ -5496,4 +5500,3 @@ void HvTxW::ExternalFindLocFromDB(QString call)
     QString loc = TMsDb->CheckBD(call); //emit EmitLocFromDB(loc);
     TRadioAndNetW->SetLocFromDB(loc);
 }
-
