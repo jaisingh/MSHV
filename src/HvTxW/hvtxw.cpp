@@ -3435,9 +3435,8 @@ void HvTxW::SetMacros(QStringList list,int id_c0,QString cont_exch,QString trmN)
     QStringList ls;
     ls << list_macros.at(0);
     ls << s_my_base_call;//1.70
-    QString cqq = "CQ";
+    QString cqq = MultiAnswerMod->DetectCQTypeFromMacros(list[7]);
     int decoder_cq = 0;
-    if (s_cont_type != 0) cqq = MultiAnswerMod->DetectCQTypeFromMacros(list[7]);
     if (cqq != "CQ")
     {
         for (int i = 0; i < cqq.count(); ++i) decoder_cq += (int)cqq.at(i).toLatin1();

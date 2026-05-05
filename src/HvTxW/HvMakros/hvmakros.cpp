@@ -7,6 +7,33 @@
 
 //#include <QtGui>
 
+namespace
+{
+const int MACRO_ACTIVITY_POTA = 100;
+const int MACRO_ACTIVITY_SOTA = 101;
+
+int CurrentMacroActivityId(const QComboBox *cb_contests)
+{
+    int idx = cb_contests->currentIndex();
+    if (idx < 0) return 0;
+    return cb_contests->itemData(idx).toInt();
+}
+QString MacroActivityToken(int activity_id)
+{
+    if (activity_id == MACRO_ACTIVITY_POTA) return "POTA";
+    if (activity_id == MACRO_ACTIVITY_SOTA) return "SOTA";
+    return "";
+}
+QString MacroCqPrefix(int activity_id, bool with_qrg)
+{
+    QString out = "CQ";
+    QString token = MacroActivityToken(activity_id);
+    if (!token.isEmpty()) out.append(" "+token);
+    if (with_qrg) out.append(" %QRG");
+    return out;
+}
+}
+
 HvMakrIn::HvMakrIn(int ident, QWidget * parent )
         : QWidget(parent)
 {
@@ -113,14 +140,11 @@ HvMakros::HvMakros(QString AppP, bool f,QWidget *parent )
     QLabel *l_cn = new QLabel();
     l_cn->setText(tr("Activity Type")+":");
     cb_contests = new QComboBox();
-    QStringList lst_cont;
-    for (int i = 0; i<COUNT_CONTEST; ++i)
-    {
-        if (i==0) lst_cont <<"Standard";
-        else if (i!=1) lst_cont << s_cont_name[pos_cont[i]];
-    }
-    cb_contests->addItems(lst_cont);
-    cb_contests->setMaxVisibleItems(COUNT_CONTEST-1);
+    cb_contests->addItem("Standard",0);
+    cb_contests->addItem("POTA",MACRO_ACTIVITY_POTA);
+    cb_contests->addItem("SOTA",MACRO_ACTIVITY_SOTA);
+    for (int i = 2; i<COUNT_CONTEST; ++i) cb_contests->addItem(s_cont_name[pos_cont[i]],pos_cont[i]);
+    cb_contests->setMaxVisibleItems(COUNT_CONTEST+1);
     cb_contests->setMinimumWidth(180);
 
     QLabel *l_exchfd = new QLabel("ARRL Field Day Exch:");
@@ -370,8 +394,9 @@ void HvMakros::CheckAllowedModesActivity()//2.51
 }
 void HvMakros::CbContNameChanged(int i)
 {
-    if (i==0) id_boption = 0;
-    else id_boption = pos_cont[i+1];//id_boption = i+1;
+    int activity_id = cb_contests->itemData(i).toInt();
+    if (activity_id>=0 && activity_id<COUNT_CONTEST) id_boption = activity_id;
+    else id_boption = 0;
 
     //For MSK144 Allowed Modes Is Only "Standard, NA VHF Contest and EU VHF Contest and CQ WW VHF Contest"
     //QFont font = l_exchru->font();
@@ -488,6 +513,9 @@ void HvMakros::SetDefaultMacros_a()
 void HvMakros::SetDefaultMacros_b()
 {
     QStringList list;
+    int activity_id = CurrentMacroActivityId(cb_contests);
+    QString cq_macro = MacroCqPrefix(activity_id,false);
+    QString cq_qrg_macro = MacroCqPrefix(activity_id,true);
     //if (id_boption == 0)       //old Standard
     //list <<"%T %M %G4"<<"%T %M %R"<<"%T %M R%R"<<"%T %M RR73"<<"%T %M 73"<<"CQ %M %G4"<<"CQ %QRG %M %G4";
     if (id_boption == 2 || id_boption == 5 || id_boption == 13)  //NA VHF Contest 0=noused CQ WW VHF Contest ARRL Inter. Digital Contest
@@ -523,7 +551,8 @@ void HvMakros::SetDefaultMacros_b()
         if (id_boption == 17) cqq = "FTC";
 		list <<"%T %M %G4"<<"%T %M %R"<<"%T %M R%R"<<"%T %M RR73"<<"%T %M 73"<<"CQ "+cqq+" %M %G4"<<"%M QSOB4";    	
    	}		  	       
-    else list<<"%T %M %G4"<<"%T %M %R"<<"%T %M R%R"<<"%T %M RR73"<<"%T %M 73"<<"CQ %M %G4"<<"CQ %QRG %M %G4";//Standard
+    else list<<"%T %M %G4"<<"%T %M %R"<<"%T %M R%R"<<"%T %M RR73"<<"%T %M 73"
+             <<cq_macro+" %M %G4"<<cq_qrg_macro+" %M %G4";//Standard/POTA/SOTA
         
     for (int i = 0; i<count_tx_widget; i++)
     {
@@ -776,18 +805,17 @@ void HvMakros::ReadSettings()
         if (ls.count()>3)
         {
             int idc = ls.at(0).toInt(); //2.65
-            if (idc==0) cb_contests->setCurrentIndex(0);
-            else
+            bool found_activity = false;
+            for (int i = 0; i < cb_contests->count(); ++i)
             {
-                for (int i = 1; i<COUNT_CONTEST-1; ++i)
+                if (idc==cb_contests->itemData(i).toInt())
                 {
-                    if (idc==pos_cont[i+1])
-                    {
-                        cb_contests->setCurrentIndex(i);
-                        break;
-                    }
+                    cb_contests->setCurrentIndex(i);
+                    found_activity = true;
+                    break;
                 }
             }
+            if (!found_activity) cb_contests->setCurrentIndex(0);
 
             le_exchfd->setText(ls.at(1));
             le_exchru->setText(ls.at(2));
@@ -827,7 +855,7 @@ void HvMakros::SaveSettings()
     if (rb_contest->isChecked())
         out << "macr_rep_grd=" << "2" << "\n";
 
-    QString macr_rep_c = QString("%1").arg(id_boption)+"#";
+    QString macr_rep_c = QString("%1").arg(CurrentMacroActivityId(cb_contests))+"#";
     macr_rep_c.append(le_exchfd->text()+"#");
     macr_rep_c.append(le_exchru->text()+"#");
     macr_rep_c.append(QString("%1").arg(cb_cabrillo_trmN->currentIndex()));
@@ -880,6 +908,5 @@ void HvMakros::Check(QString s_type)
         }
     }
 }
-
 
 

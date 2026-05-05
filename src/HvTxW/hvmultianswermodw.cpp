@@ -2171,6 +2171,8 @@ void MultiAnswerModW::CbCQChanged(QString)
         str_macros_mam_[3]="%T %M RR73";
         str_macros_mam_[4]="%T %M 73";//2.72 new
         str_macros_mam_[5]="CQ %M %G4";
+        if (list_macros.count()>7 && DetectCQTypeFromMacros(list_macros.at(7)) != "CQ")
+            str_macros_mam_[5]=list_macros.at(7);
     }
     else//DXpedition no report -> 73
     {
@@ -2182,8 +2184,10 @@ void MultiAnswerModW::CbCQChanged(QString)
         str_macros_mam_[5]="CQ %M %G4";
     }//qDebug()<<str_macros_mam_[0]<<str_macros_mam_[1]<<str_macros_mam_[2]<<str_macros_mam_[3]<<str_macros_mam_[4]<<str_macros_mam_[5];
 
-    if (s_co_type == 0 || !f_multi_answer_mod_std) Cbcqtype->setItemText(0,"CQ");//2.76
-    else Cbcqtype->setItemText(0,DetectCQTypeFromMacros(str_macros_mam_[5]));
+    QString default_cq_type = "CQ";
+    if (f_multi_answer_mod_std) default_cq_type = DetectCQTypeFromMacros(str_macros_mam_[5]);
+    Cbcqtype->setItemText(0,default_cq_type);
+    CbcqtypeSF->setItemText(0,default_cq_type);
 
     if (!Cbcqtype->isHidden())
     {
@@ -2985,6 +2989,5 @@ void MultiAnswerModW::SetTextForAutoSeq(QStringList list_in)
     else uuu=0;
 #endif
 }
-
 
 
