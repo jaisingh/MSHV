@@ -1812,7 +1812,13 @@ c10:
                     sync4d(cd2,ibest-1,ctwk2_ft4_[idfbest+20],1,sm1_sub);//sync2d(cd2,ibest-1,ctwk2(:,idfbest),1,sm1_sub);
                     sync4d(cd2,ibest+1,ctwk2_ft4_[idfbest+20],1,sp1_sub);//sync2d(cd2,ibest+1,ctwk2(:,idfbest),1,sp1_sub);
                     den_sub = sm1_sub - 2.0*smax + sp1_sub;
-                    if (fabs(den_sub) > 1.0e-6) xibest = (double)ibest + 0.5*(sm1_sub - sp1_sub)/den_sub;
+                    if (den_sub < -1.0e-6)
+                    {
+                        double delta = 0.5*(sm1_sub - sp1_sub)/den_sub;
+                        if (delta < -0.5) delta = -0.5;
+                        if (delta > 0.5) delta = 0.5;
+                        xibest = (double)ibest + delta;
+                    }
                     else xibest = (double)ibest;
                 }
                 else xibest = (double)ibest;
@@ -2048,13 +2054,20 @@ c10:
                 }
                 if (!ldupe)
                 {
-                    /*decodes[ndecodes]=message;
+                    decodes[ndecodes]=message;
                     if (ndecodes < (maxcand-1)) ndecodes++;
-                    int i3=0; int n3=0; int i4tone[120];
-                    for (int i = 0; i < 78; ++i) c77[i]=0;            		
-                    TGenFt4->pack77(message,i3,n3,c77);
-                    TGenFt4->make_c77_i4tone(c77,i4tone);
-                    subtractft4(dd,i4tone,f1,(xdt+0.5));*/
+
+                    if (dosubtract)
+                    {
+                        int i3=0;
+                        int n3=0;
+                        int i4tone[120];
+                        for (int z = 0; z < 78; ++z) c77[z]=0;
+                        TGenFt4->pack77(message,i3,n3,c77);
+                        TGenFt4->make_c77_i4tone(c77,i4tone);
+                        subtractft4(dd,i4tone,f1,(xdt+0.5));
+                    }
+
                     int nsnr=(int)xsnr;
                     bool fshow = true;
                     float qual=1.0-((float)nharderrors+(float)dmin)/60.0;
@@ -2066,4 +2079,3 @@ c10:
         }
     }
 }
-

@@ -1768,7 +1768,7 @@ void DecoderFt8::sync8(double *dd,double nfa,double nfb,double syncmin,double nf
     for (int i = ncand-1; i>= 0; --i)
     {
         int j=indx[i]; //if (j>max_c0/2-2) qDebug()<<j;
-        if (candidate0[2][j] >= syncmin && candidate0[1][i]>=-2.5) //if( candidate0(3,j) .ge. syncmin ) then
+        if (candidate0[2][j] >= syncmin && candidate0[1][j]>=-2.5) //if( candidate0(3,j) .ge. syncmin ) then
         {
             candidate[1][k]=candidate0[1][j];//candidate(2:3,k)=candidate0(2:3,j) && candidate0[1][j]>=-2.5
             //candidate[2][k]=candidate0[2][j];
@@ -2955,7 +2955,6 @@ void DecoderFt8::ft8_decode(double *dd,int c_dd,double f0a,double f0b,double fqs
     
     delete [] s_;
 }
-
 
 
 
