@@ -273,6 +273,33 @@ Validation notes used for this implementation:
 - official ADIF field support confirms `MY_SOTA_REF` and `MY_POTA_REF`
 - the generic `MY_SIG` / `MY_SIG_INFO` pair is retained for compatibility with tools that still key activity uploads from those fields
 
+## Deploy Steps
+
+The current macOS release flow used in this repo is:
+
+1. Build the app with Qt 5.15.x:
+   - `/opt/homebrew/opt/qt@5/bin/qmake MSHV_MAC.pro`
+   - `make -j4`
+2. Verify the built bundle exists at:
+   - `release/macos/MSHV_MAC.app`
+3. Commit and push the intended source changes on the working branch.
+4. Create a release tag:
+   - `git tag -a <tag-name> -m "<tag-name>"`
+   - `git push origin <tag-name>`
+5. Package the app bundle as a zip in `~/tmp`:
+   - `ditto -c -k --sequesterRsrc --keepParent release/macos/MSHV_MAC.app /Users/jaisingh/tmp/<tag-name>.zip`
+6. Authenticate GitHub CLI if needed:
+   - `/opt/homebrew/bin/gh auth status`
+   - `/opt/homebrew/bin/gh auth login`
+7. Create the GitHub release and upload the zip:
+   - `/opt/homebrew/bin/gh release create <tag-name> /Users/jaisingh/tmp/<tag-name>.zip --title <tag-name> --notes "<release notes>"`
+
+Notes:
+
+- use `~/tmp`, not `/tmp`, for release archives
+- the current GitHub remote is `https://github.com/jaisingh/MSHV.git`
+- the `build-2` release was published using this exact flow
+
 ## Verified macOS Fixes
 
 ### Audio and device handling
