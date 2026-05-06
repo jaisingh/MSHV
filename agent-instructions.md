@@ -58,6 +58,7 @@ These commits are the current committed baseline for the macOS port:
 - `7363a53` `Adjust macOS RX input level scaling`
 - `9f9eae6` `Rebase macOS port onto MSHV v2.76.6`
 - `43524bf` `Stabilize macOS FT8 decoder threading`
+- `91079fc` `Fix FT8 decoder memory corruption`
 
 ## Confirmed Upstream Layout
 
@@ -378,6 +379,28 @@ Observed crash signatures that motivated this fix:
 
 - `SIGABRT` / `pointer being freed was not allocated` in the FT8 subtract path
 - `SIGBUS` stack-guard faults in FT8 decoder worker threads
+
+### Known open issue: SD Decoder FT8 / variable decoder
+
+Commit `91079fc` fixes one standard FT8 candidate-buffer overflow, but diagnostic reports captured on 2026-05-05 show a later and separate crash still exists in the alternate SD / variable FT8 decoder path.
+
+Observed crash signatures in `~/Library/Logs/DiagnosticReports/MSHV_MAC-2026-05-05-210537.ips` and `MSHV_MAC-2026-05-05-211044.ips`:
+
+- `SIGABRT` / `pointer being freed was not allocated`
+- worker-thread stack through `QString::operator=(QString const&)` into `DecoderFt8::ft8_SetStart_ev_od_var(bool)`
+
+Current source-level assessment:
+
+- this path is only reached when the SD / variable FT8 decoder is active at runtime
+- `src/HvDecoderMs/decoderft8var.cpp` still keeps shared file-scope state in `even`, `odd`, `evencopy`, `oddcopy`, `incall`, `s_nmsg`, `c_xdtt`, and related flags
+- `ft8_SetStart_ev_od_var()` and later save/copy paths mutate those `QString`-holding structures from multiple FT8 worker threads
+- the remaining crash is therefore most likely a thread-safety bug in the SD / variable FT8 history state, not a repeat of the earlier standard FT8 candidate overflow
+
+Practical guidance until this is fixed:
+
+- treat `SD Decoder FT8` as unstable on macOS
+- prefer the standard FT8 decoder path for routine operation
+- next repair should either make the variable-decoder history state per-instance or serialize that path explicitly
 
 ### TX output level scaling
 
