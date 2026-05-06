@@ -869,6 +869,11 @@ void DecoderMs::SetCalsHash(QStringList l)
     {
     	HisGridLoc = l.at(4);//2.53 for jt65 q65
     	DecFt8_0->SetStHisCallGrid(s_HisCall,s_HisBaseCall,HisGridLoc);//sw300rc1 ap8 and var
+		DecFt8_1->SetStHisCallGrid(s_HisCall,s_HisBaseCall,HisGridLoc);
+		DecFt8_2->SetStHisCallGrid(s_HisCall,s_HisBaseCall,HisGridLoc);
+		DecFt8_3->SetStHisCallGrid(s_HisCall,s_HisBaseCall,HisGridLoc);
+		DecFt8_4->SetStHisCallGrid(s_HisCall,s_HisBaseCall,HisGridLoc);
+		DecFt8_5->SetStHisCallGrid(s_HisCall,s_HisBaseCall,HisGridLoc);
     	DecQ65->SetStHisCallGrid(s_HisCall,HisGridLoc);
    	}    	
     if (s_HisCall != l.at(1))
@@ -878,6 +883,11 @@ void DecoderMs::SetCalsHash(QStringList l)
         //no need static dec hash array TGenFt8->save_hash_call_my_his_r1_r2(s_HisCall,1);//0=my 1=his 2=r1 3=r2
         TGenMsk->save_hash_call_my_his_r1_r2(s_HisCall,1);
         DecFt8_0->SetStHisCallGrid(s_HisCall,s_HisBaseCall,HisGridLoc);//sw300rc1 ap8 and var
+        DecFt8_1->SetStHisCallGrid(s_HisCall,s_HisBaseCall,HisGridLoc);
+        DecFt8_2->SetStHisCallGrid(s_HisCall,s_HisBaseCall,HisGridLoc);
+        DecFt8_3->SetStHisCallGrid(s_HisCall,s_HisBaseCall,HisGridLoc);
+        DecFt8_4->SetStHisCallGrid(s_HisCall,s_HisBaseCall,HisGridLoc);
+        DecFt8_5->SetStHisCallGrid(s_HisCall,s_HisBaseCall,HisGridLoc);
         DecFt4_0->SetStHisCall(s_HisCall);
         DecQ65->SetStHisCallGrid(s_HisCall,HisGridLoc);
     }     	   
@@ -1845,6 +1855,4 @@ void DecoderMs::msk144signalquality(double complex *cframe,double snr,double fre
         }
     }
 }
-
-
 

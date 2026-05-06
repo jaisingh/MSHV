@@ -333,10 +333,20 @@ void DecoderMs::SetMsh(uint8_t id)
 void DecoderMs::Decode3intFt(bool f)//2.39 remm
 {
     DecFt8_0->Decode3intFt(f);//2.39 remm
+    DecFt8_1->Decode3intFt(f);
+    DecFt8_2->Decode3intFt(f);
+    DecFt8_3->Decode3intFt(f);
+    DecFt8_4->Decode3intFt(f);
+    DecFt8_5->Decode3intFt(f);
 }
 void DecoderMs::SetVarDecodeFtPar(bool f,int dcyc,int dsens)
 {
 	DecFt8_0->SetVarDecodeFtPar(f,dcyc,dsens);
+	DecFt8_1->SetVarDecodeFtPar(f,dcyc,dsens);
+	DecFt8_2->SetVarDecodeFtPar(f,dcyc,dsens);
+	DecFt8_3->SetVarDecodeFtPar(f,dcyc,dsens);
+	DecFt8_4->SetVarDecodeFtPar(f,dcyc,dsens);
+	DecFt8_5->SetVarDecodeFtPar(f,dcyc,dsens);
 }
 void DecoderMs::SetMAMCalls(QStringList ls)
 {
@@ -347,6 +357,11 @@ void DecoderMs::SetTxFreq(double f)
 {
     s_nftx = f;
     DecFt8_0->SetStTxFreq(f);
+    DecFt8_1->SetStTxFreq(f);
+    DecFt8_2->SetStTxFreq(f);
+    DecFt8_3->SetStTxFreq(f);
+    DecFt8_4->SetStTxFreq(f);
+    DecFt8_5->SetStTxFreq(f);
     DecFt4_0->SetStTxFreq(f);
     DecFt2_0->SetStTxFreq(f);
     DecQ65->SetTxFreq(f);
@@ -363,6 +378,11 @@ void DecoderMs::SetQSOProgress(int i)
 	int nlasttx = i+1;
 	if (i==5 || i==6) nlasttx=6;    
     DecFt8_0->SetStQSOProgress(s_nQSOProgress,nlasttx);//2.51 i=error
+    DecFt8_1->SetStQSOProgress(s_nQSOProgress,nlasttx);
+    DecFt8_2->SetStQSOProgress(s_nQSOProgress,nlasttx);
+    DecFt8_3->SetStQSOProgress(s_nQSOProgress,nlasttx);
+    DecFt8_4->SetStQSOProgress(s_nQSOProgress,nlasttx);
+    DecFt8_5->SetStQSOProgress(s_nQSOProgress,nlasttx);
     DecFt4_0->SetStQSOProgress(s_nQSOProgress);//2.51 i=error
     DecFt2_0->SetStQSOProgress(s_nQSOProgress);//2.51 i=error
     DecQ65->SetStQSOProgress(s_nQSOProgress);//2.51 i=error       
@@ -395,10 +415,20 @@ void DecoderMs::SetQSOProgress(int i)
 void DecoderMs::SetFreqGlobal(QString s)//2.76.5
 {
 	DecFt8_0->SetFreqGlobal(s); //qDebug()<<s;
+	DecFt8_1->SetFreqGlobal(s);
+	DecFt8_2->SetFreqGlobal(s);
+	DecFt8_3->SetFreqGlobal(s);
+	DecFt8_4->SetFreqGlobal(s);
+	DecFt8_5->SetFreqGlobal(s);
 }
 void DecoderMs::SetMultiAnswerMod(bool f)
 {
     DecFt8_0->SetStMultiAnswerMod(f);
+    DecFt8_1->SetStMultiAnswerMod(f);
+    DecFt8_2->SetStMultiAnswerMod(f);
+    DecFt8_3->SetStMultiAnswerMod(f);
+    DecFt8_4->SetStMultiAnswerMod(f);
+    DecFt8_5->SetStMultiAnswerMod(f);
     DecFt4_0->SetStMultiAnswerMod(f); //qDebug()<<"f_multi_answer_mod="<<f;
     DecFt2_0->SetStMultiAnswerMod(f); //qDebug()<<"f_multi_answer_mod="<<f;
     DecQ65->SetStMultiAnswerMod(f);
@@ -415,6 +445,11 @@ void DecoderMs::SetApDecode(bool f)
 {
     s_lapon = f;//Ap decoding ?
     DecFt8_0->SetStApDecode(f);
+    DecFt8_1->SetStApDecode(f);
+    DecFt8_2->SetStApDecode(f);
+    DecFt8_3->SetStApDecode(f);
+    DecFt8_4->SetStApDecode(f);
+    DecFt8_5->SetStApDecode(f);
     DecFt4_0->SetStApDecode(f);// only in mshv
     DecFt2_0->SetStApDecode(f);// only in mshv
     DecQ65->SetStApDecode(f);// only in mshv
@@ -424,6 +459,11 @@ void DecoderMs::SetDecoderDeep(int d)
 {
     s_decoder_deep = d;
     DecFt8_0->SetStDecoderDeep(d);
+    DecFt8_1->SetStDecoderDeep(d);
+    DecFt8_2->SetStDecoderDeep(d);
+    DecFt8_3->SetStDecoderDeep(d);
+    DecFt8_4->SetStDecoderDeep(d);
+    DecFt8_5->SetStDecoderDeep(d);
     DecFt4_0->SetStDecoderDeep(d);
     DecFt2_0->SetStDecoderDeep(d);
     DecQ65->SetStDecoderDeep(d);  //qDebug()<<"s_decoder_deep="<<s_decoder_deep;
@@ -598,6 +638,11 @@ void DecoderMs::SetWords(QStringList lst,int cont_cq,int cont_type)
     //"FT Challenge"				17  6       17 CQ FTC    0          9 = CQ FTC
 
     DecFt8_0->SetStWords(s_MyCall,s_MyBaseCall,cont_cq,cont_type,lst.at(2));
+    DecFt8_1->SetStWords(s_MyCall,s_MyBaseCall,cont_cq,cont_type,lst.at(2));
+    DecFt8_2->SetStWords(s_MyCall,s_MyBaseCall,cont_cq,cont_type,lst.at(2));
+    DecFt8_3->SetStWords(s_MyCall,s_MyBaseCall,cont_cq,cont_type,lst.at(2));
+    DecFt8_4->SetStWords(s_MyCall,s_MyBaseCall,cont_cq,cont_type,lst.at(2));
+    DecFt8_5->SetStWords(s_MyCall,s_MyBaseCall,cont_cq,cont_type,lst.at(2));
     DecFt4_0->SetStWords(s_MyCall,s_MyBaseCall,cont_cq,cont_type,lst.at(2));
     DecFt2_0->SetStWords(s_MyCall,s_MyBaseCall,cont_cq,cont_type,lst.at(2));
     DecQ65->SetStWords(s_MyCall,s_MyBaseCall,cont_cq,cont_type,lst.at(2));
@@ -2639,6 +2684,11 @@ void DecoderMs::SetDecode(int *raw,int count_q,QString time, int t_istart,int mo
     //s_time = time;
     s_mousebutton = mousebutton; //mousebutton Left=1, Right=3 fullfile=0 rtd=2 ft8=4,5,6
     DecFt8_0->SetStDecode(time,mousebutton,s_fopen);//2.66 for ap7 s_fopen8
+    DecFt8_1->SetStDecode(time,mousebutton,s_fopen);
+    DecFt8_2->SetStDecode(time,mousebutton,s_fopen);
+    DecFt8_3->SetStDecode(time,mousebutton,s_fopen);
+    DecFt8_4->SetStDecode(time,mousebutton,s_fopen);
+    DecFt8_5->SetStDecode(time,mousebutton,s_fopen);
     DecFt4_0->SetStDecode(time,mousebutton,s_fopen);
     DecFt2_0->SetStDecode(time,mousebutton,s_fopen);
     DecQ65->SetStDecode(time,mousebutton,s_fopen);//2.72 for ap pileup

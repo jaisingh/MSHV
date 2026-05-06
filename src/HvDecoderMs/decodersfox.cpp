@@ -718,7 +718,7 @@ void DecoderSFox::get_spectrum_baseline(double *dd,int nfa,int nfb,double *sbase
     baseline(savg,nfa,nfb,sbase);
 }
 void DecoderSFox::sync8(double *dd,double nfa,double nfb,double syncmin,double nfqso,
-                        double s_[402][1970],double candidate[2][620],int &ncand,double *sbase)
+                        double s_[402][1970],double candidate[2][FT8_MAX_SYNC_CAND],int &ncand,double *sbase)
 {
     const int NSPS=1920;
     int NSTEP=NSPS/4;//=480
@@ -726,8 +726,8 @@ void DecoderSFox::sync8(double *dd,double nfa,double nfb,double syncmin,double n
     int NMAX=15*12000.0;
     int NHSYM=NMAX/NSTEP-3;//372
     const int NH1=NFFT1/2;       //NH1=1920
-    const int max_c0 = 800;//2.69 old=400;//2.2.0=500 260r5=1000
-    const int max_c_ = 600;//2.69 old=249 max 254 260r5=600
+    const int max_c0 = FT8_MAX_SYNC_PRECAND;
+    const int max_c_ = FT8_MAX_SYNC_CAND;
 
     //! Search over +/- 1.5s relative to 0.5s TX start time.
     //parameter (JZ=38)
@@ -987,7 +987,7 @@ void DecoderSFox::sync8(double *dd,double nfa,double nfb,double syncmin,double n
             {//do j=1,i-1
                 double fdiff=fabs(candidate0[0][i])-fabs(candidate0[0][j]);//fdiff=abs(candidate0(1,i))-abs(candidate0(1,j))
                 double tdiff=fabs(candidate0[1][i]-candidate0[1][j]);
-                if (fabs(fdiff)<4.0 && tdiff<0.08)//one step=0.04  if(abs(fdiff).lt.4.0.and.tdiff.lt.0.04) then
+                if (fabs(fdiff)<4.0 && tdiff<0.04)//one step=0.04  if(abs(fdiff).lt.4.0.and.tdiff.lt.0.04) then
                 {
                     if (candidate0[2][i]>=candidate0[2][j]) candidate0[2][j]=0.0; //if(candidate0(3,i).ge.candidate0(3,j)) candidate0(3,j)=0.
                     if (candidate0[2][i]<candidate0[2][j]) candidate0[2][i]=0.0; //if(candidate0(3,i).lt.candidate0(3,j)) candidate0(3,i)=0.
@@ -1023,29 +1023,26 @@ void DecoderSFox::sync8(double *dd,double nfa,double nfb,double syncmin,double n
     //! Place candidates within 10 Hz of nfqso at the top of the list
     for (int i = 0; i < ncand; ++i)
     {
+        if (k >= max_c_) break;
         if (fabs(candidate0[0][i]-nfqso)<=10.0 && candidate0[2][i]>=syncmin && candidate0[1][i]>=-2.5)  //if( fabs( candidate0(1,i)-nfqso ).le.10.0 .and. candidate0(3,i).ge.syncmin ) then
         {
             candidate[0][k]=candidate0[0][i];//candidate(1:3,k)=candidate0(1:3,i) && candidate0[1][i]>=-2.5
             candidate[1][k]=candidate0[1][i];
             //candidate[2][k]=candidate0[2][i];
             candidate0[2][i]=0.0; //hv null for next loop candidate0(3,i)=0.0
-            //k=k+1
-            if (k<max_c_) k++;
-            else break;
+            k++;
         }
     }
     for (int i = ncand-1; i>= 0; --i)
     {
+        if (k >= max_c_) break;
         int j=indx[i]; //if (j>max_c0/2-2) qDebug()<<j;
-        if (candidate0[2][j] >= syncmin && candidate0[1][i]>=-2.5) //if( candidate0(3,j) .ge. syncmin ) then
+        if (candidate0[2][j] >= syncmin && candidate0[1][j]>=-2.5) //if( candidate0(3,j) .ge. syncmin ) then
         {
             candidate[1][k]=candidate0[1][j];//candidate(2:3,k)=candidate0(2:3,j) && candidate0[1][j]>=-2.5
             //candidate[2][k]=candidate0[2][j];
             candidate[0][k]=fabs(candidate0[0][j]);//candidate(1,k)=abs(candidate0(1,j))
-            //k=k+1
-            //if(k.gt.maxcand) exit
-            if (k<max_c_) k++;
-            else break;
+            k++;
         }
     }
     ncand=k; //if (k>300) qDebug()<<"2FULL==="<<max_c_<<">"<<ncand;
@@ -1417,7 +1414,7 @@ void DecoderSFox::sfox_remove_ft8(double *dd)//,int npts
 {
     static bool first = true;
     static int NDOWN = 60;
-    double candidate[2][620];//2.69 old=255 start from here;
+    double candidate[2][FT8_MAX_SYNC_CAND];//2.69 old=255 start from here;
     double (*s_)[1970] = new double[402][1970];//2.39 start from here;  2.66
     double sbase[1970];//2.39 start from here;
     int ncand = 0;

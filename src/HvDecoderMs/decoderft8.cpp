@@ -67,6 +67,30 @@ DecoderFt8::DecoderFt8(int id)
     ctab8_[65536]=0.0+0.0*I;
     ctab8_[65537]=0.0+0.0*I;
     f_new_p = true;
+    s_MyBaseCall8 = "NA";
+    s_id_cont_ft8_28 = 0;
+    s_ty_cont_ft8_28 = 0;
+    s_cont_ft8_cq = "CQ";
+    s_MyCall8 = "NA";
+    s_lmycallstd = false;
+    s_lhiscallstd = false;
+    s_HisBaseCall8 = "NA";
+    s_HisCall8 = "NA";
+    s_HisGrid8 = "NA";
+    s_time8 = "000000";
+    s_mousebutton8 = 0;
+    s_fopen8 = false;
+    s_lapon8 = false;
+    s_nQSOProgress8 = 0;
+    s_nlasttx = 0;
+    s_nftx8 = 1200.0;
+    f_multi_answer_mod8 = false;
+    s_decoder_deep8 = 1;
+    s_3intFt8_d_ = true;
+    s_use_var_dec = false;
+    s_nft8cycles = 2;
+    s_nft8sens = 2;
+    s_napwid8 = 50.0;
 
     s_cou_dd1 = 162432;  //not necessary  n=47*3456; //=162432
 
@@ -122,18 +146,10 @@ DecoderFt8::DecoderFt8(int id)
 }
 DecoderFt8::~DecoderFt8()
 {}
-bool DecoderFt8::f_multi_answer_mod8 = false;
 void DecoderFt8::SetStMultiAnswerMod(bool f)
 {
     f_multi_answer_mod8 = f;
 }
-QString DecoderFt8::s_MyBaseCall8 = "NA";
-int DecoderFt8::s_id_cont_ft8_28 = 0;
-int DecoderFt8::s_ty_cont_ft8_28 = 0;
-QString DecoderFt8::s_cont_ft8_cq = "CQ";
-QString DecoderFt8::s_MyCall8 = "NA";//3>NA count
-bool DecoderFt8::s_lmycallstd = false;
-bool DecoderFt8::s_lhiscallstd = false;
 void DecoderFt8::SetStWords(QString mc,QString s2,int cq3,int ty4,QString cq)
 {
     s_MyBaseCall8 = s2;
@@ -145,9 +161,6 @@ void DecoderFt8::SetStWords(QString mc,QString s2,int cq3,int ty4,QString cq)
     tone8(s_lmycallstd,s_lhiscallstd);
     tone8myc();
 }
-QString DecoderFt8::s_HisBaseCall8 = "NA";
-QString DecoderFt8::s_HisCall8 = "NA";//3>NA count
-QString DecoderFt8::s_HisGrid8 = "NA";
 void DecoderFt8::SetStHisCallGrid(QString hc,QString hb,QString g)
 {
     s_HisCall8 = hc;
@@ -156,34 +169,26 @@ void DecoderFt8::SetStHisCallGrid(QString hc,QString hb,QString g)
     s_lhiscallstd = pomAll.isStandardCall(s_HisCall8);
     tone8(s_lmycallstd,s_lhiscallstd);
 }
-QString DecoderFt8::s_time8 = "000000";
-int DecoderFt8::s_mousebutton8 = 0;
-bool DecoderFt8::s_fopen8 = false;
 void DecoderFt8::SetStDecode(QString time,int mousebutton,bool ffopen)
 {
     s_time8 = time;
     s_mousebutton8 = mousebutton;//mousebutton Left=1, Right=3 fullfile=0 rtd=2
     s_fopen8 = ffopen;//2.66 for ap7 s_fopen8
 }
-static int s_decoder_deep8 = 1;
 void DecoderFt8::SetStDecoderDeep(int d)
 {
     s_decoder_deep8 = d; //qDebug()<<"s_decoder_deep8="<<s_decoder_deep8;
 }
-bool DecoderFt8::s_lapon8 = false;
 void DecoderFt8::SetStApDecode(bool f)
 {
     s_lapon8 = f;
     lapmyc = f;//???
 }
-int DecoderFt8::s_nQSOProgress8 = 0;
-int DecoderFt8::s_nlasttx = 0;
 void DecoderFt8::SetStQSOProgress(int i,int j)
 {
     s_nQSOProgress8 = i;
     s_nlasttx = j; //qDebug()<<s_nQSOProgress8<<s_nlasttx;
 }
-double DecoderFt8::s_nftx8 = 1200.0;
 void DecoderFt8::SetStTxFreq(double f)
 {
     s_nftx8 = f;
@@ -1449,7 +1454,7 @@ void DecoderFt8::get_spectrum_baseline(double *dd,int nfa,int nfb,double *sbase)
     baseline(savg,nfa,nfb,sbase);
 }
 void DecoderFt8::sync8(double *dd,double nfa,double nfb,double syncmin,double nfqso,
-                       double s_[402][1970],double candidate[2][620],int &ncand,double *sbase)
+                       double s_[402][1970],double candidate[2][FT8_MAX_SYNC_CAND],int &ncand,double *sbase)
 {
     const int NSPS=1920;
     int NSTEP=NSPS/4;//=480
@@ -1457,8 +1462,8 @@ void DecoderFt8::sync8(double *dd,double nfa,double nfb,double syncmin,double nf
     int NMAX=15*DEC_SAMPLE_RATE;
     int NHSYM=NMAX/NSTEP-3;//372
     const int NH1=NFFT1/2;       //NH1=1920
-    const int max_c0 = 900;//2.69 old=400;//2.2.0=500 260r5=1000
-    const int max_c_ = 600;//2.69 old=249 max 254 260r5=600
+    const int max_c0 = FT8_MAX_SYNC_PRECAND;
+    const int max_c_ = FT8_MAX_SYNC_CAND;
 
     //! Search over +/- 1.5s relative to 0.5s TX start time.
     //parameter (JZ=38)
@@ -1718,7 +1723,7 @@ void DecoderFt8::sync8(double *dd,double nfa,double nfb,double syncmin,double nf
             {//do j=1,i-1
                 double fdiff=fabs(candidate0[0][i])-fabs(candidate0[0][j]);//fdiff=abs(candidate0(1,i))-abs(candidate0(1,j))
                 double tdiff=fabs(candidate0[1][i]-candidate0[1][j]);
-                if (fabs(fdiff)<4.0 && tdiff<0.08)//one step=0.04  if(abs(fdiff).lt.4.0.and.tdiff.lt.0.04) then
+                if (fabs(fdiff)<4.0 && tdiff<0.04)//one step=0.04  if(abs(fdiff).lt.4.0.and.tdiff.lt.0.04) then
                 {
                     if (candidate0[2][i]>=candidate0[2][j]) candidate0[2][j]=0.0; //if(candidate0(3,i).ge.candidate0(3,j)) candidate0(3,j)=0.
                     if (candidate0[2][i]<candidate0[2][j]) candidate0[2][i]=0.0; //if(candidate0(3,i).lt.candidate0(3,j)) candidate0(3,i)=0.
@@ -1754,29 +1759,26 @@ void DecoderFt8::sync8(double *dd,double nfa,double nfb,double syncmin,double nf
     //! Place candidates within 10 Hz of nfqso at the top of the list
     for (int i = 0; i < ncand; ++i)
     {
+        if (k >= max_c_) break;
         if (fabs(candidate0[0][i]-nfqso)<=10.0 && candidate0[2][i]>=syncmin && candidate0[1][i]>=-2.5)  //if( fabs( candidate0(1,i)-nfqso ).le.10.0 .and. candidate0(3,i).ge.syncmin ) then
         {
             candidate[0][k]=candidate0[0][i];//candidate(1:3,k)=candidate0(1:3,i) && candidate0[1][i]>=-2.5
             candidate[1][k]=candidate0[1][i];
             //candidate[2][k]=candidate0[2][i];
             candidate0[2][i]=0.0; //hv null for next loop candidate0(3,i)=0.0
-            //k=k+1
-            if (k<max_c_) k++;
-            else break;
+            k++;
         }
     }
     for (int i = ncand-1; i>= 0; --i)
     {
+        if (k >= max_c_) break;
         int j=indx[i]; //if (j>max_c0/2-2) qDebug()<<j;
         if (candidate0[2][j] >= syncmin && candidate0[1][j]>=-2.5) //if( candidate0(3,j) .ge. syncmin ) then
         {
             candidate[1][k]=candidate0[1][j];//candidate(2:3,k)=candidate0(2:3,j) && candidate0[1][j]>=-2.5
             //candidate[2][k]=candidate0[2][j];
             candidate[0][k]=fabs(candidate0[0][j]);//candidate(1,k)=abs(candidate0(1,j))
-            //k=k+1
-            //if(k.gt.maxcand) exit
-            if (k<max_c_) k++;
-            else break;
+            k++;
         }
     }
     ncand=k; //if (k>300) qDebug()<<"2FULL==="<<max_c_<<">"<<ncand;
@@ -1855,7 +1857,6 @@ void DecoderFt8::SetNewP(bool f)
     f_new_p = f;
 }
 
-static bool s_3intFt8_d_ = true;//2.51 default
 void DecoderFt8::Decode3intFt(bool f)//2.39 remm
 {
     s_3intFt8_d_ = f; //qDebug()<<"DecoderFt8 s_3intFt_d_="<<s_3intFt_d_;
@@ -2722,7 +2723,7 @@ void DecoderFt8::ft8_decode(double *dd,int c_dd,double f0a,double f0b,double fqs
         }
     }
 
-    double candidate[2][620];//2.69 old=255 start from here;
+    double candidate[2][FT8_MAX_SYNC_CAND];//2.69 old=255 start from here;
     double (*s_)[1970] = new double[402][1970];//2.39 start from here;  2.66
     double sbase[1970];//2.39 start from here;
 
@@ -2955,9 +2956,6 @@ void DecoderFt8::ft8_decode(double *dd,int c_dd,double f0a,double f0b,double fqs
     
     delete [] s_;
 }
-
-
-
 
 
 

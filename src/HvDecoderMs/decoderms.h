@@ -18,6 +18,8 @@
 #define ALL_MSG_SNR 200  //2.70 from 120
 #define MAXDEC 200 		 //2.70 from 120
 #define MAXDUPMSGTHR 240 //2.70 from 120 to 250
+#define FT8_MAX_SYNC_PRECAND 1000
+#define FT8_MAX_SYNC_CAND 1000
 
 //rand
 //#define	MAX_TYPES0	5
@@ -120,7 +122,7 @@ private:
     void baseline(double *s,int nfa,int nfb,double *sbase);
     void get_spectrum_baseline(double *dd,int nfa,int nfb,double *sbase);
     void sync8(double *dd,double nfa,double nfb,double syncmin,double nfqso,
-               double s_[402][1970],double candidate[2][620],int &ncand,double *sbase);
+               double s_[402][1970],double candidate[2][FT8_MAX_SYNC_CAND],int &ncand,double *sbase);
     double taper_ft8_ds[120];
     double complex cx_ft8[192100];
     void ft8_downsample(double *dd,bool &newdat,double f0,double complex *c1);
@@ -198,24 +200,30 @@ signals:
     void EmitBackColor();
 
 private:
-    static QString s_MyBaseCall8;
-    static int s_id_cont_ft8_28;
-    static int s_ty_cont_ft8_28;
-    static QString s_cont_ft8_cq;
-    static QString s_MyCall8;
-    static bool s_lmycallstd;
-    static bool s_lhiscallstd;
-    static QString s_HisBaseCall8;
-    static QString s_HisCall8;
-    static QString s_HisGrid8;
-    static QString s_time8;
-    static int s_mousebutton8;
-    static bool s_fopen8;
-    static bool s_lapon8;
-    static int s_nQSOProgress8;
-    static int s_nlasttx;
-    static double s_nftx8;
-    static bool f_multi_answer_mod8;
+    QString s_MyBaseCall8;
+    int s_id_cont_ft8_28;
+    int s_ty_cont_ft8_28;
+    QString s_cont_ft8_cq;
+    QString s_MyCall8;
+    bool s_lmycallstd;
+    bool s_lhiscallstd;
+    QString s_HisBaseCall8;
+    QString s_HisCall8;
+    QString s_HisGrid8;
+    QString s_time8;
+    int s_mousebutton8;
+    bool s_fopen8;
+    bool s_lapon8;
+    int s_nQSOProgress8;
+    int s_nlasttx;
+    double s_nftx8;
+    bool f_multi_answer_mod8;
+    int s_decoder_deep8;
+    bool s_3intFt8_d_;
+    bool s_use_var_dec;
+    int s_nft8cycles;
+    int s_nft8sens;
+    double s_napwid8;
 
     int decid;
     F2a f2a;
@@ -285,7 +293,7 @@ private:
     bool first_ft8sbl;
     double window_ft8sbl[3890];    //NFFT1=2*NSPS NSPS=1920 1920*2=3840
     void get_spectrum_baseline(double *dd,int nfa,int nfb,double *sbase);
-    void sync8(double *dd,double nfa,double nfb,double syncmin,double nfqso,double s_[402][1970],double candidate[2][620],int &ncand,double *sbase);
+    void sync8(double *dd,double nfa,double nfb,double syncmin,double nfqso,double s_[402][1970],double candidate[2][FT8_MAX_SYNC_CAND],int &ncand,double *sbase);
     void ft8apset(QString mycall12,QString hiscall12,int *apsym2);//int &iaptype ,QString hisgrid6,bool bcontest,QString mygrid6,
 
     void PrintMsg(QString,int,double,double,QString,int,float,float,bool &,bool,bool qual_eq_dmin);
@@ -306,7 +314,6 @@ private:
                  double &fbest,double &xsnr,double &plog,QString &msgbest);
     void TryAp8(double *,bool,int,int,double,bool &);
 //////////  FT8DecVar //////////////////////////////////////////////////
-    static bool s_use_var_dec;
     //static int nintcount;
     typedef struct
     {
@@ -1384,5 +1391,3 @@ protected:
 
 };
 #endif
-
-

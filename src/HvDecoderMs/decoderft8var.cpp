@@ -229,16 +229,12 @@ void DecoderFt8::SetModeChangedStaticAll()
     avexdt=0.0;
     nintcount = ERSET_IN; //qDebug()<<"SetModeChangedStaticAll";
 }
-bool DecoderFt8::s_use_var_dec = false;
-static int s_nft8cycles = 2;
-static int s_nft8sens = 2;
 void DecoderFt8::SetVarDecodeFtPar(bool f,int dcyc,int dsens)
 {
     s_use_var_dec=f;
     s_nft8cycles=dcyc;
     s_nft8sens=dsens; //qDebug()<<f<<dcyc<<dsens;
 }
-static double s_napwid8 = 50.0;
 void DecoderFt8::SetFreqGlobal(QString s)//2.76.5
 {
 	long long int mfrq = s.toLongLong();
@@ -1424,6 +1420,7 @@ void DecoderFt8::sync8var(double nfa,double nfb,double syncmin,double nfqso,doub
     double fprev=5004.0;
     for (int i = ncand-1; i >= 0; --i)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
     {//do i=ncand,1,-1
+        if (k >= max_c) break;
         int j=indx[i];
         if (fabs(candidate0[0][j]-nfqso)<=3.0 && candidate0[2][j]>=1.1 && fabs(candidate0[0][j]-fprev)>3.0/* && candidate0[1][i]>=-2.5*/)
         {
@@ -1443,20 +1440,27 @@ void DecoderFt8::sync8var(double nfa,double nfb,double syncmin,double nfqso,doub
     //!put virtual candidates for FT8Svar decoder
     if (lqsothread)// && !ffull
     {
-        candidate[0][k]=(nfqso);
-        candidate[1][k]=5.0; //! xdt
-        candidate[2][k]=0.0; //! sync
-        k++;//ncandfqso++;
-        candidate[0][k]=(nfqso);
-        candidate[1][k]=-5.0;
-        candidate[2][k]=0.0;
-        k++;//ncandfqso++;
+        if (k < max_c)
+        {
+            candidate[0][k]=(nfqso);
+            candidate[1][k]=5.0; //! xdt
+            candidate[2][k]=0.0; //! sync
+            k++;//ncandfqso++;
+        }
+        if (k < max_c)
+        {
+            candidate[0][k]=(nfqso);
+            candidate[1][k]=-5.0;
+            candidate[2][k]=0.0;
+            k++;//ncandfqso++;
+        }
     }
     ncandfqso = k;
     //if (!ffull)
     //{
     for (int i = ncand-1; i >= 0; --i)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
     {//do i=ncand,1,-1
+        if (k >= max_c) break;
         int j=indx[i];
         double syncmin10=syncmin1;
         if (fabs(candidate0[0][j]-nfqso)>3.0) syncmin10=syncmin;//then; syncmin1=syncmin; else; syncmin1=1.1; endif
@@ -1468,7 +1472,6 @@ void DecoderFt8::sync8var(double nfa,double nfb,double syncmin,double nfqso,doub
             candidate[2][k]=candidate0[2][j];
             candidate[3][k]=candidate0[3][j];//candidate(3,k)=candidate0(3,j); candidate(4,k)=candidate0(4,j)
             k++;
-            if (k>=max_c) break;//if(k.gt.460) exit
         }
     }
     //}
@@ -8051,8 +8054,6 @@ void DecoderFt8::ft8_decodevar(double *dd,int c_dd,double nfa,double nfb,double 
     }
     TryAp8(dd8,s_lapon8,3,cont_type,nfqso,have_dec);
 }
-
-
 
 
 
