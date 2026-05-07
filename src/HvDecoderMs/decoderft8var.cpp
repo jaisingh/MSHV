@@ -13,6 +13,7 @@
 #include "decoderms.h"
 #include "../HvMsPlayer/libsound/genpom.h"
 #include "ft_all_ap_def.h"
+#include <pthread.h>
 //#include <QtGui>
 
 //static double dd8m[190000];
@@ -49,6 +50,18 @@ static double avexdt;
 static int c_xdtt=0;
 static double xdtt[MAXStatOE+80];
 static bool once_static_init = true;
+static pthread_mutex_t g_ft8_var_state_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+void DecoderFt8::LockVarDecoderState()
+{
+    pthread_mutex_lock(&g_ft8_var_state_mutex);
+}
+
+void DecoderFt8::UnlockVarDecoderState()
+{
+    pthread_mutex_unlock(&g_ft8_var_state_mutex);
+}
+
 void DecoderFt8::ft8var_init()
 {
     //first_agccft8 = true;
@@ -226,8 +239,10 @@ void DecoderFt8::cwfilter_init()
 static int nintcount = ERSET_IN;
 void DecoderFt8::SetModeChangedStaticAll()
 {
+    LockVarDecoderState();
     avexdt=0.0;
     nintcount = ERSET_IN; //qDebug()<<"SetModeChangedStaticAll";
+    UnlockVarDecoderState();
 }
 void DecoderFt8::SetVarDecodeFtPar(bool f,int dcyc,int dsens)
 {
@@ -245,6 +260,7 @@ void DecoderFt8::SetFreqGlobal(QString s)//2.76.5
 static bool f_statis_all_new_p = true;
 void DecoderFt8::SetEndPStaticAll()
 {
+    LockVarDecoderState();
     f_statis_all_new_p = true;
     int nFT8decd = c_xdtt;
     double dtmed=0.0;
@@ -286,6 +302,7 @@ void DecoderFt8::SetEndPStaticAll()
         avexdt=sumxdt/(double)nFT8decd; //qDebug()<<"OUT reset="<<avexdt;
         nintcount = -10;//stop
     }   //qDebug()<<"END<---- decid="<<decid<<"Count="<<nFT8decd<<avexdt<<nintcount;
+    UnlockVarDecoderState();
 }
 void DecoderFt8::tone8(bool lmycallstd,bool lhiscallstd)//double complex csynce[19][32];
 {
@@ -8054,7 +8071,6 @@ void DecoderFt8::ft8_decodevar(double *dd,int c_dd,double nfa,double nfb,double 
     }
     TryAp8(dd8,s_lapon8,3,cont_type,nfqso,have_dec);
 }
-
 
 
 

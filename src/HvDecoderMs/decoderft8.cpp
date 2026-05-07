@@ -2550,12 +2550,17 @@ void DecoderFt8::ft8_decode(double *dd,int c_dd,double f0a,double f0b,double fqs
     if (jseqr==0) f_eve0_odd1=false;
     if (use_var_dec)
     {
+        // The variable FT8 decoder keeps shared even/odd history in file-scope
+        // state, so its setup and decode entry points must not overlap.
+        LockVarDecoderState();
         if (id3dec==1 || id3dec==100) ft8_SetStart_ev_od_var(f_eve0_odd1);
         if (!s_3intFt8_d_)
         {
             ft8_decodevar(dd,c_dd,nfa,nfb,nfqso,have_dec,w_f00,w_f01,nagain,lqsothread,f_eve0_odd1);
+            UnlockVarDecoderState();
             return;
         }
+        UnlockVarDecoderState();
     }
 
     int cont_type = 0;
@@ -2718,7 +2723,9 @@ void DecoderFt8::ft8_decode(double *dd,int c_dd,double f0a,double f0b,double fqs
         }
         if (use_var_dec && id3dec==3)
         {
+            LockVarDecoderState();
             ft8_decodevar(dd,c_dd,nfa,nfb,nfqso,have_dec,w_f00,w_f01,nagain,lqsothread,f_eve0_odd1);
+            UnlockVarDecoderState();
             return;
         }
     }
@@ -2956,6 +2963,5 @@ void DecoderFt8::ft8_decode(double *dd,int c_dd,double f0a,double f0b,double fqs
     
     delete [] s_;
 }
-
 
 

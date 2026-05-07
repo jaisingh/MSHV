@@ -194,6 +194,8 @@ public:
     int ft8_even_odd(QString);//2.76sf
     void SetVarDecodeFtPar(bool,int,int);
     void SetFreqGlobal(QString);//2.76.5
+    void LockVarDecoderState();
+    void UnlockVarDecoderState();
 
 signals:
     void EmitDecodetTextFt(QStringList);

@@ -164,7 +164,7 @@ MsCore::MsCore()
     rad_open_sound();
 #endif
 #if defined _MACOS_
-    rad_open_sound();
+    p_read_snd = false;
 #endif
 
     QTimer *timer_ref_ = new QTimer();
