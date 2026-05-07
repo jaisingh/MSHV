@@ -1472,7 +1472,7 @@ QString MultiAnswerModW::DecodeMacros(int row, QString id)//row from listNow id 
         } //qDebug()<<next_queued<<next_queued_tx_id;
         bool f_tx_sm = false;//2.70
         if (!f_multi_answer_mod_std && (cb_tx_sm->isChecked() || id_mshf==2)) f_tx_sm = true; //2.70 //2.76
-        //if (f_multi_answer_mod_std && cb_tx_sm_std->isChecked() && s_co_type==0) f_tx_sm = true; //2.71
+        if (f_multi_answer_mod_std && cb_tx_sm->isChecked() && s_co_type==0) f_tx_sm = true; //2.71
         if (f_tx_sm && !f_tx_rx && !next_queued.isEmpty() && his_call_is_std && //2.70 added f_tx_sm, SBslots->valueS()>1 &&
                 isStandardCall(next_queued) && LsNow->GetRowCount() >= nslot/*SBslots->valueS()-sfoxslot*/ &&
                 (next_queued_tx_id == "1" || next_queued_tx_id == "2") && !f_sf4r) //not a good idea-> || next_queued_tx_id == "2"
@@ -1939,7 +1939,8 @@ void MultiAnswerModW::ConfigRestrictW()
             if (s_co_type==0) SBslots->setRange(1,2);
             else SBslots->setRange(1,1);//<- importent eu vhf only 1 slot needed
         }
-        cb_tx_sm->setHidden(true);
+        if (s_co_type==0) cb_tx_sm->setHidden(false);
+        else cb_tx_sm->setHidden(true);
         cb_otp_mamd_key->setHidden(true);
         cb_cont_ns->setHidden(false);
         if (id_mshf==1) cb_cont_ns->setEnabled(false);
@@ -2989,5 +2990,3 @@ void MultiAnswerModW::SetTextForAutoSeq(QStringList list_in)
     else uuu=0;
 #endif
 }
-
-
