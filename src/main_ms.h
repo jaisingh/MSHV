@@ -331,6 +331,7 @@ private:
     QAction *ac_2click_list_autu_on;  
     QAction *ac_start_qso_from_tx2_or_tx1; 
     QAction *ac_use_queue_cont; 
+    QAction *ac_disable_multi_tx_restrictions;
     QAction *ac_new_dec_clr_msg_list; 
     QAction *ac_click_on_call_show_cty;
     QAction *ac_show_timec;
@@ -434,7 +435,6 @@ protected:
     };
 };
 #endif
-
 
 
 

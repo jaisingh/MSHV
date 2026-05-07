@@ -554,6 +554,11 @@ Main_Ms::Main_Ms(QString inst0,QWidget * parent)
     ac_use_queue_cont->setCheckable(true);
     Other_m->addAction(ac_use_queue_cont);//2.59
 
+    ac_disable_multi_tx_restrictions = new QAction(tr("Disable Multi TX Restrictions"),this);
+    ac_disable_multi_tx_restrictions->setCheckable(true);
+    Option_m->addAction(ac_disable_multi_tx_restrictions);
+    connect(ac_disable_multi_tx_restrictions, SIGNAL(toggled(bool)), THvTxW, SLOT(SetDisableMultiTxRestrictions(bool)));
+
     Other_m->addSeparator();
 
     recognize_tp1 = new QAction(tr("Recognize Period")+" JTMS FSK ISCAT JT6M",this);
@@ -3996,7 +4001,7 @@ void Main_Ms::SetQActionCb(QString s, bool idp, QAction *ac)//idp priority of pr
 }
 void Main_Ms::Read_Settings(QString path)
 {
-    const int c_st_id = 110;//92  89
+    const int c_st_id = 111;//92  89
     //dopalva se tuk v kraia
     const QString st_id[c_st_id]=
         {
@@ -4023,7 +4028,7 @@ void Main_Ms::Read_Settings(QString path)
             "def_filter_list4","def_filter_list5","def_adle_vdsp","def_areset_qso","def_1_dec_sig_q65",
             "def_auto_clr_avg_afdec","def_dec_aft_eme_delay","def_max_drift","def_use_queue_cont","def_filter_list6",
             "use_aseq_max_dist","def_mod_bt_sw","def_show_lcols","vd_bw_lines_draw","def_band_bt_sw",
-            "def_show_hide_wf_tx","def_var_dec_parr"
+            "def_show_hide_wf_tx","def_var_dec_parr","disable_multi_tx_restrictions"
         };
 
     QString st_res[c_st_id];
@@ -4481,6 +4486,7 @@ void Main_Ms::Read_Settings(QString path)
             else if (l.at(2)=="2") rb_vdec_sens[2]->setChecked(true);
         }
     }
+    SetQActionCb(st_res[110], true, ac_disable_multi_tx_restrictions);
 
     THvTxW->SetBlockEmitFreqToRig(false);
 
@@ -4703,6 +4709,7 @@ void Main_Ms::Save_Settings(QString path)
         }
     }
     out << "def_var_dec_parr=" << dd << "\n";
+    out << "disable_multi_tx_restrictions=" << QString("%1").arg(ac_disable_multi_tx_restrictions->isChecked()) << "\n";
 
     file.close();
 }

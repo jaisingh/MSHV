@@ -335,6 +335,9 @@ HvTxW::HvTxW(QString inst,QString path,int lid,bool f,int x,int y,QWidget * pare
     g_no_block_tx = 101;//101=noblock 100=blockall 6=blocktx7 1=blocktx2
     g_ub_m_k = false;
     prev_frest_ = false;
+    prev_hf_restrict_band_ = false;
+    f_disable_multi_tx_restrictions = false;
+    prev_restrict_freq_ = "";
     //s_msk144_contest_mode = false;
     TRadioAndNetW->GetFtFr(_ftfr_);
     s_cont_type = 0; // default
@@ -2916,47 +2919,58 @@ void HvTxW::SetGUbMK(bool f)
 {
     g_ub_m_k = f;
 }
-void HvTxW::RefreshLRestrict()
+void HvTxW::SetDisableMultiTxRestrictions(bool f)
 {
-    static QString prev_mfrq_  = "2"; //static bool prev_frest_ = false;
-    static bool prev_hf_ = false;
-    if (prev_mfrq_ == FREQ_GLOBAL) return;
-    prev_mfrq_ = FREQ_GLOBAL;
+    if (f_disable_multi_tx_restrictions == f) return;
+    f_disable_multi_tx_restrictions = f;
+    RefreshLRestrictState(true);
+}
+void HvTxW::RefreshLRestrictState(bool force)
+{
+    if (!force && prev_restrict_freq_ == FREQ_GLOBAL) return;
+    prev_restrict_freq_ = FREQ_GLOBAL;
     long long int mfrq = FREQ_GLOBAL.toLongLong();
     bool hf = false;
     if (mfrq<0x213C4D1) hf = true;//213C4D1 34.850.001 midle  29702000+39998000=69700000/2=34850000
-    if (hf != prev_hf_) MultiAnswerMod->setHfBand(hf);
-    prev_hf_ = hf; 
+    if (force || hf != prev_hf_restrict_band_) MultiAnswerMod->setHfBand(hf);
+    prev_hf_restrict_band_ = hf;
     emit EmitFreqGlobalToDec(FREQ_GLOBAL);//2.76.5
     if (g_ub_m_k) return;
     if (s_mode!=11 && s_mode!=13 && s_mode!=18 && !allq65) return; 
     if (mfrq<1000000) return;
     bool frest = false;
-    for (int i = 0; i < 27; ++i)//all=27 +FT2=36
+    if (!f_disable_multi_tx_restrictions)
     {
-        long long int Hzd = 0;
-        Hzd = mfrq - _ftfr_[i];
-        if (i<17)//all=17 +FT2=26
+        for (int i = 0; i < 27; ++i)//all=27 +FT2=36
         {
-        	if (qAbs(Hzd) < 3000)
-			{
-				frest = true;
-				break;        		
-			}
+            long long int Hzd = 0;
+            Hzd = mfrq - _ftfr_[i];
+            if (i<17)//all=17 +FT2=26
+            {
+                if (qAbs(Hzd) < 3000)
+                {
+                    frest = true;
+                    break;
+                }
+            }
+            else//wspr
+            {
+                if (Hzd > -3500 && Hzd < 300)
+                {
+                    frest = true;
+                    break;
+                }
+            }
         }
-        else//wspr
-        {
-        	if(Hzd > -3500 && Hzd < 300) 
-        	{
-            	frest = true;
-            	break;
-        	} 
-       	}
     }
-    if (prev_frest_ == frest) return;
+    if (!force && prev_frest_ == frest) return;
     prev_frest_ = frest;
     MshfChanget(false);//2.76
     MultiAnswerMod->RefreshLRestrict_pub(frest);
+}
+void HvTxW::RefreshLRestrict()
+{
+    RefreshLRestrictState(false);
 }
 static bool _freq_from_app_rig_ = false;
 void HvTxW::SetFreqGlobalFromRigCat(QString s)

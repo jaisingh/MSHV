@@ -290,6 +290,7 @@ public slots:
 	//void SetFtDf1500(bool);
 	void SetAResetQsoAtEnd(bool); //2.49
 	void SetCfm73(bool);
+    void SetDisableMultiTxRestrictions(bool);
     void StopAuto();
 	void SetTxActive(int);
     void SetFont(QFont);
@@ -451,6 +452,9 @@ private:
 	void RefreshCfm73();
 	bool g_ub_m_k;	
 	bool prev_frest_;
+    bool prev_hf_restrict_band_;
+    bool f_disable_multi_tx_restrictions;
+    QString prev_restrict_freq_;
     bool f_mod_set_frq_to_rig;
 	QFrame *Box_in_tx;
 	int s_list_log_mark_txt_p1;
@@ -512,6 +516,7 @@ private:
     void SaveSettings();
     bool isFindId(QString id,QString line,QString &res);
     void ReadSettings();
+    void RefreshLRestrictState(bool force);
     QString sr_path;
     //QLineEdit *le_his_call;
     
