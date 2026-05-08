@@ -34,7 +34,7 @@ The upstream tree as extracted contains 575 files and 96 directories, including 
 
 Current built artifact:
 
-- `release/macos/MSHV_MAC.app`
+- `release/macos/MSHV-OSX.app`
 
 Current build state:
 
@@ -283,13 +283,13 @@ The current macOS release flow used in this repo is:
    - `/opt/homebrew/opt/qt@5/bin/qmake MSHV_MAC.pro`
    - `make -j4`
 2. Verify the built bundle exists at:
-   - `release/macos/MSHV_MAC.app`
+   - `release/macos/MSHV-OSX.app`
 3. Commit and push the intended source changes on the working branch.
 4. Create a release tag:
    - `git tag -a <tag-name> -m "<tag-name>"`
    - `git push origin <tag-name>`
 5. Package the app bundle as a zip in `~/tmp`:
-   - `ditto -c -k --sequesterRsrc --keepParent release/macos/MSHV_MAC.app /Users/jaisingh/tmp/<tag-name>.zip`
+   - `ditto -c -k --sequesterRsrc --keepParent release/macos/MSHV-OSX.app /Users/jaisingh/tmp/<tag-name>.zip`
 6. Authenticate GitHub CLI if needed:
    - `/opt/homebrew/bin/gh auth status`
    - `/opt/homebrew/bin/gh auth login`
@@ -436,7 +436,7 @@ Working commands already verified in this repo:
 2. build the app:
    `make -j4`
 3. force-refresh the generated bundle plist after editing `macos/Info.plist`:
-   `make -B release/macos/MSHV_MAC.app/Contents/Info.plist`
+   `make -B release/macos/MSHV-OSX.app/Contents/Info.plist`
 
 These commands were run from:
 

@@ -6,8 +6,8 @@ Everything in this copy is experimental, use at your own risk...
 
 The build will need to have some security stuff disabled. If you don't know what this is or what it does, best to not do this...
 
-```
-sudo xattr -r -d com.apple.quarantine MSHV_MAC.app
+```bash
+sudo xattr -r -d com.apple.quarantine MSHV-OSX.app
 ```
 \<EOM\>
 

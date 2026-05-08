@@ -1,6 +1,6 @@
 include(MSHV_x86_64.pro)
 
-TARGET = MSHV_MAC
+TARGET = MSHV-OSX
 
 CONFIG += sdk_no_version_check
 QT += multimedia
@@ -54,4 +54,4 @@ MOC_DIR = $$clean_path($$PWD/build/macos/moc)
 RCC_DIR = $$clean_path($$PWD/build/macos/rcc)
 UI_DIR = $$clean_path($$PWD/build/macos/ui)
 
-QMAKE_POST_LINK += $$QMAKE_COPY_DIR $$shell_path($$PWD/bin/settings) $$shell_path($$DESTDIR/$${TARGET}.app/Contents/Resources)
+QMAKE_POST_LINK += $$QMAKE_COPY_DIR $$shell_path($$PWD/bin/settings) $$shell_quote($$shell_path($$DESTDIR/$${TARGET}.app/Contents/Resources))
