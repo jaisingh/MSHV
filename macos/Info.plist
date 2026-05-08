@@ -9,7 +9,7 @@
     <key>CFBundleGetInfoString</key>
     <string>MSHV OSX Build 2.76.6-osx</string>
     <key>CFBundleIconFile</key>
-    <string>${ASSETCATALOG_COMPILER_APPICON_NAME}</string>
+    <string>mshv_mac.icns</string>
     <key>CFBundleIdentifier</key>
     <string>${PRODUCT_BUNDLE_IDENTIFIER}</string>
     <key>CFBundleName</key>

@@ -7,6 +7,7 @@ QT += multimedia
 
 QMAKE_MACOSX_DEPLOYMENT_TARGET = 11.0
 QMAKE_INFO_PLIST = $$PWD/macos/Info.plist
+ICON = $$PWD/macos/mshv_mac.icns
 
 QMAKE_CC = /opt/homebrew/bin/gcc-15
 QMAKE_CXX = /opt/homebrew/bin/g++-15
