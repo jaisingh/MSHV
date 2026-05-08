@@ -295,6 +295,9 @@ The current macOS release flow used in this repo is:
    - `/opt/homebrew/bin/gh auth login`
 7. Create the GitHub release and upload the zip:
    - `/opt/homebrew/bin/gh release create <tag-name> /Users/jaisingh/tmp/<tag-name>.zip --title <tag-name> --notes "<release notes>"`
+8. Update the lightweight release summary in `readme_osx.md`:
+   - add a new top entry under `## Agent Release Notes`
+   - include the build tag, publish date, a one-line summary, and a link to the GitHub release page for detailed notes
 
 Notes:
 
