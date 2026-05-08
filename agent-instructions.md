@@ -22,7 +22,7 @@ Port MSHV to macOS with the smallest practical patch set:
 
 ## Current Repo Status
 
-As of 2026-05-05, the repo is past the initial port-planning stage and has a working macOS build path plus several runtime fixes.
+As of 2026-05-07, the repo is past the initial port-planning stage and has a working macOS build path plus several runtime fixes, packaging updates, and recent multi-answer changes.
 
 Historical baseline notes:
 
@@ -40,6 +40,7 @@ Current build state:
 
 - `qmake` and `make -j4` succeed for the macOS target
 - the app bundle contains `Contents/Resources/settings`
+- the app bundle now ships a dedicated macOS icon as `Contents/Resources/mshv_mac.icns`
 - the bundle plist contains the macOS microphone usage string and `LSMinimumSystemVersion = 11.0`
 - there are still linker warnings from Homebrew-provided `fftw` and `libstdc++` being built for newer macOS deployment versions
 
@@ -59,6 +60,12 @@ These commits are the current committed baseline for the macOS port:
 - `9f9eae6` `Rebase macOS port onto MSHV v2.76.6`
 - `43524bf` `Stabilize macOS FT8 decoder threading`
 - `91079fc` `Fix FT8 decoder memory corruption`
+- `112f182` `Serialize variable FT8 decoder state and defer macOS audio open`
+- `b4a09cd` `Add option to disable multi-TX HF restrictions`
+- `9ce6f81` `Enable SM condensed replies in MA Standard`
+- `bf92966` `Document macOS release summaries and publish workflow`
+- `862445e` `Add macOS app icon assets`
+- `f060c2c` `Rename macOS app bundle to MSHV-OSX`
 
 ## Confirmed Upstream Layout
 
@@ -303,7 +310,7 @@ Notes:
 
 - use `~/tmp`, not `/tmp`, for release archives
 - the current GitHub remote is `https://github.com/jaisingh/MSHV.git`
-- the `build-2` release was published using this exact flow
+- the `build-4` release was published using this exact flow
 
 ## Verified macOS Fixes
 
@@ -356,6 +363,23 @@ Current behavior:
 Important detail:
 
 - the internal Qt app-data name is still kept as `MSHV` on macOS so the settings path does not move again
+
+### App bundle and icon packaging
+
+Recent packaging follow-ups now separate the user-facing app bundle name from the internal display strings.
+
+Current behavior:
+
+- the built macOS app bundle is `release/macos/MSHV-OSX.app`
+- the bundle executable is `MSHV-OSX`
+- the `.pro` target remains `MSHV_MAC.pro`, but it now builds the hyphenated bundle/executable target
+- the bundle identifier resolves as `PaardCo.MSHV-OSX`
+- the bundle now ships a dedicated Finder/Dock icon at `Contents/Resources/mshv_mac.icns`
+- the in-app 32px window icon resources were refreshed to match the new macOS icon art
+
+Important detail:
+
+- historical crash logs and older release artifacts may still use the previous `MSHV_MAC` bundle name
 
 ### RX input level scaling
 
@@ -426,6 +450,16 @@ Current behavior:
 - default generated CQ macros become `CQ POTA <MYCALL> <GRID4>` or `CQ SOTA <MYCALL> <GRID4>`
 - the selected portable activity is persisted in `settings/ms_macros`
 - the CQ type also propagates into the multi-answer CQ selector and decoder word hints so the FT/Q65 path treats these as intentional CQ variants instead of plain `CQ`
+
+### Multi-answer follow-ups
+
+Recent follow-up commits added two macOS-port-adjacent operator controls in the FT multi-answer path.
+
+Current behavior:
+
+- `Options` now includes `Disable Multi TX Restrictions`, which bypasses the protected HF FT8/FT4 multi-slot restriction checks when enabled
+- `SM` condensed replies are now available in `MA Standard`, not only in `MA DXpedition`
+- the existing condensed semicolon response format is reused rather than introducing a new wire format
 
 ## Build and Refresh Commands
 
