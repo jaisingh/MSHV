@@ -8,6 +8,7 @@ Upstream references:
 
 - Project page: <https://lz2hv.org/node/10>
 - Source releases: <https://sourceforge.net/projects/mshv/files/>
+- Updated github site: <https://github.com/LZ2HV/MSHV>
 
 As of 2026-05-03, the latest upstream full source archive visible from the project page is `MSHV_2765_Full_Source_Code.zip`, published on 2026-03-24.
 
@@ -22,13 +23,13 @@ Port MSHV to macOS with the smallest practical patch set:
 
 ## Current Repo Status
 
-As of 2026-05-07, the repo is past the initial port-planning stage and has a working macOS build path plus several runtime fixes, packaging updates, and recent multi-answer changes.
+As of 2026-06-24, the repo has been rebased onto upstream `MSHV v.2.76.7 rc011` and has a working macOS build path plus several runtime fixes, packaging updates, and recent multi-answer changes.
 
 Historical baseline notes:
 
 - the macOS port work started from the SourceForge `MSHV_2765` source archive
 - the old staging repo carried the early source audit and baseline capture before the port was rebased onto the GitHub fork
-- the current fork worktree is based on upstream GitHub `MSHV v.2.76.6`
+- the current fork worktree is based on upstream GitHub `MSHV v.2.76.7 rc011`
 
 The upstream tree as extracted contains 575 files and 96 directories, including `bin/`, `build/`, `debug/`, and `release/` directories inside the source zip.
 
@@ -210,11 +211,11 @@ The lowest-risk path is:
 
 The active macOS target is:
 
-- `MSHV_MAC.pro`
+- `MSHV_macOS.pro`
 
 Key implementation choices already made:
 
-- use the upstream `MSHV_x86_64.pro` target as the macOS base
+- standalone macOS `.pro` target (no longer an override of the Linux `MSHV_x86_64.pro`)
 - use the vendored `qextserialport.pri` macOS enumerator instead of inventing new serial code
 - use QtMultimedia-based macOS input and output backends
 - copy bundled `settings` into the app resources path
@@ -287,7 +288,7 @@ Validation notes used for this implementation:
 The current macOS release flow used in this repo is:
 
 1. Build the app with Qt 5.15.x:
-   - `/opt/homebrew/opt/qt@5/bin/qmake MSHV_MAC.pro`
+   - `/opt/homebrew/opt/qt@5/bin/qmake MSHV_macOS.pro`
    - `make -j4`
 2. Verify the built bundle exists at:
    - `release/macos/MSHV-OSX.app`
@@ -343,22 +344,22 @@ The live waterfall staying flat on macOS was traced to FFT buffer helper functio
 
 ### Build identity and exported version surfaces
 
-Commit `3a51c34` renames the macOS build surfaces to `MSHV OSX Build`, and the current rebased fork identifies itself with the macOS-specific version string `2.76.6-osx`.
+Commit `3a51c34` renames the macOS build surfaces to `MSHV OSX Build`, and the current rebased fork identifies itself with the macOS-specific version string `2.76.7-osx`.
 
 Current behavior:
 
 - macOS UI surfaces identify the app as `MSHV OSX Build`
 - `QCoreApplication::setApplicationVersion()` uses `APP_VERSION`
-- PSK Reporter identifies the client as `MSHV OSX Build v2.76.6-osx`
-- WSJT-X/UDP broadcast version export uses `2.76.6-osx`
-- HTTP `User-Agent` uses `MSHV/2.76.6-osx`
-- ADIF `PROGRAMVERSION` uses `2.76.6-osx`
+- PSK Reporter identifies the client as `MSHV OSX Build v2.76.7-osx`
+- WSJT-X/UDP broadcast version export uses `2.76.7-osx`
+- HTTP `User-Agent` uses `MSHV/2.76.7-osx`
+- ADIF `PROGRAMVERSION` uses `2.76.7-osx`
 - the built bundle plist shows:
   - `CFBundleDisplayName = MSHV OSX Build`
   - `CFBundleName = MSHV OSX Build`
-  - `CFBundleGetInfoString = MSHV OSX Build 2.76.6-osx`
-  - `CFBundleVersion = 2.76.6-osx`
-  - `CFBundleShortVersionString = 2.76.6`
+  - `CFBundleGetInfoString = MSHV OSX Build 2.76.7-osx`
+  - `CFBundleVersion = 2.76.7-osx`
+  - `CFBundleShortVersionString = 2.76.7`
 
 Important detail:
 
@@ -372,7 +373,7 @@ Current behavior:
 
 - the built macOS app bundle is `release/macos/MSHV-OSX.app`
 - the bundle executable is `MSHV-OSX`
-- the `.pro` target remains `MSHV_MAC.pro`, but it now builds the hyphenated bundle/executable target
+- the `.pro` target is `MSHV_macOS.pro` and builds the hyphenated bundle/executable target
 - the bundle identifier resolves as `PaardCo.MSHV-OSX`
 - the bundle now ships a dedicated Finder/Dock icon at `Contents/Resources/mshv_mac.icns`
 - the in-app 32px window icon resources were refreshed to match the new macOS icon art
@@ -466,7 +467,7 @@ Current behavior:
 Working commands already verified in this repo:
 
 1. regenerate the macOS Makefile:
-   `/opt/homebrew/Cellar/qt@5/5.15.18/bin/qmake -o Makefile MSHV_MAC.pro`
+   `/opt/homebrew/Cellar/qt@5/5.15.18/bin/qmake -o Makefile MSHV_macOS.pro`
 2. build the app:
    `make -j4`
 3. force-refresh the generated bundle plist after editing `macos/Info.plist`:
@@ -487,7 +488,7 @@ Still worth verifying on a real macOS station:
 3. playback and monitor behavior
 4. CAT/PTT behavior through the macOS serial path
 5. offline decode parity against known WAV samples
-6. whether external services display and accept the custom `2.76.6-osx` version strings as intended
+6. whether external services display and accept the custom `2.76.7-osx` version strings as intended
 
 ## Definition Of Done
 
