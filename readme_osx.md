@@ -16,6 +16,7 @@ sudo xattr -r -d com.apple.quarantine MSHV-OSX.app
 _Content below this line is auto generated.._
 
 ----
+- `build-6` (2026-06-24): rebase onto upstream MSHV v2.76.7 rc011 and consolidation into a single `MSHV_macOS.pro` project file. [Detailed release notes](https://github.com/jaisingh/MSHV/releases/tag/build-6)
 - `build-5` (2026-05-07): macOS packaging refresh with dedicated app icon assets, the `MSHV-OSX` bundle rename, and release documentation sync. [Detailed release notes](https://github.com/jaisingh/MSHV/releases/tag/build-5)
 - `build-4` (2026-05-07): FT8 and multi-answer refresh with serialized variable decoder state, an option to disable Multi TX HF restrictions, and SM condensed replies in MA Standard. [Detailed release notes](https://github.com/jaisingh/MSHV/releases/tag/build-4)
 - `build-3` (2026-05-05): FT8 decoder threading and FFTW plan stabilization, improved low-end macOS TX output scaling, and new POTA/SOTA macro activity presets. [Detailed release notes](https://github.com/jaisingh/MSHV/releases/tag/build-3)
