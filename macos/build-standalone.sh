@@ -16,8 +16,8 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
-APP="$REPO/bin/MSHV.app"
-BIN="$APP/Contents/MacOS/MSHV"
+APP="$REPO/release/macos/MSHV-OSX.app"
+BIN="$APP/Contents/MacOS/MSHV-OSX"
 FW="$APP/Contents/Frameworks"
 
 if [[ ! -x "$BIN" ]]; then
@@ -176,6 +176,75 @@ for FW_BIN in "$FW"/*.framework/Versions/*/[A-Z]*; do
     embed_remaining "$FW_BIN" || true
 done
 
+# 2b. @rpath deps. Homebrew dylibs reference siblings as @rpath/libX.dylib
+#     (libbrotlidec -> libbrotlicommon, libwebp -> libsharpyuv, gcc's
+#     libstdc++ -> libgcc_s). The sweep above only matches absolute
+#     /opt/homebrew paths, so these were never embedded: they resolved only
+#     via the hardcoded /opt/homebrew/Cellar/gcc/<ver> LC_RPATHs the linker
+#     put in the binary, or not at all. A missing libbrotlicommon breaks
+#     libfreetype -> libqcocoa, and Qt abort()s with "no Qt platform plugin".
+#     Embed every @rpath dep, rewrite it to @executable_path, then strip all
+#     absolute LC_RPATHs so nothing can silently resolve into Homebrew.
+BREW_PREFIX="${QT_ROOT%/opt/qt@5}"
+RPATH_SEARCH=("$BREW_PREFIX/lib" "$BREW_PREFIX/opt/gcc/lib/gcc/current")
+
+bundle_machos() {
+    find "$APP/Contents/MacOS" "$FW" "$APP/Contents/PlugIns" -type f 2>/dev/null |
+        while read -r f; do
+            file "$f" | grep -q 'Mach-O' && printf '%s\n' "$f"
+        done
+}
+
+embed_rpath_deps() {
+    local target="$1" own_id dep name src d changed=0
+    own_id="$(otool -D "$target" | awk 'NR>1')"
+    while read -r dep; do
+        [[ "$dep" == @rpath/* && "$dep" != "$own_id" ]] || continue
+        name="${dep#@rpath/}"
+        if [[ ! -f "$FW/$name" ]]; then
+            src=""
+            for d in "${RPATH_SEARCH[@]}"; do
+                [[ -f "$d/$name" ]] && { src="$d/$name"; break; }
+            done
+            if [[ -z "$src" ]]; then
+                echo "    ERROR: $(basename "$target") needs $dep, not found in ${RPATH_SEARCH[*]}" >&2
+                exit 1
+            fi
+            echo "    embedding @rpath dep: $name (from $src)"
+            cp -L "$src" "$FW/$name"
+            chmod u+w "$FW/$name"
+            install_name_tool -id "@executable_path/../Frameworks/$name" "$FW/$name" 2>/dev/null
+            changed=1
+        fi
+        install_name_tool -change "$dep" "@executable_path/../Frameworks/$name" "$target" 2>/dev/null
+    done < <(otool -L "$target" | awk 'NR>1 {print $1}')
+    return $changed
+}
+
+echo "==> embed @rpath deps"
+# Newly embedded libs can have @rpath / Homebrew deps of their own, so loop
+# until a full pass embeds nothing new.
+while :; do
+    more=0
+    while read -r f; do
+        embed_rpath_deps "$f" || more=1
+    done < <(bundle_machos)
+    for LIB_PATH in "$FW"/*.dylib; do
+        embed_remaining "$LIB_PATH" || more=1
+    done
+    [[ $more -eq 0 ]] && break
+done
+
+echo "==> strip absolute LC_RPATHs"
+while read -r f; do
+    otool -l "$f" | awk '/cmd LC_RPATH/ {getline; getline; print $2}' |
+        while read -r rp; do
+            [[ "$rp" == @* ]] && continue
+            echo "    $(basename "$f"): -rpath $rp"
+            install_name_tool -delete_rpath "$rp" "$f" 2>/dev/null
+        done
+done < <(bundle_machos)
+
 # 3. Ad-hoc codesign (required after install_name_tool mutates the binary).
 #    codesign rejects bundle members with com.apple.{FinderInfo,provenance,
 #    quarantine} xattrs ("resource fork, Finder information, or similar
@@ -260,6 +329,29 @@ for LIB_PATH in "$FW"/*.dylib "$FW"/*.framework/Versions/*/[A-Z]*; do
     fi
 done
 [[ $LIB_LEAKS -eq 0 ]] && echo "  embedded libs: all clean"
+
+# Every non-system dep of every Mach-O (incl. plugins) must resolve inside
+# the bundle, and nothing may still use @rpath. Otherwise the app breaks
+# the moment Homebrew upgrades or removes the original — fail the build.
+UNRESOLVED=0
+while read -r f; do
+    own_id="$(otool -D "$f" | awk 'NR>1')"
+    while read -r dep; do
+        [[ "$dep" == "$own_id" ]] && continue
+        case "$dep" in
+            /System/* | /usr/lib/*) continue ;;
+            @executable_path/*)
+                [[ -e "$APP/Contents/MacOS/${dep#@executable_path/}" ]] && continue ;;
+        esac
+        echo "ERROR: $(basename "$f") -> $dep does not resolve inside the bundle"
+        UNRESOLVED=$((UNRESOLVED + 1))
+    done < <(otool -L "$f" | awk 'NR>1 {print $1}')
+done < <(bundle_machos)
+if [[ $UNRESOLVED -gt 0 ]]; then
+    echo "==> FAILED: $UNRESOLVED unresolved deps" >&2
+    exit 1
+fi
+echo "  all deps resolve inside the bundle"
 
 SIZE="$(du -sh "$APP" | cut -f1)"
 echo "==> done. $APP ($SIZE) is now self-contained."
