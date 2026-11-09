@@ -59,6 +59,9 @@ public:
 //signals:
         
 private slots:
+    // Native Flex VITA-49: live forward power / SWR straight off the radio.
+    void UpdateFlexMeter(bool,bool,double,double);
+    
 	void SetTxFreq(double);//2.16
 	void SetStaticTxFrq(bool,int);//2.16
     void SetMacros(int,QString);//2.32
@@ -257,6 +260,9 @@ private:
     QPushButton *pb_clear_avgQ65;
     bool f_tune;
     QLabel *l_tx_text;
+    
+    QLabel *l_flex_meter;        // Flex fwd power / SWR; hidden unless active
+    QPushButton *pb_flex_panel;  // opens the Flex control/monitor panel
 
     bool auto_decode_all[COUNT_MODE];
     QCheckBox *cb_auto_decode_all;

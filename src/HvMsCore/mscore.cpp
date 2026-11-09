@@ -526,7 +526,7 @@ void MsCore::SetupSettings_(QString dev_in_number,int bpsampl,int latency,int ca
     //if ((QString)rad_sound_state.dev_capt_name==dev_in_number)
     //qDebug()<<"mscore="<<(QString)rad_sound_state.dev_capt_name<<dev_in_number;
     QString str_device_name = (QString)rad_sound_state.dev_capt_name; //qDebug()<<"str_device_name="<<str_device_name;
-    if (str_device_name=="TCI Client Input")
+    if (str_device_name=="TCI Client Input" || str_device_name.startsWith("Flex Native Input"))
     {     	
         fftw_sample_rate = (int)ORG_SAMPLE_RATE_12000;
         in_sample_rate = (int)IN_SAMPLE_RATE_48000;//sample_rate.toInt();

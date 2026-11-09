@@ -57,6 +57,7 @@ DecoderFt2::DecoderFt2(int id)
     {
         for (int j= 0; j < 2; ++j) ndec[i][j] = 0;
     }
+    band2 = 200;
     //////////end AP7//////////////////
 }
 DecoderFt2::~DecoderFt2()
@@ -87,6 +88,11 @@ static bool s_lapon2 = false;// only in mshv
 void DecoderFt2::SetStApDecode(bool f)
 {
     s_lapon2 = f; //qDebug()<<"s_lapon2="<<s_lapon2;
+}
+static uint8_t s_band2 = 0;
+void DecoderFt2::SetBandChangedStaticAll(uint8_t i)//2.76.7 for reset ap78
+{
+    s_band2 = i; 
 }
 static int s_nQSOProgress2 = 0;
 void DecoderFt2::SetStQSOProgress(int i)
@@ -1702,7 +1708,7 @@ void DecoderFt2::PrintMsg(QString tmm,int nsnr,double xdt,double f1,QString mess
 //#define DEB_FALSEDEC
 uint8_t DecoderFt2::isFalseDecode(QString msg,int nsnr,double qual,bool do_avg,int nharderror,int i3,int n3)
 {
-    if (msg.count()<1) return 1;
+    if (msg.count()<1) return 1; 
     if (msg.indexOf("<> ")>-1 || msg.indexOf(" <>")>-1 || msg.startsWith("CQ_001 ")) return 2;
     if (do_avg && qual<0.01 && nharderror>40) return 3;//&& nsnr<-20
     int harde = 36;
@@ -1753,7 +1759,7 @@ uint8_t DecoderFt2::isFalseDecode(QString msg,int nsnr,double qual,bool do_avg,i
             QString s = msg.mid(3,msg.count()-3);
             if (s.indexOf(' ')<0 && nharderror>harde) return 15;
         }//(n3==3 || n3==4) DEC Snr=-20 Qual=0.2450 Msg=1W5DTH 264HKO 21E KS Avg=0 nhrr=28 i3=0 n3=4 iap=0
-        if (i3==0 && (n3==3 || n3==4) && nsnr<-19 && nharderror>harde) return 16;//ARRL Field Day
+        if (i3==0 && (n3==0 || n3==3 || n3==4) && nsnr<-19 && nharderror>harde) return 16;//ARRL Field Day
     }
     return 0;
 }
@@ -2059,7 +2065,6 @@ void DecoderFt2::ft2_decode(double *dd,double f0a,double f0b,double f0a1,double 
     {
         if (ndec[1][jseq_a7]==0) c_zerop++; //2.66 HV add
         else c_zerop=0;
-
         int iz=ndec[1][jseq_a7];
         for (int i = 0; i < iz; ++i)
         {
@@ -2075,7 +2080,7 @@ void DecoderFt2::ft2_decode(double *dd,double f0a,double f0b,double f0a1,double 
         t_mm1 =  nutc0.midRef(2,2).toInt();
         t_hh1 =  nutc0.midRef(0,2).toInt();
         int t_p0  = (t_hh1*3600)+(t_mm1*60)+t_ss1;
-        if (t_p1-t_p0>11 || c_zerop>2)//2.66 HV add=3p   if (t_p1-t_p0>60 || c_zerop>3)//2.66 HV add=4p
+        if (t_p1-t_p0>11 || c_zerop>2 || s_band2!=band2)//2.66 HV add=3p   if (t_p1-t_p0>60 || c_zerop>3)//2.66 HV add=4p
         {
             //ft2 11 and 3 for 3 periods//15 and 4 for 4 periods ...
             //1. We lost 3 periods (no decode),= data is not actual, ap7 not permitted
@@ -2089,7 +2094,8 @@ void DecoderFt2::ft2_decode(double *dd,double f0a,double f0b,double f0a1,double 
             //dt0[0][1][i]=0.0;
             //f0[0][1][i]=0.0;
             //}
-            c_zerop=0;
+            c_zerop=0; //qDebug()<<"Reset2="<<s_band2<<band2;
+            band2=s_band2; 
         }
         else
         {

@@ -67,7 +67,7 @@ def_aggressive_lev=5#95
 def_two_dec_list=MSK144=1#JTMS=0#FSK441=0#FSK315=0#ISCAT-A=0#ISCAT-B=0#JT6M=0#JT65A=0#JT65B=1#JT65C=0#PI4=0#FT8=1#MSKMS=0#FT4=1#Q65A=1#Q65B=1#Q65C=1#Q65D=1#FT2=1
 def_2click_list_autu_on=1
 offset_trsv_rig_parms=135 kHz=0|0#472 kHz=0|0#501 kHz=0|0#1.8 MHz=0|0#3.5 MHz=0|0#5 MHz=0|0#7 MHz=0|0#10 MHz=0|0#14 MHz=0|0#18 MHz=0|0#21 MHz=0|0#24 MHz=0|0#27 MHz=0|0#28 MHz=0|0#40 MHz=0|0#50 MHz=0|0#60 MHz=0|0#70 MHz=0|0#144 MHz=0|0#222 MHz=0|0#432 MHz=0|0#902 MHz=0|0#1296 MHz=0|0#2320 MHz=0|0#3.4 GHz=0|0#5.65 GHz=0|0#10 GHz=0|0#24 GHz=0|0#47 GHz=0|0#76 GHz=0|0#120 GHz=0|0#144 GHz=0|0#248 GHz=0|0
-multi_answer_mod=0#0
+multi_answer_mod=1#0
 def_gbk_t=10#15#13#14
 start_qso_from_tx2_or_tx1=0
 def_app_fonts=Arial#9#Courier New#10
@@ -80,7 +80,7 @@ direct_log_qso=1
 click_on_call_show_cty=1
 def_desk_pos_help_xy=636#266
 def_desk_pos_astr_xy=636#266
-def_desk_pos_logw_xywh=636#266#797#480
+def_desk_pos_logw_xywh=636#266#640#480
 net_rig_srv_port=127.0.0.1;7809#127.0.0.1;12345#127.0.0.1;52002#127.0.0.1;50001;1;2048;3;48000;50#127.0.0.1;50001;1;2048;3;48000;50#127.0.0.1;13013#127.0.0.1;4532#RIG IP Addr;4992#RIG IP Addr;4992#RIG IP Addr;4992#RIG IP Addr;4992#RIG IP Addr;4992#RIG IP Addr;4992#RIG IP Addr;4992#RIG IP Addr;4992
 def_confirm73=1
 def_thr_lev=1#1#1#1#1#1#1#1#1#1#1#1#1#2#1#1#1#1#1

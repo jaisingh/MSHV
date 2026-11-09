@@ -161,6 +161,7 @@ signals:
     void EmitQrgFromRig(QString);//2.45
     void EmitQrgInfoFromCat(QString);//2.45
     void EmitRigCatActiveAndRead(bool f,QString);//2.53 //2.76.1
+    //void EmitFlexSliceReady();//flex native vita-49: forwarded from HvRigCat
     
 private slots:
     void SetCatAactiveAndRead(bool,bool);
@@ -211,7 +212,7 @@ private slots:
     void LeOffsetTrsvRigChange(QString);
     void CbOffSetFrqToRig(bool);
     void SetPttDtr(bool);// sea-235
-    void SetTciSelect(int);
+    void SetTciSelect(int,int,bool);
     void SetRigModeFreq();
     void SetFullRigInfo(QString);//2.76.1
     

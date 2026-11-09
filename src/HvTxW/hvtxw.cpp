@@ -281,6 +281,10 @@ HvTxW::HvTxW(QString inst,QString path,int lid,bool f,int x,int y,QWidget * pare
     TWD = new TWDialog(THvMakros,TRadioAndNetW,TRadioAndNetW->GetRadListW(),this);
     connect(TWD,SIGNAL(EmitClose()),THvMakros,SLOT(SetClose()));
 
+	flex_panel = new FlexPanel(dsty,this);
+	flex_panel->hide();
+	connect(flex_panel,SIGNAL(EmitUpdateFlexMeter(bool,bool,double,double,bool)),this,SLOT(UpdateFlexMeter(bool,bool,double,double,bool)));
+
     slid = lid;
     allq65 = false;
     alljt65 = false;
@@ -365,8 +369,7 @@ HvTxW::HvTxW(QString inst,QString path,int lid,bool f,int x,int y,QWidget * pare
     f_cntest_only_sdtc = false;
     f_two_no_sdtc = false;
 
-    for (int i = 0; i < TEX_MARK_C; i++)
-        s_txt_mark[i]=true;// inportet default all is marked HV 1.26 here and in hvtxtcolor.cpp
+    for (int i = 0; i < TEX_MARK_C; i++) s_txt_mark[i]=true;// inportet default all is marked HV 1.26 here and in hvtxtcolor.cpp
 
     block_mon_call1 = true;
     block_mon_call2 = true;
@@ -1251,6 +1254,7 @@ void HvTxW::SetFont(QFont f)
     b_add_to_log->setFont(f);//2.75
     cb_msh->setFont(f);//2.76
     cb_msf->setFont(f);
+    //flex_panel->setFont(f);// ???
 }
 void HvTxW::SetUdpDecClr()
 {
@@ -2935,6 +2939,7 @@ void HvTxW::RefreshLRestrictState(bool force)
     if (mfrq<0x213C4D1) hf = true;//213C4D1 34.850.001 midle  29702000+39998000=69700000/2=34850000
     if (force || hf != prev_hf_restrict_band_) MultiAnswerMod->setHfBand(hf);
     prev_hf_restrict_band_ = hf;
+    flex_panel->FlexTrackFreq(FREQ_GLOBAL);
     emit EmitFreqGlobalToDec(FREQ_GLOBAL);//2.76.5
     if (g_ub_m_k) return;
     if (s_mode!=11 && s_mode!=13 && s_mode!=18 && !allq65) return; 
@@ -3005,7 +3010,7 @@ void HvTxW::SetRigCatActiveAndRead(bool f,QString s)//2.53
 }
 void HvTxW::SetDefFreqGlobal(int id,QString user_frq)
 {
-    QString tfrq = user_frq; //qDebug()<<"SetDefFreqGlobal="<<f<<user_frq<<f_block_emit_freq_to_rig;
+    QString tfrq = user_frq; //qDebug()<<"SetDefFreqGlobal="<<id<<user_frq<<f_block_emit_freq_to_rig;
     if (tfrq=="default") TRadioAndNetW->FindFreqRadList(0,tfrq);//0 to hz
     else FindRigBandFromFreq(tfrq);  //if user_frq
     _freq_from_app_rig_ = false;//2.68
@@ -3023,6 +3028,28 @@ void HvTxW::SetDefFreqGlobal(int id,QString user_frq)
         RefreshLRestrict(); //emit EmitFreqGlobalToDec(tfrq);
     } 
 }
+
+// Native Flex VITA-49 backend (network.cpp): live TX metering off the radio.
+void HvTxW::UpdateFlexMeter(bool up,bool is_meter,double fwd,double swr,bool fpp)
+{   //qDebug()<<"UpdateFlexMeter="<<"flex_push_pending="<<fpp;
+    if (fpp) 
+    { 
+    	if (rig_cat_active_and_read)
+    	{
+    		flex_panel->StopFlexPushPending(); //qDebug()<<"Flex Set FREQ----->"<<flex_panel->GetFlexLastFreq();
+    		SetDefFreqGlobal(2,flex_panel->GetFlexLastFreq());
+   		}
+    }
+    emit EmitUpdateFlexMeter(up,is_meter,fwd,swr);
+}
+void HvTxW::ShowFlexPanel()
+{
+	flex_panel->show();
+    flex_panel->raise();
+    flex_panel->activateWindow();
+}
+// end Native Flex VITA-49 backend (network.cpp): live TX metering off the radio.
+
 ////////END RIG CONTROL/////////////////////////////////
 void HvTxW::RefreshCntestOnlySdtc()//2.15
 {
@@ -3629,6 +3656,7 @@ void HvTxW::SaveSettings()
     out << "log_qsos_limit_gt9999_lt500001=" << THvLogW->GetMaxLogQsoCount() << "\n";//500001
     out << "add_to_log_prop_all=" << THvLogW->GetPropSettings() << "\n";//2.75
     out << "mam_shf="<<QString("%1").arg(cb_msh->isChecked())<<"#"<<QString("%1").arg(cb_msf->isChecked())<<"\n";//2.76
+    out << "flex_native_last_all=" << flex_panel->GetFlexLastAll() << "\n";//frequency#rxant#txant
 
     //out << "auto_seq_all=" << AutoSeqLab->getautoseq_all() << "\n";
     //out << "lock_txrx_all=" << get_lock_txrx_all() << "\n";
@@ -3649,12 +3677,12 @@ bool HvTxW::isFindId(QString id,QString line,QString &res)
 }
 void HvTxW::ReadSettings()
 {
-    const int c_st_id = 14;//dopalva se tuk v kraia    
+    const int c_st_id = 15;//dopalva se tuk v kraia    
     const QString st_id[c_st_id]=
         {
             "his_call_tx","my_qrg_tx","tx_fi","mon_call1","mon_call2","def_radec","def_multi_answer",
             "cont_v1_txsn","cont_v2_txsn","def_cabrillo_log_set","def_use_adif_save",
-            "log_qsos_limit_gt9999_lt500001","add_to_log_prop_all","mam_shf"
+            "log_qsos_limit_gt9999_lt500001","add_to_log_prop_all","mam_shf","flex_native_last_all"
         };
     QString st_res[c_st_id];
     for (int i = 0; i < c_st_id; ++i) st_res[i]="";
@@ -3687,6 +3715,7 @@ void HvTxW::ReadSettings()
     }
     file.close();
     //qDebug()<<"2Time="<<ttt.elapsed();
+    
     if (!st_res[6].isEmpty()) MultiAnswerMod->SetSettings(st_res[6]);
     if (!st_res[0].isEmpty()) le_his_call->SetText(st_res[0]);
     if (!st_res[1].isEmpty()) le_qrg->setText(st_res[1]);
@@ -3713,6 +3742,7 @@ void HvTxW::ReadSettings()
     		if (l.at(1)=="1") cb_msf->setChecked(true);
    		}
    	}
+   	if (!st_res[14].isEmpty()) flex_panel->SetFlexLastAll(st_res[14].trimmed());//frequency#rxant#txant
 }
 void HvTxW::SetTxTextsHiden(bool f)
 {

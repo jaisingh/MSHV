@@ -269,7 +269,7 @@ Main_Ms::Main_Ms(QString inst0,QWidget * parent)
     connect(TSettingsMs, SIGNAL(InDevChanged(QString,int,int,int,int,int,int)),
             this, SLOT(InDevChanged(QString,int,int,int,int,int,int)));
     connect(TSettingsMs, SIGNAL(rejected()), this, SLOT(SaveSettings()));
-    connect(TSettingsMs, SIGNAL(EmitTciSelect(int)), THvRigControl, SLOT(SetTciSelect(int)));//2.59
+    connect(TSettingsMs, SIGNAL(EmitTciSelect(int,int,bool)),THvRigControl,SLOT(SetTciSelect(int,int,bool)));//2.59
     //connect(TSettingsMs, SIGNAL(StndInLevel(int)), TMsCore, SLOT(SetInLevel(int)));
     //connect(TSettingsMs, SIGNAL(SendSettingsTime(QStringList)), this, SLOT(SetTimeOffset(QStringList)));
 
@@ -286,6 +286,23 @@ Main_Ms::Main_Ms(QString inst0,QWidget * parent)
     //QFont tx_font = font();
     //tx_font.setPointSize(10);
     //tx_font.setBold(true);
+    
+    // Native Flex VITA-49 meter: forward power + SWR read from the radio's own
+    // FWDPWR/REFPWR/SWR meters. Hidden unless the Flex backend is transmitting,
+    // so it is invisible to anyone not using a FlexRadio.
+    l_flex_meter = new QLabel("");
+    l_flex_meter->setFixedHeight(19);
+    l_flex_meter->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    l_flex_meter->setMinimumWidth(150);
+    l_flex_meter->setAlignment(Qt::AlignCenter);
+    l_flex_meter->setToolTip(tr("FlexRadio forward power and SWR"));
+    l_flex_meter->hide();
+    pb_flex_panel = new QPushButton("Flex");
+    pb_flex_panel->setFixedHeight(19);
+    pb_flex_panel->setFixedWidth(46);
+    pb_flex_panel->setToolTip(tr("FlexRadio meters, antenna and mode"));
+    pb_flex_panel->hide();    
+    
     l_tx_text = new QLabel("Txing:");
     l_tx_text->setFixedHeight(20);
     //l_tx_text->setFont(tx_font);
@@ -393,6 +410,9 @@ Main_Ms::Main_Ms(QString inst0,QWidget * parent)
     connect(THvTxW,SIGNAL(EmitOtpVerif(QString,uint8_t)),TDecodeList1,SLOT(SetOtpVerif(QString,uint8_t)));//2.76sf only to list 1
     //connect(THvTxW,SIGNAL(EmitSFoxVerif(QString)),TDecodeList2,SLOT(SetSFoxVerif(QString)));//2.76sf
     connect(THvTxW,SIGNAL(EmitOffsetDt(int)),this,SLOT(SetOffsetDt(int)));//2.76sf
+    
+    connect(pb_flex_panel,SIGNAL(clicked()),THvTxW,SLOT(ShowFlexPanel()));
+    connect(THvTxW,SIGNAL(EmitUpdateFlexMeter(bool,bool,double,double)),this,SLOT(UpdateFlexMeter(bool,bool,double,double)));
 
     QMenuBar *Min_Menu = new QMenuBar();
 
@@ -802,7 +822,7 @@ Main_Ms::Main_Ms(QString inst0,QWidget * parent)
     connect(THvRigControl, SIGNAL(EmitGetedFreq(QString)), THvTxW, SLOT(SetFreqGlobalFromRigCat(QString)));//1.61=
     connect(THvRigControl, SIGNAL(EmitGetedMode(QString)), THvTxW, SLOT(SetModeGlobalFromRigCat(QString)));//1.61=
     connect(THvRigControl, SIGNAL(EmitTxActive(int)), THvTxW, SLOT(SetTxActive(int)));//2.21
-    connect(THvRigControl, SIGNAL(EmitRigCatActiveAndRead(bool,QString)), THvTxW, SLOT(SetRigCatActiveAndRead(bool,QString)));//2.53 //2.76.1
+    connect(THvRigControl, SIGNAL(EmitRigCatActiveAndRead(bool,QString)), THvTxW, SLOT(SetRigCatActiveAndRead(bool,QString)));//2.53 //2.76.1    
 
     connect(THvTxW, SIGNAL(EmitQSOProgress(int)), TDecoderMs, SLOT(SetQSOProgress(int)));
     connect(THvTxW, SIGNAL(EmitQSOProgress(int)), THvRigControl, SLOT(SetQSOProgress(int)));//2.45
@@ -1022,7 +1042,7 @@ Main_Ms::Main_Ms(QString inst0,QWidget * parent)
     cb_3intFt_d = new QAction(tr("Use Three-stage Decoding")+" FT8",this);//Use Three Intervals For Decode FT8 (High Speed PCs)
     cb_3intFt_d->setCheckable(true);
     cb_3intFt_d->setEnabled(false);
-
+ 
     cb_UseVarDecFt = new QAction(tr("Use")+" SD Decoder FT8",this);
     cb_UseVarDecFt->setCheckable(true);
     cb_UseVarDecFt->setEnabled(false);
@@ -1243,7 +1263,20 @@ Main_Ms::Main_Ms(QString inst0,QWidget * parent)
     H_l->setAlignment(Min_Menu,Qt::AlignLeft);
     //H_l->addWidget(lsuperfox);
     //H_l->setAlignment(lsuperfox,Qt::AlignCenter);
-    H_l->addWidget(TCpuWudget);
+    
+    // Flex Panel
+    QHBoxLayout *H_lflex = new QHBoxLayout();
+    H_lflex->setContentsMargins(0,0,0,0);
+    H_lflex->addWidget(l_flex_meter);
+    H_lflex->addWidget(pb_flex_panel);
+    H_lflex->setAlignment(Qt::AlignCenter | Qt::AlignHCenter);
+    H_l->addLayout(H_lflex);     
+    /*H_l->addWidget(l_flex_meter);
+    H_l->setAlignment(l_flex_meter,Qt::AlignRight | Qt::AlignHCenter); 
+    H_l->addWidget(pb_flex_panel);
+    H_l->setAlignment(pb_flex_panel,Qt::AlignRight | Qt::AlignHCenter);*/  
+         
+    H_l->addWidget(TCpuWudget);    
     H_l->setAlignment(TCpuWudget,Qt::AlignRight | Qt::AlignHCenter);
     //H_l->setAlignment(TPicW,Qt::AlignHCenter);
     //H_l->addWidget(THvSMeter_H);
@@ -1419,7 +1452,8 @@ Main_Ms::Main_Ms(QString inst0,QWidget * parent)
     H_status->addWidget(cb_rtd_decode);
     H_status->addWidget(TPicW);
     //H_status->setAlignment(TPicW,Qt::AlignLeft);
-    H_status->addWidget(l_tx_text);
+    H_status->addWidget(l_tx_text); 
+     
     //H_status->setAlignment(l_tx_text,Qt::AlignHCenter);
     H_status->addWidget(THvSMeter_H);
     //H_centr->setAlignment(THvTxW, Qt::AlignRight);
@@ -2590,8 +2624,7 @@ void Main_Ms::SkUpDownBandChanged(bool f_up_down)
 }
 void Main_Ms::BandChanged(bool)
 {
-    //StopTxGlobal();//2.12
-    for (int i = 0; i<COUNT_BANDS; ++i)
+    for (int i = 0; i<COUNT_BANDS; ++i)//StopTxGlobal();//2.12
     {
         if (ListBands.at(i)->isChecked())
         {
@@ -2600,7 +2633,8 @@ void Main_Ms::BandChanged(bool)
             THvTxW->SetBand(temp_band,s_id_set_to_rig);//0<-from App 1<-from Rig
             RefreshWindowTitle();
             s_id_set_to_rig = 0;
-            W_band_bt_sw->SetActiveBt(i);
+            W_band_bt_sw->SetActiveBt(i); 
+            TDecoderMs->setBand(i);//2.76.7 reset ap7
             break;
         }
     }
@@ -2620,12 +2654,55 @@ void Main_Ms::ModeMenuStatRefresh(bool dea)
         W_mod_bt_sw->setDisabled(false);
     }
 }
+
+// Native Flex VITA-49 backend (network.cpp): live TX metering off the radio.
+void Main_Ms::UpdateFlexMeter(bool up,bool is_meter,double fwd,double swr)
+{
+    // Visible whenever the Flex backend is up, RX or TX -- not only while
+    // transmitting. Hiding it during receive meant the operator could never
+    // see that it existed, nor check SWR except mid-transmission.
+    //qDebug()<<"Main_Ms::UpdateFlexMeter"<<up<<is_meter<<fwd<<swr<<"flex_push_pending="<<flex_push_pending;
+    if (!up)
+    {
+        if (l_flex_meter->isVisible()) 
+        { 
+        	l_flex_meter->hide();
+        	pb_flex_panel->hide();
+        }
+        return;
+    }     
+    if (!l_flex_meter->isVisible()) 
+    { 
+    	if (!l_flex_meter->isVisible())
+    	{
+    		l_flex_meter->show(); 
+    		pb_flex_panel->show();    		
+   		}   //qDebug()<<"UpdateFlexMeter="<<"flex_push_pending="<<flex_push_pending<<flex_native_last_freq;
+    }          
+    if (!is_meter)
+    {
+        // Backend is up but the radio has not sent a meter packet yet.
+        l_flex_meter->setText("Flex: --");
+        l_flex_meter->setStyleSheet("");
+        return;
+    }
+    l_flex_meter->setText(QString("%1 W   SWR %2")
+                          .arg(fwd, 0, 'f', (fwd < 10.0) ? 1 : 0)
+                          .arg(swr, 0, 'f', 2));
+    // Only colour on a genuinely high SWR, and only while actually producing
+    // power -- an idle radio reads SWR 1.00 and would otherwise flicker green.
+    if (fwd > 0.5 && swr >= 3.0) l_flex_meter->setStyleSheet("QLabel{color:rgb(255,80,80);}");
+    else if (fwd > 0.5 && swr >= 2.0) l_flex_meter->setStyleSheet("QLabel{color:rgb(255,180,60);}");
+    else l_flex_meter->setStyleSheet("");
+}
+//end Native Flex VITA-49 backend (network.cpp): live TX metering off the radio.
+
 void Main_Ms::SetRigTxRx(bool f)
 {
-    //qDebug()<<"SetRigTxRx...................."<<f;
+	if (f_tx_busy == f) return;//2.76.7 Protection from background working Clock synchronisation software.  
     f_tx_busy = f;//2.47
     THvRigControl->SetPtt(f,0);//id 0=All 1=p1 2=p2
-    THvTxW->SetTxRxCountAutoSeq(f);
+    THvTxW->SetTxRxCountAutoSeq(f);//qDebug()<<"SetRigTxRx...................."<<f;
     if (f)
     {
         if (dsty) l_tx_text->setStyleSheet("QLabel{background-color:rgb(170,0,0);}");
@@ -2639,7 +2716,6 @@ void Main_Ms::SetRigTxRx(bool f)
         Band_m->setDisabled(false);
         W_band_bt_sw->setDisabled(false); //qDebug()<<g_block_mam<<g_ub_m_k;
     }
-    //f_tx_busy = f;
     if (s_mode==11 || s_mode==13 || s_mode==18 || allq65) ModeMenuStatRefresh(f_de_active);//ft8 and ft4
 }
 void Main_Ms::SetOffsetDt(int dt)//2.76.5
@@ -3063,7 +3139,6 @@ void Main_Ms::Refresh()
         }
     }
     //////////////END REMUTE/////////////////////////////////
-    //qDebug()<<"s_f_dec50"<<s_f_dec50;
 }
 void Main_Ms::SetAuto()
 {
@@ -4051,8 +4126,7 @@ void Main_Ms::Read_Settings(QString path)
         };
 
     QString st_res[c_st_id];
-    for (int i = 0; i < c_st_id; ++i)
-        st_res[i]="";
+    for (int i = 0; i < c_st_id; ++i) st_res[i]="";
 
     QDir testD(path.mid(0,path.count()-12)); // /ms_settings = 12
     if (!testD.exists())
@@ -4110,7 +4184,7 @@ void Main_Ms::Read_Settings(QString path)
     }
     file.close();
     //qDebug()<<"1Time="<<ttt.elapsed();//2297 ms   down 2813 ms
-
+    	
     if (!st_res[84].isEmpty())
     {
         int sthr = 1;

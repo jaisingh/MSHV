@@ -708,6 +708,9 @@ void DecodeList::SetMode(int mode,bool flag_two,bool f0,bool f1,bool f2,bool f3)
     THvHeader->showSection(6);//for two lists ft8
     THvHeader->showSection(7);//for two lists jt65
     THvHeader->showSection(8);//for two lists jt65
+    //FT State column is logical 10, shown right after Country; other modes keep 10 in place
+    if (mode==11 || mode==13 || mode==18 || allq65) THvHeader->moveSection(THvHeader->visualIndex(10),6);
+    else THvHeader->moveSection(THvHeader->visualIndex(10),10);
 
     //2.31 false for "\n" jt6m=6 jtms=1
     setUniformRowHeights(true);//2.30 fast wiev
@@ -938,16 +941,17 @@ void DecodeList::SetMode(int mode,bool flag_two,bool f0,bool f1,bool f2,bool f3)
         if (allq65) qdc = "Dec";
         if (flag_two)
         {
-            if (s_list_ident == 1) list_A <<tr("Time")<<"dB"<<"DT"<<"DF Of TX"<<tr("Message")<<tr("Country")<<tr("Dist")<<tr("Type")<<qdc<<"Freq";//9 Flags
-            if (s_list_ident == 2) list_A <<tr("Time")<<"dB"<<"DT"<<"DF Of TX"<<tr("RX Frequency Message")<<tr("Country")<<tr("Dist")<<"Type"<<qdc<<"Freq";//9 Flags
+            if (s_list_ident == 1) list_A <<tr("Time")<<"dB"<<"DT"<<"DF Of TX"<<tr("Message")<<tr("Country")<<tr("Dist")<<tr("Type")<<qdc<<"Freq"<<tr("State");//9 Flags
+            if (s_list_ident == 2) list_A <<tr("Time")<<"dB"<<"DT"<<"DF Of TX"<<tr("RX Frequency Message")<<tr("Country")<<tr("Dist")<<"Type"<<qdc<<"Freq"<<tr("State");//9 Flags
             THvHeader->hideSection(3);
             THvHeader->hideSection(7);//2.73 Dist Country
             THvHeader->hideSection(8);//2.73 Dist Country
         }
-        else list_A <<tr("Time")<<"dB"<<"DT"<<"DF Of TX"<<tr("Message")<<tr("Country")<<tr("Dist")<<tr("Type")<<qdc<<"Freq";//9 Flags
+        else list_A <<tr("Time")<<"dB"<<"DT"<<"DF Of TX"<<tr("Message")<<tr("Country")<<tr("Dist")<<tr("Type")<<qdc<<"Freq"<<tr("State");//9 Flags
 
         THvHeader->showSection(9);
-        THvHeader->hideSection(10);
+        if (f3) THvHeader->showSection(10);//State goes with Country
+        else THvHeader->hideSection(10);
         THvHeader->hideSection(11);
         THvHeader->hideSection(12);//2.73 Dist Country
         if (!f0 && !allq65) THvHeader->hideSection(0);
@@ -967,6 +971,7 @@ void DecodeList::SetMode(int mode,bool flag_two,bool f0,bool f1,bool f2,bool f3)
         def_section_sizes[7] = 70;//THvHeader->resizeSection(5, 70);//Type
         def_section_sizes[8] = 50;//THvHeader->resizeSection(6, 50);//Q
         def_section_sizes[9] = 55;//THvHeader->resizeSection(7, 55);//freq
+        def_section_sizes[10] = 45;//State
 
         //THvHeader->setSectionResizeMode(0, QHeaderView::Interactive);//1.81 for font
         THvHeader->setSectionResizeMode(4, QHeaderView::Stretch);//qt5
@@ -1437,6 +1442,13 @@ QString DecodeList::FindCountry(QString sid,QString txt,QString call)
     res = THvCty->FindCountry(call,false);
     return res;
 }
+QString DecodeList::FindState(QString sid,QString txt,QString call)
+{
+    if (!s_show_counc) return "";
+    if (sid.startsWith("TX") || sid=="QSY") return "";
+    if (call.isEmpty()) call = FindHisCall(txt);
+    return THvCty->FindUsState(call);
+}
 QString DecodeList::CalcDistance(QString sid,QString txt)
 {
     QString res = "";
@@ -1579,9 +1591,10 @@ void DecodeList::InsertItem_hv(QStringList list,bool ffopen,bool forme)
         alltxt.append(ModeStr(s_mode)+"|");
         QList<QStandardItem *> qlsi;
         int k = 0;
-        uint8_t falltxt[2];
+        uint8_t falltxt[3];
         falltxt[0] = 100; //no save column
         falltxt[1] = 100; //no save column
+        falltxt[2] = 100; //no save column
 
         uint8_t id_vomsg = 0;
         if (s_mode==11)//2.76sf 0=normal msg, 1=$VERIFY$, 2=C0ALL.123456, 3=verified
@@ -1608,14 +1621,17 @@ void DecodeList::InsertItem_hv(QStringList list,bool ffopen,bool forme)
         	{
         		list.insert(5,"");//list.insert(5, FindCountry("","",list.at(4).split(" ").at(0))); 
         		list.insert(6,"");      		
+        		if (list.count()==10) list.append("");
        		}
             else 
             {
             	list.insert(5, FindCountry(list.at(1),list.at(4),call)); 
             	list.insert(6,CalcDistance(list.at(1),list.at(4)));           	
+            	if (list.count()==10) list.append(FindState(list.at(1),list.at(4),call));//State after Freq, readers index up to 9
            	}            
             falltxt[0] = 5;
             falltxt[1] = 6;
+            falltxt[2] = 10;
         }
         else if (s_mode==0)
         {
@@ -1632,6 +1648,8 @@ void DecodeList::InsertItem_hv(QStringList list,bool ffopen,bool forme)
             falltxt[1] = 8;
         }        
 
+        int last_save = list.count()-1;//last column written to ALL.TXT, no '|' after it
+        while (last_save>0 && (last_save==falltxt[0] || last_save==falltxt[1] || last_save==falltxt[2])) last_save--;
         for (QStringList::iterator it =  list.begin(); it != list.end(); ++it)
         {
             QString txtin = QString(*it);
@@ -1689,7 +1707,7 @@ void DecodeList::InsertItem_hv(QStringList list,bool ffopen,bool forme)
                         item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
                         if (isNotTxnQsyCq(list.at(1))) item->setEditable(true); // yes double click for select call
                     }
-                    else if (k==5) item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);//2.73 Dist Country  freq
+                    else if (k==5 || k==10) item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);//2.73 Dist Country  freq, State
                     else item->setTextAlignment(Qt::AlignCenter);
                     if (k==9)//2.73 Dist Country  freq
                     {
@@ -1749,9 +1767,9 @@ void DecodeList::InsertItem_hv(QStringList list,bool ffopen,bool forme)
                	              	
                 qlsi.append(item);
             }
-            if (k!=falltxt[0] && k!=falltxt[1])//2.73
+            if (k!=falltxt[0] && k!=falltxt[1] && k!=falltxt[2])//2.73
             {
-                if (k<list.count()-1) alltxt.append(txtin+"|");
+                if (k<last_save) alltxt.append(txtin+"|");
                 else alltxt.append(txtin);
             }
             k++;
@@ -2033,6 +2051,8 @@ void DecodeList::paintEvent(QPaintEvent *event)
     else c_col=8;// jtms fsk441 fsk315 jt6m
     //if (s_list_ident==1) qDebug()<<"istrt="<<istrt<<c_col;
     for (int i = istrt; i<c_col; ++i) painter.drawLine(header()->sectionPosition(i),1,header()->sectionPosition(i),height());
+    if ((s_mode==11 || s_mode==13 || s_mode==18 || allq65) && s_show_counc)//State sits between Country and Dist
+        painter.drawLine(header()->sectionPosition(10),1,header()->sectionPosition(10),height());
     painter.restore();
     // triabva da e sled QTreeView::paintEvent(event); ina4e ne risuva pravilno
     // Tuk a ne na drawRow za da risuva kogato niama item v listata

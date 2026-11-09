@@ -183,6 +183,7 @@ public:
     void SetStDecode(QString time,int mousebutton,bool);
     void SetStDecoderDeep(int d);
     void SetStApDecode(bool f);
+    void SetBandChangedStaticAll(uint8_t);
     void SetStQSOProgress(int,int);
     void SetStTxFreq(double f);
     void Decode3intFt(bool);//2.39 remm
@@ -235,6 +236,7 @@ private:
     double DEC_SAMPLE_RATE;
     double twopi;
     double pi;
+    uint8_t band8;
 
     bool f_new_p;
     //QString s_time8_prev;
@@ -437,6 +439,7 @@ private:
     void agccft8(double nfa,double nfb);*/
 
     void sync8var(double,double,double,double,double c[4][512],int&,int,int,int,bool,int,int,double,double);
+    bool extract_calls(QString msgd,QString &c1,QString &c2,int &ispc1,int &ispc2,int &ispc3);
 
     double complex csyncsd[19][32];//(0:18,32)
     double complex csyncsdcq[58][32];//(0:57,32)
@@ -450,21 +453,23 @@ private:
                    bool lastsync,int iqso,bool lcq,bool lcallsstd,bool lcqcand,int);
 
     void syncdist(double *,int *,int);
+    void set_itonedem_s8(int *itonedem,bool *lmatched,double s8_1_[79][8]);
     void ft8sd1var(double s8_[79][8],int *itone,QString msgd,QString &msg37,bool &lft8sd,bool lcq);
     void ft8mf1var(double s8_[79][8],int *itone,QString msgd,QString &msg37,bool &lft8sd);
     int idtone25[25][58];//(25,58)
     void ft8mfcqvar(double s8_[79][8],int *itone,QString msgd,QString &msg37,bool &lft8sd);
     void ft8svar(double s8_[79][8],double srr,int *itone,QString &msg37,bool &lft8s,int nft8rxfsens,bool stophint);
-
+	
     //double napwid8;
     bool lapmyc;
     //int nqsoend[3];
     void ft8sdvar(double s8_[79][8],double srr,int *itone,QString msgd,QString &msg37,bool &lft8sd,bool lcq);
     void subtractft8var(int *itone,double f0,double dt);
+    
+    uint8_t isFalseDecode(QString msg,int xsnr,double qual,int nharderror);   
     int nindex;
     QString msgincall[MAXINC_PerDec+5];//(174)
     double xdtincall[MAXINC_PerDec+5];//(174)
-    //bool first_ft8b_2var;
     void ft8bvar(bool &newdat1,int nQSOProgress,double nfqso,double nftx,bool lsubtract,
                  bool nagainfil,double &f1,double &xdt,int &nbadcrc,
                  QString &msg37,double &xsnr,bool stophint,bool &lFreeText,int ipass,bool lft8subpass,
@@ -476,7 +481,8 @@ private:
     int nmsgloc;
     xcopy_struct eventmp[MAXStatOEt+5];
     xcopy_struct oddtmp[MAXStatOEt+5];
-    void ft8_SetStart_ev_od_var(bool);
+    uint8_t band8var;
+    void ft8_SetStart_ev_od_var(bool,uint8_t);
     void ft8_Write_evt_odt_var(QString,int,bool,double,double,bool,bool,bool);
     void ft8_decodevar(double *,int,double,double,double,bool &,double,double,bool,bool,bool);
 
@@ -495,6 +501,7 @@ public:
     void SetStMultiAnswerMod(bool f);
     void SetStDecoderDeep(int d);
     void SetStApDecode(bool f);// only in mshv
+    void SetBandChangedStaticAll(uint8_t);
     void SetStQSOProgress(int i);
     void SetStDecode(QString time,int mousebutton,bool);
     void SetStWords(QString,QString,int,int,QString);
@@ -517,6 +524,7 @@ private:
     double DEC_SAMPLE_RATE;
     double twopi;
     double pi;
+    uint8_t band4;
 
     //bool f_new_p;
     //void dshift1(double *a,int cou_a,int ish);//???
@@ -603,6 +611,7 @@ public:
     void SetStMultiAnswerMod(bool f);
     void SetStDecoderDeep(int d);
     void SetStApDecode(bool f);// only in mshv
+    void SetBandChangedStaticAll(uint8_t);
     void SetStQSOProgress(int i);
     void SetStDecode(QString time,int mousebutton,bool);
     void SetStWords(QString,QString,int,int,QString);
@@ -625,6 +634,7 @@ private:
     double DEC_SAMPLE_RATE;
     double twopi;
     double pi;
+    uint8_t band2;
 
     //bool f_new_p;
     //void dshift1(double *a,int cou_a,int ish);//???
@@ -743,6 +753,7 @@ public:
     DecoderMs(QString);
     ~DecoderMs();
 
+	void setBand(int);
     void setMode(int);
     //void ResetCalsHashFileOpen(); //msk40 za po natatak ako ima oplakwane 1.31
     void SetCalsHashFileOpen(QString);

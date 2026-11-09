@@ -206,6 +206,254 @@
     </message>
 </context>
 <context>
+    <name>FlexPanel</name>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="40"/>
+        <source>FlexRadio Native</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="64"/>
+        <source>Radio meters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="69"/>
+        <source>Forward power</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="70"/>
+        <source>SWR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="71"/>
+        <source>Reflected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="72"/>
+        <source>ALC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="73"/>
+        <source>PA temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="74"/>
+        <source>Supply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="78"/>
+        <source>Slice</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="85"/>
+        <source>RX antenna</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="86"/>
+        <source>TX antenna</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="87"/>
+        <source>Mode</source>
+        <translation type="unfinished">模式</translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="98"/>
+        <source>Transmit power</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="112"/>
+        <source>RF drive for normal transmit (transmit set rfpower).
+Takes effect on Enter or when the field loses focus.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="114"/>
+        <source>RF drive for TUNE only (transmit set tunepower).
+Kept separate so a tune-up does not hit the
+amplifier at full transmit drive.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="117"/>
+        <source>Ceiling the radio enforces on the two above
+(transmit set max_power_level).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="119"/>
+        <source>Hardware ALC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="120"/>
+        <source>Let an external amplifier&apos;s ALC line control drive
+(transmit set hwalc_enabled).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="123"/>
+        <source>RF power</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="124"/>
+        <source>Tune power</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="125"/>
+        <source>Max power</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="135"/>
+        <source>Antenna tuner</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="140"/>
+        <source>Tune</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="141"/>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="532"/>
+        <source>Bypass</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="142"/>
+        <source>Memories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="143"/>
+        <source>Runs the radio&apos;s antenna tuner (atu start).
+The radio TRANSMITS while it tunes -
+put an amplifier in standby first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="146"/>
+        <source>Takes the tuner out of the antenna path (atu bypass).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="147"/>
+        <source>Use the tuner&apos;s stored settings
+(atu set memories enabled).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="149"/>
+        <source>Status</source>
+        <translation type="unfinished">状态</translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="158"/>
+        <source>Local audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="164"/>
+        <source>Mute front speaker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="165"/>
+        <source>Mutes the speaker in the radio&apos;s front panel.
+M series only - other models have no front speaker.
+Line-out and headphones are left alone, and the
+DAX audio MSHV decodes is unaffected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="417"/>
+        <source>Flex Native: not connected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="524"/>
+        <source>Tuned</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="525"/>
+        <source>OK</source>
+        <translation type="unfinished">确定</translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="526"/>
+        <source>Tuning...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="531"/>
+        <source>No tuning required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="533"/>
+        <source>Bypass (manual)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="534"/>
+        <source>Failed, bypassed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="535"/>
+        <source>Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="536"/>
+        <source>Aborted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="537"/>
+        <source>Not tuned</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="540"/>
+        <source>memory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="544"/>
+        <source>Refused by the radio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="586"/>
+        <source>Mutes the speaker in the radio&apos;s front panel.
+Line-out and headphones are left alone, and the
+DAX audio MSHV decodes is unaffected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../HvRigControl/HvRigCat/network/flexpanel.cpp" line="589"/>
+        <source>%1 has no front panel speaker.
+This control is for M series radios.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HvAstroDataW</name>
     <message>
         <location filename="../HvTxW/HvAstroDataW/hvastrodataw.cpp" line="578"/>
@@ -1326,7 +1574,7 @@ If you are in mode MSK144 the allowed Activity Types are only:</source>
     </message>
     <message>
         <location filename="../HvRigControl/hvrigcontrol.cpp" line="281"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1143"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1144"/>
         <source>Connect</source>
         <translation>连接</translation>
     </message>
@@ -1396,10 +1644,10 @@ If you are in mode MSK144 the allowed Activity Types are only:</source>
     <message>
         <location filename="../HvRigControl/hvrigcontrol.cpp" line="444"/>
         <location filename="../HvRigControl/hvrigcontrol.cpp" line="633"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1419"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1632"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1639"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2453"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1420"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1633"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1640"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2456"/>
         <source>START PTT TEST    NO PORT SELECTED</source>
         <translation>启动PTT测试    无选择端口</translation>
     </message>
@@ -1420,8 +1668,8 @@ If you are in mode MSK144 the allowed Activity Types are only:</source>
     </message>
     <message>
         <location filename="../HvRigControl/hvrigcontrol.cpp" line="473"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="895"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="899"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="896"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="900"/>
         <source>Select  Audio Frequency</source>
         <translation>选择音频频率</translation>
     </message>
@@ -1459,7 +1707,7 @@ If you are in mode MSK144 the allowed Activity Types are only:</source>
     </message>
     <message>
         <location filename="../HvRigControl/hvrigcontrol.cpp" line="556"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2208"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2211"/>
         <source>Transverter Local Oscillator Or RIG Offset:   For Band</source>
         <translation>变频器本地振荡器或无线电设备偏移:   对于波段</translation>
     </message>
@@ -1489,47 +1737,47 @@ If you are in mode MSK144 the allowed Activity Types are only:</source>
         <translation>周期</translation>
     </message>
     <message>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="996"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1108"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1239"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1410"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1548"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2421"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2448"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2515"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="997"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1109"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1240"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1411"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1549"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2424"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2451"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2518"/>
         <source>START PTT TEST</source>
         <translation>启动PTT测试</translation>
     </message>
     <message>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1013"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1014"/>
         <source>START PTT TEST    FAILED TO START OMNIRIG</source>
         <translation>启动PTT测试    OMNIRIG启动失败</translation>
     </message>
     <message>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1104"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1105"/>
         <source>Disconnect</source>
         <translation>断开</translation>
     </message>
     <message>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1124"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1125"/>
         <source>Wait</source>
         <translation>等待</translation>
     </message>
     <message>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1231"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2413"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1232"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2416"/>
         <source>STOP PTT TEST</source>
         <translation>停止PTT测试</translation>
     </message>
     <message>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1420"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2454"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1421"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2457"/>
         <source>START PTT TEST    PORT</source>
         <translation>启动PTT测试    端口</translation>
     </message>
     <message>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1420"/>
-        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2454"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="1421"/>
+        <location filename="../HvRigControl/hvrigcontrol.cpp" line="2457"/>
         <source>IS BUSY</source>
         <translation>正在忙碌</translation>
     </message>
@@ -1604,237 +1852,237 @@ Max Time or Max Periods</source>
 <context>
     <name>HvTxW</name>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="637"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="641"/>
         <source>Automatic Sequencing</source>
         <translation>自动程序</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="682"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="686"/>
         <source>ADD TO LOG</source>
         <translation>添加到日志</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="685"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="689"/>
         <source>Left Click, ADD TO LOG</source>
         <translation>左键, 添加到日志</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="685"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="689"/>
         <source>Right Click, Logging Settings</source>
         <translation>右键, 日志设置</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="690"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="694"/>
         <source>TO RADIO</source>
         <translation>呼号</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="720"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="3548"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="3561"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="724"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="3576"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="3589"/>
         <source>AUTO IS OFF</source>
         <translation>发射已关闭</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="726"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="730"/>
         <source>GEN MSG</source>
         <translation>生成信息</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="752"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="756"/>
         <source>TX To RX</source>
         <translation>TX 到 RX</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="755"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="759"/>
         <source>RX To TX</source>
         <translation>RX 到 TX</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="765"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="769"/>
         <source>Lock TX &amp; RX</source>
         <translation>锁定 发射及接收频率</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="785"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="789"/>
         <source>RX Only First/Second Period</source>
         <translation>接收 仅第一/第二周期</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="788"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="792"/>
         <source>TX FIRST</source>
         <translation>发射第一</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="790"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="794"/>
         <source>TX SECOND</source>
         <translation>发射第二</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="886"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="890"/>
         <source>LOCATOR</source>
         <translation>定位</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="892"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="896"/>
         <source>Dist</source>
         <translation>距离</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="898"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="902"/>
         <source>Azimuth</source>
         <translation>方位</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="904"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="908"/>
         <source>Elevation</source>
         <translation>海拔</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="914"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="918"/>
         <source>LOOKUP</source>
         <translation>查找</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="922"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="926"/>
         <source>ADD</source>
         <translation>添加</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="956"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="960"/>
         <source>R1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="963"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="967"/>
         <source>MONITOR</source>
         <translation>监听</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="964"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="968"/>
         <source>R2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="971"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="975"/>
         <source>MOON</source>
         <translation>月球</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="974"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="1315"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="978"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="1320"/>
         <source>Az</source>
         <translation>角度</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="977"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="1316"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="981"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="1321"/>
         <source>El</source>
         <translation>仰角</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="980"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="1317"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="984"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="1322"/>
         <source>Dop</source>
         <translation>多谱勒频移</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="983"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="1318"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="987"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="1323"/>
         <source>Dgrd</source>
         <translation>路径损耗</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="1726"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="1731"/>
         <source>Overwrite Locator Database</source>
         <translation>复盖定位数据库</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="1779"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="2557"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="1784"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2562"/>
         <source>Please set valid call sign</source>
         <translation>请设置有效的呼号</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="2187"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2192"/>
         <source>In Multi Answering Auto Seq Protocol Standard</source>
         <translation>在多应答自动序列协议标准中</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="2212"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="2298"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2217"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2303"/>
         <source>There were two non-standard callsigns,</source>
         <translation>有两个非标准呼号,</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="2216"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="2231"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="2302"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="2318"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2221"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2236"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2307"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2323"/>
         <source>His Call</source>
         <translation>他的呼号</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="2215"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="2230"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="2301"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="2317"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2220"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2235"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2306"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2322"/>
         <source>My Call</source>
         <translation>我的呼号</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="578"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="582"/>
         <source>Super Hound</source>
         <translation>超级猎犬</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="582"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="586"/>
         <source>Super Fox</source>
         <translation>超级狐狸</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="2188"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2193"/>
         <source>In the HF bands</source>
         <translation>在高频波段</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="2189"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2194"/>
         <source>Not possible to TX in second period if TX Slots is more then one</source>
         <translation>如果发送时隙多于一个, 则不可能在第二周期内发送</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="2217"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="2232"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="2303"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="2319"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2222"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2237"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2308"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2324"/>
         <source>so this QSO is not possible in this protocol</source>
         <translation>所以此通联在此协议中是不可能的</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="2213"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="2229"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="2299"/>
-        <location filename="../HvTxW/hvtxw.cpp" line="2316"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2218"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2234"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2304"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2321"/>
         <source>There were non-standard callsign,</source>
         <translation>有非标准呼号,</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="2339"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2344"/>
         <source>You have a Call in the queue already</source>
         <translation>你已经有一个呼叫在队列中</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="2564"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="2569"/>
         <source>Please set valid locator</source>
         <translation>请设置有效的定位</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="3570"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="3598"/>
         <source>AUTO IS ON</source>
         <translation>发射已开启</translation>
     </message>
     <message>
-        <location filename="../HvTxW/hvtxw.cpp" line="4893"/>
+        <location filename="../HvTxW/hvtxw.cpp" line="4924"/>
         <source>Are you sure you want to spot your call</source>
         <translation>你确定你想 spot 你的呼叫吗</translation>
     </message>
@@ -2110,628 +2358,638 @@ Max Time or Max Periods</source>
 <context>
     <name>Main_Ms</name>
     <message>
-        <location filename="../main_ms.cpp" line="402"/>
+        <location filename="../main_ms.cpp" line="422"/>
         <source>Generate Messages For Test Tones</source>
         <translation>生成信息用于测试音调</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="405"/>
+        <location filename="../main_ms.cpp" line="425"/>
         <source>Time Synchronization</source>
         <translation>时间同步</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="409"/>
+        <location filename="../main_ms.cpp" line="429"/>
         <source>Online Time Check</source>
         <translation>在线时间检查</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="412"/>
+        <location filename="../main_ms.cpp" line="432"/>
         <source>Font Settings</source>
         <translation>字体设置</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="419"/>
+        <location filename="../main_ms.cpp" line="439"/>
         <source>Options</source>
         <translation>选项</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="435"/>
+        <location filename="../main_ms.cpp" line="455"/>
         <source>Radio And Frequencies Configuration</source>
         <translation>无线电和频率配置</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="447"/>
+        <location filename="../main_ms.cpp" line="467"/>
         <source>Decode Lists Options</source>
         <translation>解码列表选项</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="514"/>
+        <location filename="../main_ms.cpp" line="534"/>
         <source>Log Options</source>
         <translation>日志选项</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="526"/>
+        <location filename="../main_ms.cpp" line="546"/>
         <source>Warn Me If QSO Before</source>
         <translation>如果曾经通联警告我</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="530"/>
+        <location filename="../main_ms.cpp" line="550"/>
         <source>Log QSO Start Date,Time = End Date,Time</source>
         <translation>记录通联 开始日期, 时间 = 结束日期, 时间</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="535"/>
+        <location filename="../main_ms.cpp" line="555"/>
         <source>Turn Auto Comments Off</source>
         <translation>关闭自动注释</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="544"/>
+        <location filename="../main_ms.cpp" line="564"/>
         <source>Other Options</source>
         <translation>其他选项</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="552"/>
+        <location filename="../main_ms.cpp" line="572"/>
         <source>Use Queue (For Contest Activitiеs Only)</source>
         <translation>使用队列 (仅用于竞赛活动)</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="569"/>
+        <location filename="../main_ms.cpp" line="589"/>
         <source>View JT65 DF Axis On Display</source>
         <translation>在显示器中查看 JT65 DF 轴</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="575"/>
+        <location filename="../main_ms.cpp" line="595"/>
         <source>Turn Off JT65 Display Markers</source>
         <translation>关闭 JT65 显示标记</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="630"/>
-        <location filename="../main_ms.cpp" line="633"/>
+        <location filename="../main_ms.cpp" line="650"/>
+        <location filename="../main_ms.cpp" line="653"/>
         <source>Mode Switcher Buttons</source>
         <translation>模式切换按钮</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="664"/>
+        <location filename="../main_ms.cpp" line="684"/>
         <source>View Astronomical Data</source>
         <translation>查看天文数据</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="416"/>
+        <location filename="../main_ms.cpp" line="436"/>
         <source>Text Highlight</source>
         <translation>文本突出显示</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="434"/>
+        <location filename="../main_ms.cpp" line="297"/>
+        <source>FlexRadio forward power and SWR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_ms.cpp" line="302"/>
+        <source>FlexRadio meters, antenna and mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main_ms.cpp" line="454"/>
         <source>Network Configuration</source>
         <translation>网络配置</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="460"/>
+        <location filename="../main_ms.cpp" line="480"/>
         <source>Use Two Decode Lists</source>
         <translation>使用两个解码列表</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="465"/>
+        <location filename="../main_ms.cpp" line="485"/>
         <source>Double Click On Call Sets Auto Is On</source>
         <translation>双击呼号自动呼叫</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="469"/>
+        <location filename="../main_ms.cpp" line="489"/>
         <source>New decode period to clear Message List</source>
         <translation>新解码周期清除消息列表</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="473"/>
+        <location filename="../main_ms.cpp" line="493"/>
         <source>Single Click On Call Shows Country Info</source>
         <translation>单击呼号显示国家/地区信息</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="477"/>
+        <location filename="../main_ms.cpp" line="497"/>
         <source>Show/Hide Time Column</source>
         <translation>显示/隐藏 时间列</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="481"/>
+        <location filename="../main_ms.cpp" line="501"/>
         <source>Show/Hide Country Column</source>
         <translation>显示/隐藏 国家/地区列</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="484"/>
+        <location filename="../main_ms.cpp" line="504"/>
         <source>Show/Hide Distance Column</source>
         <translation>显示/隐藏 距离列</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="487"/>
+        <location filename="../main_ms.cpp" line="507"/>
         <source>Show/Hide Frequency Column</source>
         <translation>显示/隐藏 频率列</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="504"/>
+        <location filename="../main_ms.cpp" line="524"/>
         <source>Decode List Filters</source>
         <translation>解码过滤器列表</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="517"/>
+        <location filename="../main_ms.cpp" line="537"/>
         <source>Log Automatically QSO</source>
         <translation>自动记录通联日志</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="521"/>
+        <location filename="../main_ms.cpp" line="541"/>
         <source>Prompt Me To Log QSO</source>
         <translation>提示我记录通联日志</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="539"/>
+        <location filename="../main_ms.cpp" line="559"/>
         <source>Auto Logging Info Settings</source>
         <translation>设置自动记录信息</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="547"/>
+        <location filename="../main_ms.cpp" line="567"/>
         <source>Skip Tx1</source>
         <translation>跳过 Tx1</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="547"/>
+        <location filename="../main_ms.cpp" line="567"/>
         <source>Uncheck for DXpedition</source>
         <translation>取消选择 DX远征模式</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="558"/>
-        <location filename="../main_ms.cpp" line="562"/>
+        <location filename="../main_ms.cpp" line="578"/>
+        <location filename="../main_ms.cpp" line="582"/>
         <source>Recognize Period</source>
         <translation>识别周期</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="581"/>
+        <location filename="../main_ms.cpp" line="601"/>
         <source>Turn On Mouse Markers</source>
         <translation>打开鼠标标记</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="585"/>
+        <location filename="../main_ms.cpp" line="605"/>
         <source>Turn On RX Markers</source>
         <translation>打开接收标记</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="590"/>
+        <location filename="../main_ms.cpp" line="610"/>
         <source>Turn On TX Markers</source>
         <translation>打开发射标记</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="612"/>
+        <location filename="../main_ms.cpp" line="632"/>
         <source>Manually Add Calls To Queue By Double Click</source>
         <translation>通过双击手动将呼号添加到队列中</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="630"/>
+        <location filename="../main_ms.cpp" line="650"/>
         <source>Choose Modes</source>
         <translation>选择模式</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="631"/>
+        <location filename="../main_ms.cpp" line="651"/>
         <source>USE MODE SWITCHER</source>
         <translation>使用模式切换</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="645"/>
-        <location filename="../main_ms.cpp" line="648"/>
+        <location filename="../main_ms.cpp" line="665"/>
+        <location filename="../main_ms.cpp" line="668"/>
         <source>Band Switcher Buttons</source>
         <translation>波段切换按钮</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="645"/>
+        <location filename="../main_ms.cpp" line="665"/>
         <source>Choose Bands</source>
         <translation>选择波段</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="646"/>
+        <location filename="../main_ms.cpp" line="666"/>
         <source>USE BAND SWITCHER</source>
         <translation>使用波段切换</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="671"/>
+        <location filename="../main_ms.cpp" line="691"/>
         <source>ASeq: Reply to the Most Distant.</source>
         <translation>ASeq: 回复最遥远的.</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="677"/>
+        <location filename="../main_ms.cpp" line="697"/>
         <source>TX Confirmation If 73 Or RR73</source>
         <translation>如果发出73或RR73记录确认</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="687"/>
+        <location filename="../main_ms.cpp" line="707"/>
         <source>Auto RESET QSO at end</source>
         <translation>通联结束时自动重置</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="695"/>
+        <location filename="../main_ms.cpp" line="715"/>
         <source>Monitor ON At Startup</source>
         <translation>启动时打开监听</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="815"/>
+        <location filename="../main_ms.cpp" line="836"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="820"/>
+        <location filename="../main_ms.cpp" line="841"/>
         <source>Overwrite Locator Database</source>
         <translation>复盖定位数据库</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="831"/>
-        <location filename="../main_ms.cpp" line="840"/>
+        <location filename="../main_ms.cpp" line="852"/>
+        <location filename="../main_ms.cpp" line="861"/>
         <source>Palette</source>
         <translation>调色板</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="833"/>
+        <location filename="../main_ms.cpp" line="854"/>
         <source>Default BW</source>
         <translation>默认黑白色</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="835"/>
+        <location filename="../main_ms.cpp" line="856"/>
         <source>Default Color</source>
         <translation>默认彩色</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="843"/>
+        <location filename="../main_ms.cpp" line="864"/>
         <source>Custom Palette</source>
         <translation>自定义调色板</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="852"/>
+        <location filename="../main_ms.cpp" line="873"/>
         <source>Custom Palette Editor</source>
         <translation>自定义调色板编辑器</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="857"/>
+        <location filename="../main_ms.cpp" line="878"/>
         <source>Dark Style</source>
         <translation>深暗色样式</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="867"/>
+        <location filename="../main_ms.cpp" line="888"/>
         <source>Mode</source>
         <translation>模式</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="896"/>
+        <location filename="../main_ms.cpp" line="917"/>
         <source>Band</source>
         <translation>波段</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="930"/>
-        <location filename="../main_ms.cpp" line="931"/>
+        <location filename="../main_ms.cpp" line="951"/>
+        <location filename="../main_ms.cpp" line="952"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="943"/>
+        <location filename="../main_ms.cpp" line="964"/>
         <source>Beacon List</source>
         <translation>信标列表</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="947"/>
-        <location filename="../main_ms.cpp" line="949"/>
+        <location filename="../main_ms.cpp" line="968"/>
+        <location filename="../main_ms.cpp" line="970"/>
         <source>MS Procedures</source>
         <translation>MS 程序</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="953"/>
-        <location filename="../main_ms.cpp" line="955"/>
+        <location filename="../main_ms.cpp" line="974"/>
+        <location filename="../main_ms.cpp" line="976"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="970"/>
+        <location filename="../main_ms.cpp" line="991"/>
         <source>Decode</source>
         <translation>解码</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="977"/>
+        <location filename="../main_ms.cpp" line="998"/>
         <source>Threads</source>
         <translation>线程处理</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="981"/>
-        <location filename="../main_ms.cpp" line="983"/>
-        <location filename="../main_ms.cpp" line="985"/>
-        <location filename="../main_ms.cpp" line="987"/>
-        <location filename="../main_ms.cpp" line="989"/>
-        <location filename="../main_ms.cpp" line="997"/>
-        <location filename="../main_ms.cpp" line="998"/>
-        <location filename="../main_ms.cpp" line="999"/>
-        <location filename="../main_ms.cpp" line="1000"/>
-        <location filename="../main_ms.cpp" line="1001"/>
+        <location filename="../main_ms.cpp" line="1002"/>
+        <location filename="../main_ms.cpp" line="1004"/>
+        <location filename="../main_ms.cpp" line="1006"/>
+        <location filename="../main_ms.cpp" line="1008"/>
+        <location filename="../main_ms.cpp" line="1010"/>
+        <location filename="../main_ms.cpp" line="1018"/>
+        <location filename="../main_ms.cpp" line="1019"/>
+        <location filename="../main_ms.cpp" line="1020"/>
+        <location filename="../main_ms.cpp" line="1021"/>
+        <location filename="../main_ms.cpp" line="1022"/>
         <source>Max</source>
         <translation>最多</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="997"/>
-        <location filename="../main_ms.cpp" line="998"/>
-        <location filename="../main_ms.cpp" line="999"/>
-        <location filename="../main_ms.cpp" line="1000"/>
-        <location filename="../main_ms.cpp" line="1001"/>
+        <location filename="../main_ms.cpp" line="1018"/>
+        <location filename="../main_ms.cpp" line="1019"/>
+        <location filename="../main_ms.cpp" line="1020"/>
+        <location filename="../main_ms.cpp" line="1021"/>
+        <location filename="../main_ms.cpp" line="1022"/>
         <source>Do Not Use If TXing</source>
         <translation>如果传输中不要使用</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1004"/>
+        <location filename="../main_ms.cpp" line="1025"/>
         <source>Fast</source>
         <translation>快速</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1006"/>
+        <location filename="../main_ms.cpp" line="1027"/>
         <source>Normal</source>
         <translation>正常</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1008"/>
+        <location filename="../main_ms.cpp" line="1029"/>
         <source>Deep</source>
         <translation>深度</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1015"/>
+        <location filename="../main_ms.cpp" line="1036"/>
         <source>Use Three-stage Decoding</source>
         <translation>使用三阶段解码</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1019"/>
+        <location filename="../main_ms.cpp" line="1040"/>
         <source>Use</source>
         <translation>使用</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1022"/>
+        <location filename="../main_ms.cpp" line="1043"/>
         <source>Parameters</source>
         <translation>参数</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1026"/>
+        <location filename="../main_ms.cpp" line="1047"/>
         <source>Decoder Cycles 1</source>
         <translation>解码器周期 1</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1028"/>
+        <location filename="../main_ms.cpp" line="1049"/>
         <source>Decoder Cycles 2</source>
         <translation>解码器周期 2</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1030"/>
+        <location filename="../main_ms.cpp" line="1051"/>
         <source>Decoder Cycles 3</source>
         <translation>解码器周期 3</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1034"/>
+        <location filename="../main_ms.cpp" line="1055"/>
         <source>Sensitivity Minimum</source>
         <translation>最低灵敏度</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1036"/>
+        <location filename="../main_ms.cpp" line="1057"/>
         <source>Sensitivity Use Low Thresholds</source>
         <translation>灵敏度使用低阈值</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1038"/>
+        <location filename="../main_ms.cpp" line="1059"/>
         <source>Sensitivity Use Subpass</source>
         <translation>灵敏度使用子通道</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1059"/>
+        <location filename="../main_ms.cpp" line="1080"/>
         <source>Aggressive Levels</source>
         <translation>侵略性等级</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1084"/>
+        <location filename="../main_ms.cpp" line="1105"/>
         <source>Check for VHF/UHF Uncheck for HF Features</source>
         <translation>选择 VHF/UHF 取消选择 HF 功能</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1095"/>
+        <location filename="../main_ms.cpp" line="1116"/>
         <source>Enable Averaging</source>
         <translation>启用平均值</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1099"/>
+        <location filename="../main_ms.cpp" line="1120"/>
         <source>Auto Clear Averaging After Decode</source>
         <translation>解码后自动清除平均值</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1106"/>
+        <location filename="../main_ms.cpp" line="1127"/>
         <source>Enable Deep Search</source>
         <translation>启用深度搜索</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1119"/>
+        <location filename="../main_ms.cpp" line="1140"/>
         <source>Enable AP</source>
         <translation>启用 АР</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1131"/>
-        <location filename="../main_ms.cpp" line="1149"/>
+        <location filename="../main_ms.cpp" line="1152"/>
+        <location filename="../main_ms.cpp" line="1170"/>
         <source>Single Decoded Signal</source>
         <translation>解码单个信号</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1137"/>
+        <location filename="../main_ms.cpp" line="1158"/>
         <source>Use Drift Correction</source>
         <translation>使用漂移校正</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1143"/>
+        <location filename="../main_ms.cpp" line="1164"/>
         <source>Decode After EME Delay</source>
         <translation>EME 延迟解码</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1151"/>
+        <location filename="../main_ms.cpp" line="1172"/>
         <source>Max 4 Decoded Signals</source>
         <translation>解码最多 4 个信号</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1153"/>
+        <location filename="../main_ms.cpp" line="1174"/>
         <source>Max 8 Decoded Signals</source>
         <translation>解码最多 8 个信号</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1155"/>
+        <location filename="../main_ms.cpp" line="1176"/>
         <source>Max 16 Decoded Signals</source>
         <translation>解码最多 16 个信号</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1157"/>
+        <location filename="../main_ms.cpp" line="1178"/>
         <source>Max 32 Decoded Signals</source>
         <translation>解码最多 32 个信号</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1247"/>
+        <location filename="../main_ms.cpp" line="1281"/>
         <source>STOP MONITOR</source>
         <translation>停止监听</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1251"/>
+        <location filename="../main_ms.cpp" line="1285"/>
         <source>MONITOR</source>
         <translation>监听</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1257"/>
+        <location filename="../main_ms.cpp" line="1291"/>
         <source>STOP TX</source>
         <translation>停止 TX</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1261"/>
-        <location filename="../main_ms.cpp" line="3455"/>
+        <location filename="../main_ms.cpp" line="1295"/>
+        <location filename="../main_ms.cpp" line="3531"/>
         <source>CLEAR MESSAGES</source>
         <translation>清除信息</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1267"/>
+        <location filename="../main_ms.cpp" line="1301"/>
         <source>CLR RX FREQ MSG</source>
         <translation>清除接收频率信息</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1271"/>
+        <location filename="../main_ms.cpp" line="1305"/>
         <source>RESET QSO</source>
         <translation>重置通联</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1276"/>
+        <location filename="../main_ms.cpp" line="1310"/>
         <source>TUNE</source>
         <translation>调谐</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1285"/>
-        <location filename="../main_ms.cpp" line="1306"/>
-        <location filename="../main_ms.cpp" line="1312"/>
-        <location filename="../main_ms.cpp" line="2179"/>
-        <location filename="../main_ms.cpp" line="2184"/>
-        <location filename="../main_ms.cpp" line="2188"/>
+        <location filename="../main_ms.cpp" line="1319"/>
+        <location filename="../main_ms.cpp" line="1340"/>
+        <location filename="../main_ms.cpp" line="1346"/>
+        <location filename="../main_ms.cpp" line="2214"/>
+        <location filename="../main_ms.cpp" line="2219"/>
+        <location filename="../main_ms.cpp" line="2223"/>
         <source>CLEAR AVG</source>
         <translation>清除平均值</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1290"/>
-        <location filename="../main_ms.cpp" line="2050"/>
-        <location filename="../main_ms.cpp" line="2055"/>
-        <location filename="../main_ms.cpp" line="2060"/>
-        <location filename="../main_ms.cpp" line="2066"/>
-        <location filename="../main_ms.cpp" line="2068"/>
+        <location filename="../main_ms.cpp" line="1324"/>
+        <location filename="../main_ms.cpp" line="2085"/>
+        <location filename="../main_ms.cpp" line="2090"/>
+        <location filename="../main_ms.cpp" line="2095"/>
+        <location filename="../main_ms.cpp" line="2101"/>
+        <location filename="../main_ms.cpp" line="2103"/>
         <source>DECODE</source>
         <translation>解码</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1385"/>
+        <location filename="../main_ms.cpp" line="1419"/>
         <source>Auto Dec</source>
         <translation>自动解码</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1392"/>
+        <location filename="../main_ms.cpp" line="1426"/>
         <source>RT Dec</source>
         <translation>实时解码</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1422"/>
-        <location filename="../main_ms.cpp" line="1429"/>
-        <location filename="../main_ms.cpp" line="4716"/>
-        <location filename="../main_ms.cpp" line="4733"/>
+        <location filename="../main_ms.cpp" line="1457"/>
+        <location filename="../main_ms.cpp" line="1464"/>
+        <location filename="../main_ms.cpp" line="4808"/>
+        <location filename="../main_ms.cpp" line="4825"/>
         <source>SAVE DISPLAY</source>
         <translation>保存显示</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1442"/>
+        <location filename="../main_ms.cpp" line="1477"/>
         <source>Flatten Display</source>
         <translation>平坦化显示</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1456"/>
+        <location filename="../main_ms.cpp" line="1491"/>
         <source>Auto Flatten Display</source>
         <translation>自动平坦化显示</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1473"/>
+        <location filename="../main_ms.cpp" line="1508"/>
         <source>Speed</source>
         <translation>速度</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1486"/>
+        <location filename="../main_ms.cpp" line="1521"/>
         <source>Start</source>
         <translation>开始</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1555"/>
+        <location filename="../main_ms.cpp" line="1590"/>
         <source>Change Waterfall Size</source>
         <translation>变更瀑布流尺寸</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1715"/>
+        <location filename="../main_ms.cpp" line="1750"/>
         <source>To change the Style, you need to MANUALLY RESTART MSHV</source>
         <translation>要更改样式, 您需要手动重新启动 MSHV</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1876"/>
+        <location filename="../main_ms.cpp" line="1911"/>
         <source>MA DXpedition</source>
         <translation>МA DX远征</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1877"/>
+        <location filename="../main_ms.cpp" line="1912"/>
         <source>MA Standard</source>
         <translation>МA 标准</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="3447"/>
+        <location filename="../main_ms.cpp" line="3523"/>
         <source>CLR MSG</source>
         <translation>清除信息</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="4709"/>
+        <location filename="../main_ms.cpp" line="4801"/>
         <source>SAVE THIS</source>
         <translation>保存这</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="4726"/>
+        <location filename="../main_ms.cpp" line="4818"/>
         <source>SAVE PREVIOUS</source>
         <translation>保存上一个</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="4764"/>
-        <location filename="../main_ms.cpp" line="4780"/>
+        <location filename="../main_ms.cpp" line="4856"/>
+        <location filename="../main_ms.cpp" line="4872"/>
         <source>File Name</source>
         <translation>文件名称</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="4790"/>
+        <location filename="../main_ms.cpp" line="4882"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="4790"/>
+        <location filename="../main_ms.cpp" line="4882"/>
         <source>Files</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="4814"/>
+        <location filename="../main_ms.cpp" line="4906"/>
         <source>Open File</source>
         <translation>打开文件</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="4966"/>
+        <location filename="../main_ms.cpp" line="5058"/>
         <source>Windows Xp:
 1.Click on the Internet Time tab.
 2.Click on the Update Now button.
@@ -2748,7 +3006,7 @@ Windows 7,8,8.1,10:
 3.单击 立即更新 按钮.</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="5212"/>
+        <location filename="../main_ms.cpp" line="5304"/>
         <source>Multi Answering Auto Seq Protocol
 can be used only in Standard Activity Type
 Go to Options Macros and correct.</source>
@@ -2757,27 +3015,27 @@ Go to Options Macros and correct.</source>
 转到选项自定义文字并更正.</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="979"/>
+        <location filename="../main_ms.cpp" line="1000"/>
         <source>Only 1</source>
         <translation>仅可 1</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1043"/>
+        <location filename="../main_ms.cpp" line="1064"/>
         <source>MSK RX Equalization Off</source>
         <translation>MSK 接收均衡关闭</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1045"/>
+        <location filename="../main_ms.cpp" line="1066"/>
         <source>MSK RX Equalization Static</source>
         <translation>MSK 接收均衡静态</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1047"/>
+        <location filename="../main_ms.cpp" line="1068"/>
         <source>MSK RX Equalization Dynamic</source>
         <translation>MSK 接收均衡动态</translation>
     </message>
     <message>
-        <location filename="../main_ms.cpp" line="1049"/>
+        <location filename="../main_ms.cpp" line="1070"/>
         <source>MSK RX Equalization S And D</source>
         <translation>MSK 接收均衡静态和动态</translation>
     </message>
@@ -2973,73 +3231,73 @@ HF频段中有多个插槽操作.</translation>
 <context>
     <name>Network</name>
     <message>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="643"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="851"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="869"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="883"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="897"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="912"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="926"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="940"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1958"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2193"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2211"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2225"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2249"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2264"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2278"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2293"/>
         <source>Connecting to</source>
         <translation>连接到</translation>
     </message>
     <message>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="643"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="851"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="869"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="883"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="897"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="912"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="926"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="940"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1098"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1323"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1351"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1384"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1442"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1457"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1509"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1595"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1958"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2193"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2211"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2225"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2249"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2264"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2278"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2293"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2479"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2704"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2732"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2765"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2823"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2838"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2890"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="3005"/>
         <source>Port</source>
         <translation>端口</translation>
     </message>
     <message>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="851"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="869"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="883"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="897"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="912"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="926"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="940"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2193"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2211"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2225"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2249"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2264"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2278"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2293"/>
         <source>Try</source>
         <translation>尝试</translation>
     </message>
     <message>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="836"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="864"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="878"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="892"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="906"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="921"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="935"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2178"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2206"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2220"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2244"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2258"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2273"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2287"/>
         <source>Error To Initialize</source>
         <translation>初始化错误</translation>
     </message>
     <message>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1098"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1323"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1351"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1384"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1442"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1457"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1509"/>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1595"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2479"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2704"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2732"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2765"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2823"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2838"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="2890"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="3005"/>
         <source>Connected to</source>
         <translation>连接到</translation>
     </message>
     <message>
-        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="657"/>
+        <location filename="../HvRigControl/HvRigCat/network/network.cpp" line="1985"/>
         <source>Disconnected</source>
         <translation>断开</translation>
     </message>
@@ -3100,8 +3358,8 @@ HF频段中有多个插槽操作.</translation>
     </message>
     <message>
         <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="1032"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3026"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3051"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3027"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3052"/>
         <source>PSK Reporter Is Disabled And Disconnected</source>
         <translation>PSK Reporter 已禁用和断开连接</translation>
     </message>
@@ -3109,13 +3367,13 @@ HF频段中有多个插槽操作.</translation>
         <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="1032"/>
         <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="1051"/>
         <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="1122"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3007"/>
         <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3008"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3024"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3026"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3051"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3440"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3442"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3009"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3025"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3027"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3052"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3441"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3443"/>
         <source>Status</source>
         <translation>状态</translation>
     </message>
@@ -3126,13 +3384,13 @@ HF频段中有多个插槽操作.</translation>
     </message>
     <message>
         <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="1051"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3010"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3011"/>
         <source>Disconnected</source>
         <translation>断开</translation>
     </message>
     <message>
         <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="1058"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3012"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3013"/>
         <source>Press To Connect</source>
         <translation>按下连接</translation>
     </message>
@@ -3148,7 +3406,7 @@ HF频段中有多个插槽操作.</translation>
     </message>
     <message>
         <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="1122"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3442"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3443"/>
         <source>UDP Broadcast Is Disabled And Disconnected</source>
         <translation>UDP 广播已禁用并断开连接</translation>
     </message>
@@ -3246,7 +3504,7 @@ HF频段中有多个插槽操作.</translation>
     </message>
     <message>
         <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="1492"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3941"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3974"/>
         <source>List Servers</source>
         <translation>列出服务器</translation>
     </message>
@@ -3267,38 +3525,38 @@ HF频段中有多个插槽操作.</translation>
     </message>
     <message>
         <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="1569"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3118"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3119"/>
         <source>N/A For This Activity Type</source>
         <translation>此活动类型的不适用</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="1669"/>
         <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="1670"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="1671"/>
         <source>Page</source>
         <translation>页</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2464"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2465"/>
         <source>Unposted QSOs are in the MSHV Log directori and the filename is</source>
         <translation>未发布的通联位于MSHV日志目录中, 文件名为</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2472"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2473"/>
         <source>Successful upload</source>
         <translation>成功上传</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2473"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2474"/>
         <source>Upload accepted and queued!</source>
         <translation>上传已接受并等候!</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2635"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2636"/>
         <source>Missing: E-Mail or Password or Callsign</source>
         <translation>缺少: 电子邮件或密码或呼号</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2862"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2863"/>
         <source>Default frequencies have been changed for the</source>
         <translation>默认频率已更改为</translation>
     </message>
@@ -3331,16 +3589,16 @@ HF频段中有多个插槽操作.</translation>
         <translation>无线电和频率配置</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2214"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2361"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2460"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2215"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2362"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2461"/>
         <source>Please check your Internet connection</source>
         <translation>请检查您的互联网连接</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2118"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2275"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2460"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2119"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2276"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2461"/>
         <source>Unsuccessful upload to</source>
         <translation>上传失败到</translation>
     </message>
@@ -3362,58 +3620,58 @@ HF频段中有多个插槽操作.</translation>
         <translation>发送一次性密码金钥超级狐狸</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2463"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2464"/>
         <source>or stop uploading to</source>
         <translation>或停止上传到</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2636"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2637"/>
         <source>Go to Options, Network Configuration and correct it</source>
         <translation>转到选项, 网络配置并纠正它</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2910"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="2911"/>
         <source>Default frequencies have been changed to</source>
         <translation>默认频率已更改为</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3017"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3018"/>
         <source>Press To Disconnect</source>
         <translation>按下断开</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3032"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3418"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3033"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3419"/>
         <source>Status: Reconnecting...</source>
         <translation>状态: 重新连接...</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3043"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3403"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3429"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3044"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3404"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3430"/>
         <source>Status: Connecting...</source>
         <translation>状态:连接...</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3113"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3114"/>
         <source>Default FREQs For</source>
         <translation>默认频率对于</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3259"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3260"/>
         <source>PSK Reporter Problem</source>
         <translation>PSK Reporter 的问题</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3259"/>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3339"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3260"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3340"/>
         <source>Is Not A Valid Call
 Go To Menu Options Macros And Set MY CALL</source>
         <translation>不是有效的呼号
 转到菜单 自定义文字 选项并设置 我的呼号</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3260"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3261"/>
         <source>PSK Reporter Problem
 MY CALL: Is Empty
 Go To Menu Options Macros And Set MY CALL</source>
@@ -3422,12 +3680,12 @@ Go To Menu Options Macros And Set MY CALL</source>
 转到菜单 自定义文字 选项并设置 我的呼号</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3339"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3340"/>
         <source>DX-Spot Problem</source>
         <translation>DX-Spot 的问题</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3340"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3341"/>
         <source>DX-Spot Problem
 MY CALL: Is Empty
 Go To Menu Options Macros And Set MY CALL</source>
@@ -3436,7 +3694,7 @@ Go To Menu Options Macros And Set MY CALL</source>
 转到菜单 自定义文字 选项并设置 我的呼号</translation>
     </message>
     <message>
-        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3410"/>
+        <location filename="../HvTxW/HvRadioNetW/radionetw.cpp" line="3411"/>
         <source>Status: Disconnecting...</source>
         <translation>状态: 断开...</translation>
     </message>
@@ -3511,28 +3769,28 @@ Go To Menu Options Macros And Set MY CALL</source>
         <translation>电平表刷新速度 (最快=0 最慢=5)</translation>
     </message>
     <message>
-        <location filename="../SettingsMs/settings_ms.cpp" line="745"/>
+        <location filename="../SettingsMs/settings_ms.cpp" line="787"/>
+        <location filename="../SettingsMs/settings_ms.cpp" line="788"/>
+        <location filename="../SettingsMs/settings_ms.cpp" line="789"/>
         <source>Output and Input Devices</source>
         <translation>输出和输入设备</translation>
     </message>
     <message>
-        <location filename="../SettingsMs/settings_ms.cpp" line="750"/>
+        <location filename="../SettingsMs/settings_ms.cpp" line="790"/>
         <source>Output Device</source>
         <translation>輸出設備</translation>
     </message>
     <message>
-        <location filename="../SettingsMs/settings_ms.cpp" line="755"/>
+        <location filename="../SettingsMs/settings_ms.cpp" line="791"/>
         <source>Input Device</source>
         <translation>輸入設備</translation>
     </message>
     <message>
-        <location filename="../SettingsMs/settings_ms.cpp" line="787"/>
-        <source>The TCI Client does not support 44100 Hz Sample Rate
+        <location filename="../SettingsMs/settings_ms.cpp" line="799"/>
+        <source>The TCI Client and Flex Native does not support 44100 Hz Sample Rate
 Not possible to use modes JTMS, FSK, ISCAT and JT6M
 Please in Sound Settings choose other</source>
-        <translation>TCI 客户端不支持 44100 Hz 抽样速率
-无法使用 JTMS, FSK, ISCAT 和 JT6M 模式
-请在声音设置中选择其他</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -220,6 +220,10 @@ public:
         else
         {
         	str.append("#"+QString("%1").arg(this->width())+"#"+QString("%1").arg(this->height()));
+        	for (int i = 0; i<THvLogList->model.columnCount(); ++i)
+        	{
+        		str.append("#"+QString("%1").arg(THvLogList->columnWidth(i)));        		
+       		}
         }
 		return str;				
 	}

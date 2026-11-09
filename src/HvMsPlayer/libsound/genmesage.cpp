@@ -122,15 +122,22 @@ bool GenMessage::initialize(char *msg,int mod_ident,double tx_freq,int period_t,
     s_mode = mod_ident;
     s_msf = msf;
     BITS_PER_SAMPLE = bpsampl;
+    int all_gain = 46;//2.76.7
 
     if (s_mode>0 && s_mode<7) //2.65
     {
+    	//all_gain = 46;
         GEN_SAMPLE_RATE = OUT_SAMPLE_RATE_44100;
         koef_srate = GEN_SAMPLE_RATE/ORG_SAMPLE_RATE_11025;
     }
     else
     {
-        if (s_mode == 0 || s_mode == 12) TGenMsk = new GenMsk(false);
+    	all_gain = 48;
+        if (s_mode == 0 || s_mode == 12) 
+        {
+        	all_gain = 46;
+        	TGenMsk = new GenMsk(false);        	
+       	}
         else if (s_mode == 7 || s_mode == 8 || s_mode == 9) TGen65 = new Gen65();//jt65abc
         else if (s_mode == 11) 
         {
@@ -140,7 +147,7 @@ bool GenMessage::initialize(char *msg,int mod_ident,double tx_freq,int period_t,
         else if (s_mode == 13) TGenFt4 = new GenFt4(false);//ft4
         else if (s_mode == 18) TGenFt2 = new GenFt2(false);//ft2
         else if (s_mode == 14 || s_mode == 15 || s_mode == 16|| s_mode == 17) TGenQ65 = new GenQ65(false);//q65
-            
+                    
         if (s_mode != 10) f_gens = true; //pi4
         GEN_SAMPLE_RATE = OUT_SAMPLE_RATE_48000;
         koef_srate = GEN_SAMPLE_RATE/ORG_SAMPLE_RATE_12000;
@@ -148,16 +155,18 @@ bool GenMessage::initialize(char *msg,int mod_ident,double tx_freq,int period_t,
 
 	ftci=player->gettci();
 	QString tmp = (QString)msg+"   ";
+	if (tmp[0]=='@') all_gain = 48;//2.76.7 tune
 #if defined DEB_LIMI0
 		printf("MsgSend= %s Count=%d\n",qPrintable(tmp),tmp.count());
 #endif
-	bool tune = false;
-	int all_gain = 46;//2.76.4 0ld=46 forFT8=48 true -> LSH+HSH /* Low shelf filter and High shelf filter*/ for TX gine_all 45 zaradi windows	
-	if (tmp[0]=='@') tune = true;	
-	if (s_mode==11 || s_mode==13 || s_mode==18 || tune) all_gain = 47;//if (((s_mode>-1 && s_mode<7) || s_mode==12) && !tune) all_gain = 46;
+	//bool tune = false;
+	//int all_gain = 46;//2.76.4 0ld=46 forFT8=48 true -> LSH+HSH /* Low shelf filter and High shelf filter*/ for TX gine_all 45 zaradi windows	
+	//if (tmp[0]=='@') tune = true;	
+	//if (s_mode==11 || s_mode==13 || s_mode==18 || tune) all_gain = 47;//if (((s_mode>-1 && s_mode<7) || s_mode==12) && !tune) all_gain = 46;
 	THvRawFilter = new HvRawFilter(all_gain,100.0,8000.0,true);
 #if defined DEB_LIMI0
-		printf("Filt====================== AllGain=%d Tune=%d \n",all_gain,tune);
+		if (tmp[0]=='@') printf("Filt====================== AllGain=%d Tune=1 \n",all_gain);
+		else printf("Filt====================== AllGain=%d Tune=0 \n",all_gain);
 #endif
     f_rawf = true;
 

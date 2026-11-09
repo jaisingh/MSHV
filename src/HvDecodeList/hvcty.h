@@ -28,9 +28,11 @@ public:
     bool ShowCNYDecode(QString,QStringList,bool,QString);
     bool ShowPFXDecode(QString,QStringList,bool,QString);
     QStringList GetCountries();
+    QString FindUsState(QString);//US state from FCC licence data, "" if unknown
 
 private:
     void ReadCtyDat();
+    void ReadUsStates();
 
 protected:
 

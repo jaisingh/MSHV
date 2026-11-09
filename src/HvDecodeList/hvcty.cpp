@@ -20,6 +20,8 @@ recordd;
 static QList<recordd>db_cty_p;
 static QList<recordd>db_cty_c;
 static QStringList _lcountries_;
+static QByteArray db_us_states;//"CALL ST\n" lines sorted by call
+static QVector<int> db_us_offs;//start of each line in db_us_states
 bool hv_sort_disorder_(const recordd &d1,const recordd &d2)
 {
     if (d1.pfx.count() == d2.pfx.count()) return d1.country.count() < d2.country.count(); //2.69 new equal calls, not /
@@ -42,7 +44,11 @@ void debuglst()
 HvCty::HvCty(int id_n)//QObject *parent
 //: QObject(parent)
 {
-    if (id_n==1) ReadCtyDat();//only 1 list refresh cty.dat
+    if (id_n==1)//only 1 list refresh cty.dat
+    {
+        ReadCtyDat();
+        ReadUsStates();
+    }
 }
 HvCty::~HvCty()
 {/*qDebug()<<"DELETE";*/
@@ -267,14 +273,9 @@ void HvCty::ReadCtyDat()
 }
 #include <QRegularExpression>
 QRegularExpression non_prefix_suffix {R"(\A([0-9AMPQR]|QRP|F[DF]|[AM]M|L[HT]|LGT)\z)"};
-bool HvCty::FilndDbPfx(QString call0, QString &pfx, QString &coy, QString &cot)
+static QString hv_cty_call(QString call0)//2.76.3 call part that decides the country
 {
-    bool res = false;
-    pfx="";
-    coy="Unknown";
-    cot="";
-    if (call0.isEmpty()) return false; //{qDebug()<<"CallEmpty="<<pfx<<coy<<cot<<call; return false;}
-	QString call = call0;//2.76.3
+	QString call = call0;
     int slash_pos = call.indexOf ('/');
     if (slash_pos >= 0)
     {
@@ -285,7 +286,54 @@ bool HvCty::FilndDbPfx(QString call0, QString &pfx, QString &coy, QString &cot)
             call = call0.mid (slash_pos + 1);
             if (call.contains(non_prefix_suffix) || call=="B") call = call0.left(slash_pos);
         }
-    }//end 2.76.3   	
+    }
+    return call;
+}
+void HvCty::ReadUsStates()
+{
+    QFile file(HvAppWritablePath("settings/database/us_states.dat"));
+    if (!file.open(QIODevice::ReadOnly)) return;
+    db_us_states = file.readAll();
+    file.close();
+    db_us_offs.clear();
+    db_us_offs.reserve(db_us_states.count('\n')+1);
+    int pos = 0;
+    while (pos < db_us_states.size())
+    {
+        db_us_offs.append(pos);
+        int nl = db_us_states.indexOf('\n',pos);
+        if (nl < 0) break;
+        pos = nl+1;
+    }
+}
+QString HvCty::FindUsState(QString call0)
+{
+    if (call0.isEmpty() || db_us_offs.isEmpty()) return "";
+    QStringList parts = call0.split('/');//licence address only means something for K1ABC, K1ABC/P /M /QRP
+    if (parts.count()>2) return "";
+    if (parts.count()==2 && parts.at(1)!="P" && parts.at(1)!="M" && parts.at(1)!="QRP") return "";
+    QByteArray call = parts.at(0).toLatin1()+" ";
+    const char *d = db_us_states.constData();
+    int lo = 0;
+    int hi = db_us_offs.count()-1;
+    while (lo <= hi)
+    {
+        int mid = (lo+hi)/2;
+        int c = qstrncmp(d+db_us_offs.at(mid),call.constData(),call.size());
+        if (c==0) return QString::fromLatin1(d+db_us_offs.at(mid)+call.size(),2);
+        if (c<0) lo = mid+1;
+        else hi = mid-1;
+    }
+    return "";
+}
+bool HvCty::FilndDbPfx(QString call0, QString &pfx, QString &coy, QString &cot)
+{
+    bool res = false;
+    pfx="";
+    coy="Unknown";
+    cot="";
+    if (call0.isEmpty()) return false; //{qDebug()<<"CallEmpty="<<pfx<<coy<<cot<<call; return false;}
+	QString call = hv_cty_call(call0);//2.76.3
     for (int i = 0; i < db_cty_c.count(); ++i)
     {
         QString pfxxdb = db_cty_c.at(i).pfx;

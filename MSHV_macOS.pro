@@ -34,9 +34,12 @@ LIBS += -framework CoreFoundation -framework IOKit -framework AppKit
 
 # Compiler toolchain: Homebrew GCC is used so the C++ standard library
 # matches the one FFTW/libstdc++ were built against.
-QMAKE_CC = /opt/homebrew/bin/gcc-15
-QMAKE_CXX = /opt/homebrew/bin/g++-15
-QMAKE_LINK = /opt/homebrew/bin/g++-15
+# Uses the newest installed Homebrew GCC; override with `qmake GCC_VER=15`.
+isEmpty(GCC_VER): GCC_VER = $$system(ls $$HOMEBREW_PREFIX/bin/ | grep -E '^g[+][+]-[0-9]+$' | cut -d- -f2 | sort -n | tail -1)
+isEmpty(GCC_VER): error("Homebrew GCC not found - run: brew install gcc")
+QMAKE_CC = $$HOMEBREW_PREFIX/bin/gcc-$$GCC_VER
+QMAKE_CXX = $$HOMEBREW_PREFIX/bin/g++-$$GCC_VER
+QMAKE_LINK = $$HOMEBREW_PREFIX/bin/g++-$$GCC_VER
 QMAKE_CXXFLAGS -= -stdlib=libc++
 QMAKE_LFLAGS -= -stdlib=libc++
 QMAKE_CXXFLAGS -= -freorder-functions -funroll-all-loops
@@ -151,6 +154,7 @@ HEADERS = src/main_ms.h \
  src/HvRigControl/HvRigCat/racal/racal.h \
  src/HvRigControl/HvRigCat/sdrs/sdrs.h \
  src/HvRigControl/HvRigCat/network/network.h \
+ src/HvRigControl/HvRigCat/network/flexpanel.h \
  src/HvRigControl/HvRigCat/mits/mits.h \
  src/LabWidget/labw.h \
  src/HvSlider_V_Identif/hvslider_v_identif.h \
@@ -261,6 +265,7 @@ SOURCES = src/main.cpp \
  src/HvRigControl/HvRigCat/racal/racal.cpp \
  src/HvRigControl/HvRigCat/sdrs/sdrs.cpp \
  src/HvRigControl/HvRigCat/network/network.cpp \
+ src/HvRigControl/HvRigCat/network/flexpanel.cpp \
  src/HvRigControl/HvRigCat/mits/mits.cpp \
  src/LabWidget/labw.cpp \
  src/HvSlider_V_Identif/hvslider_v_identif.cpp \

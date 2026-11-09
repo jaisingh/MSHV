@@ -149,6 +149,7 @@ private:
 	bool ShowCENDDecode(QString);
 	bool HideB4Qso(QString);
 	QString FindCountry(QString,QString,QString);	
+	QString FindState(QString,QString,QString);
 	QString CalcDistance(QString,QString);
 	bool isNotTxnQsyCq(QString);
 	

@@ -41,6 +41,7 @@ static const addr_newm icom_addr_newm[ICOM_COUNT] =
     {
         /*IC-7000*/{0x70,false},
         /*IC-7100*/{0x88,true},
+        /*IC-7110*/{0xba,true},//2.76.7
         /*IC-7200*/{0x76,false},
         /*IC-7300*/{0x94,true},
         /*IC-7300MK2*/{0xb6,true},//2.76.6

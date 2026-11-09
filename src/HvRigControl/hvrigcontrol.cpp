@@ -779,6 +779,7 @@ HvRigControl::HvRigControl( QWidget *parent )
     connect(THvRigCat, SIGNAL(EmitGetedMode(QString)), this, SLOT(SetGetedMode(QString)));
     connect(THvRigCat, SIGNAL(EmitPttDtr(bool)), this, SLOT(SetPttDtr(bool)));// sea-235
     connect(THvRigCat, SIGNAL(EmitFullRigInfo(QString)), this, SLOT(SetFullRigInfo(QString)));//2.76.1 for pskreporter
+    //connect(THvRigCat, SIGNAL(EmitFlexSliceReady()), this, SIGNAL(EmitFlexSliceReady()));//flex native vita-49
 
     ////// omnirig /////////////
     omnirig_active = false;
@@ -828,9 +829,9 @@ HvRigControl::~HvRigControl()
     //DestroyPort();//za mahane
     //qDebug()<<"CLOSE DestroyPort()";//za mahane
 }
-void HvRigControl::SetTciSelect(int i)
+void HvRigControl::SetTciSelect(int i,int vr,bool vt)
 {
-    THvRigCat->SetTciSelect(i);
+    THvRigCat->SetTciSelect(i,vr,vt);
 }
 void HvRigControl::SetMsf(bool f)//2.76sf
 {
@@ -2008,7 +2009,9 @@ void HvRigControl::TimerTryStaticTxF()
     }
 }
 void HvRigControl::SetPtt(bool flag, int id)//id 0=All 1=p1 2=p2
-{
+{   
+	//if (flag) qDebug()<<"SetPtt====== TO TX"<<flag<<id;
+	//else  qDebug()<<"SetPtt=RX"<<flag<<id;	
     bool all_sttx = false;  //ft8  ft4 q65
     if (f_static_tx && all_static_tx_modes) all_sttx = true;
     bool all_qrg = false;  //msk fsk

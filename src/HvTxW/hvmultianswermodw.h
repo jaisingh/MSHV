@@ -87,6 +87,7 @@ protected:
 #include <QCheckBox>
 #include "hvqthloc.h"
 #include "hvinle.h"
+#include "../HvDecodeList/hvcty.h"
 
 class HvSpinLE : public QLineEdit
 {
@@ -277,6 +278,7 @@ private:
     int s_mode;
     QStringList list_macros;
     HvQthLoc THvQthLoc;
+    HvCty THvCty{0};//shares the cty.dat and us_states.dat loaded by the decode list
     ListA *LsQueue;
     ListA *LsNow;
     QSpinBox *SBqueueLimit;

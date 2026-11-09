@@ -143,6 +143,7 @@ DecoderFt8::DecoderFt8(int id)
     } //(need to be) ----> SubCW 5.68004e-14 8.00183e-17 -1.57806e-16  <--Criticle (need to be)
     //qDebug()<<" ----> SubCW"<<creal(cw_subsft8[13020])<<creal(cw_subsft8[50800])<<creal(cw_subsft8[101000]);
     ft8var_init();
+    band8 = 200;
 }
 DecoderFt8::~DecoderFt8()
 {}
@@ -183,6 +184,11 @@ void DecoderFt8::SetStApDecode(bool f)
 {
     s_lapon8 = f;
     lapmyc = f;//???
+}
+static uint8_t s_band8 = 0;
+void DecoderFt8::SetBandChangedStaticAll(uint8_t i)//2.76.7 for reset ap78
+{
+    s_band8 = i; 
 }
 void DecoderFt8::SetStQSOProgress(int i,int j)
 {
@@ -2163,8 +2169,7 @@ void DecoderFt8::ft8_a8d(double *dd,QString mycall,QString dxcall,QString dxgrid
     QString msg,msgsent;
     for (int i = 0; i < NMSGS; ++i)//do imsg=1,NMSGS
     {
-        //call getmsg(imsg,mycall,dxcall,dxgrid,msg)
-        msg = mycall+" "+dxcall;
+        msg = mycall+" "+dxcall;//call getmsg(imsg,mycall,dxcall,dxgrid,msg)
         if (!my_std)
         {
             //if (i==0) msg = "<"+mycall+"> "+hiscall;
@@ -2181,7 +2186,6 @@ void DecoderFt8::ft8_a8d(double *dd,QString mycall,QString dxcall,QString dxgrid
             if (i>=6) msg = mycall+" <"+dxcall+">";
         }
         //else if (i==0) msg = msg0.trimmed();
-
         if (i==1) msg.append(" RRR");
         if (i==2) msg.append(" RR73");
         if (i==3) msg.append(" 73");
@@ -2191,7 +2195,6 @@ void DecoderFt8::ft8_a8d(double *dd,QString mycall,QString dxcall,QString dxgrid
             if (!his_std) msg="CQ "+dxcall;//KN23SF
         }
         if (i==5 && his_std) msg.append(" "+dxgrid.mid(0,4));
-
         if (i>=6 && i<206)
         {
             int isnr = -50 + (i-6)/2; //isnr = -50 + (i-7)/2 ss.append(QString("%1").arg(abs(s.toInt()),2,10,QChar('0')));
@@ -2206,7 +2209,6 @@ void DecoderFt8::ft8_a8d(double *dd,QString mycall,QString dxcall,QString dxgrid
                 else msg.append(" R-"+QString("%1").arg(abs(isnr),2,10,QChar('0')));
             }
         }
-
         //! Source-encode the message, get itone(), and generate complex FT8 waveform.
         //int i3=-1;
         //int n3=-1;//bool cw[180];
@@ -2241,7 +2243,6 @@ void DecoderFt8::ft8_a8d(double *dd,QString mycall,QString dxcall,QString dxgrid
                 }
                 for (int ii = NWAVE; ii < NZZ; ++ii) cd0[ii]=0.0+0.0*I;//cd0(NWAVE:)=0.
                 f2a.four2a_c2c(cd0,NFFT,-1,1,decid);// call four2a(cd0,NFFT,1,-1,1) //!Forward c2c FFT
-
                 for (int ii = 0; ii < NFFT; ++ii)
                 {//do i=0,NFFT-1
                     int j=ii;
@@ -2265,7 +2266,6 @@ void DecoderFt8::ft8_a8d(double *dd,QString mycall,QString dxcall,QString dxgrid
                 }//! j*/
             }
         }
-
         if (spk>sbest)
         {
             sbest=spk;
@@ -2462,7 +2462,7 @@ void DecoderFt8::ft8_decode(double *dd,int c_dd,double f0a,double f0b,double fqs
         {
         	lqsomsgdcd=false;//HV if not early decode period, make only if full period
     		msgroot=s_MyCall8+" "+s_HisCall8;//if (decid==0) qDebug()<<"---------------------------"; qDebug()<<decid<<"   ---SD Reset="<<msgroot<<lqsomsgdcd;
-        	ft8_SetStart_ev_od_var(f_eve0_odd1);
+        	ft8_SetStart_ev_od_var(f_eve0_odd1,s_band8);        	
        	}
         if (!s_3intFt8_d_)
         {
@@ -2507,7 +2507,6 @@ void DecoderFt8::ft8_decode(double *dd,int c_dd,double f0a,double f0b,double fqs
     {
         if (ndec[1][jseq]==0) c_zerop++; //2.66 HV add
         else c_zerop=0;
-
         int iz=ndec[1][jseq];
         for (int i = 0; i < iz; ++i)
         {
@@ -2523,7 +2522,7 @@ void DecoderFt8::ft8_decode(double *dd,int c_dd,double f0a,double f0b,double fqs
         t_mm1 =  nutc0.midRef(2,2).toInt();
         t_hh1 =  nutc0.midRef(0,2).toInt();
         int t_p0  = (t_hh1*3600)+(t_mm1*60)+t_ss1;
-        if (t_p1-t_p0>45 || c_zerop>2)//2.66 HV add=3p   if (t_p1-t_p0>60 || c_zerop>3)//2.66 HV add=4p
+        if (t_p1-t_p0>45 || c_zerop>2 || s_band8!=band8)//2.66 HV add=3p   if (t_p1-t_p0>60 || c_zerop>3)//2.66 HV add=4p
         {
             //ft8 45 and 3 for 3 periods//60 and 4 for 4 periods ...
             //1. We lost 3 periods (no decode),= data is not actual, ap7 not permitted
@@ -2537,7 +2536,8 @@ void DecoderFt8::ft8_decode(double *dd,int c_dd,double f0a,double f0b,double fqs
                	dt0[0][1][i]=0.0;
                	f0[0][1][i]=0.0; 
             }*/
-            c_zerop=0;
+            c_zerop=0; //qDebug()<<" FT8 Reset8="<<decid<<s_band8<<band8;
+            band8=s_band8;
         }
         else
         {
@@ -2799,14 +2799,18 @@ void DecoderFt8::ft8_decode(double *dd,int c_dd,double f0a,double f0b,double fqs
                         xdt_save[s_ndecodes]=xdt+0.5;
                         for (int is = 0; is < 79; ++is) itone_save[s_ndecodes][is]=itone[is];
                     }
-                    if (s_ndecodes < (ALL_MSG_SNR-1)) s_ndecodes++;
+                    if (s_ndecodes < (ALL_MSG_SNR-1)) s_ndecodes++; //qDebug()<<decid<<"   DEC OUT="<<message<<" -> "<<iaptype<<xsnr<<lqsomsgdcd<<msgroot;
                     PrintMsg(s_time8,nsnr,xdt,f1,message,iaptype,(float)nharderrors,(float)dmin,have_dec,true,false,false);
                     if (use_var_dec)
                     {
-                    	if (!lqsomsgdcd && s_HisCall8.count()>2 && message.startsWith(msgroot+" "))
+                    	QString rem_msg37 = message;
+                    	rem_msg37.remove("<");
+                    	rem_msg37.remove(">");
+                    	rem_msg37=rem_msg37+" ";
+                    	if (!lqsomsgdcd && s_HisCall8.count()>2 && rem_msg37.startsWith(msgroot+" "))
                     	{
 							//HV QSO message already decoded (protect SD decoder)
-                        	lqsomsgdcd=true; //qDebug()<<"    lqsomsgdcd="<<lqsomsgdcd;                   		
+                        	lqsomsgdcd=true; //qDebug()<<decid<<"  Set lqsomsgdcd="<<lqsomsgdcd;                  		
                    		}
                     	bool lFreeText=false;
                         if (i3==0 && n3==0) lFreeText=true;

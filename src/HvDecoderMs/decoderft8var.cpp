@@ -148,6 +148,7 @@ void DecoderFt8::ft8var_init()
     }
     nmsgloc=0;
     cwfilter_init();
+    band8var=200;
 }
 #define TAPDS 55//55
 #define FS8D 5//5
@@ -252,8 +253,8 @@ void DecoderFt8::SetVarDecodeFtPar(bool f,int dcyc,int dsens)
 }
 void DecoderFt8::SetFreqGlobal(QString s)//2.76.5
 {
-	long long int mfrq = s.toLongLong();
-	if (mfrq < 30000000) s_napwid8=10.0;//5.0;
+    long long int mfrq = s.toLongLong();
+    if (mfrq < 30000000) s_napwid8=10.0;//5.0;
     else if (mfrq < 100000000) s_napwid8=30.0;//15.0;
     else s_napwid8=50.0; //printf(" s_napwid8 = %0.1f\n",s_napwid8);
 }
@@ -655,13 +656,8 @@ void DecoderFt8::ft8apsetvar(bool lmycallstd,bool lhiscallstd)
 }
 void DecoderFt8::tone8myc()
 {
-    //bool c77[100];
-    int itone[120];
-    for (int i = 0; i < 95; ++i)
-    {
-        //c77[i]=false;
-        itone[i]=0;
-    }
+    int itone[120];//bool c77[100];
+    for (int i = 0; i < 95; ++i) itone[i]=0;
     TGenFt8->pack77_make_c77_i4tone(s_MyCall8+" AA1AAA FN25",itone);
     for (int i = 0; i < 29; ++i)
     {
@@ -1515,6 +1511,22 @@ void DecoderFt8::sync8var(double nfa,double nfb,double syncmin,double nfqso,doub
     delete [] sync2d;
     delete [] s_;
 }
+bool DecoderFt8::extract_calls(QString msgd,QString &c1,QString &c2,int &ispc1,int &ispc2,int &ispc3)
+{
+    bool res = true;//msgd.append("             ");
+    ispc1=msgd.indexOf(' ');
+    ispc2=msgd.indexOf(' ',ispc1+1);
+    ispc3=msgd.indexOf(' ',ispc2+1);
+    if (ispc1<=12 && (ispc2-(ispc1+1))<=12)
+    {
+        c1=msgd.mid(0,ispc1);
+        c2=msgd.mid(ispc1+1,ispc2-(ispc1+1));
+        c1=c1.trimmed();
+        c2=c2.trimmed();
+    }
+    else res = false;
+    return res;
+}
 void DecoderFt8::tonesdvar(QString msgd,bool lcq)
 {
     const QString rpt[75]=
@@ -1545,20 +1557,9 @@ void DecoderFt8::tonesdvar(QString msgd,bool lcq)
     }
     else//c++ ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
     {
-        msgd.append("    ");//c1='            '; c2='            ' LZ2HV SP9HWY KN23
-        int ispc1=msgd.indexOf(' ');//ispc1=index(msgd,' ');
-        int ispc2=msgd.indexOf(' ',ispc1+1);//ispc2=index(msgd((ispc1+1):),' ')+ispc1;
-        int ispc3=msgd.indexOf(' ',ispc2+1);//ispc3=index(msgd((ispc2+1):),' ')+ispc2;
-        //if(len(msgd(1:ispc1-1)).le.12 .and. len(msgd(ispc1+1:ispc2-1)).le.12) then
-        //c1=msgd(1:ispc1-1); c2=msgd(ispc1+1:ispc2-1)
-        //if (msgd.mid(0,ispc1).count()<=12 && msgd.mid(ispc1+1,ispc2-(ispc1+1)).count()<=12)
-        if (ispc1<=12 && (ispc2-(ispc1+1))<=12)
-        {
-            c1=msgd.mid(0,ispc1);
-            c2=msgd.mid(ispc1+1,ispc2-(ispc1+1));
-            c1=c1.trimmed();
-            c2=c2.trimmed();
-        }
+        msgd.append("    ");
+        int ispc1,ispc2,ispc3;
+        extract_calls(msgd,c1,c2,ispc1,ispc2,ispc3);//qDebug()<<msgd<<c1<<c2<<ispc1<<ispc2<<ispc3<<lr73<<lgrid;
         if (msgd.indexOf(" RR73")>0 || msgd.indexOf(" 73")>0) lr73=true;
         if (!lr73 && (ispc3-ispc2)==5 && msgd.mid(ispc2+1,2)!="R+" && msgd.mid(ispc2+1,2)!="R-") lgrid=true;
         if (lgrid)
@@ -1899,6 +1900,25 @@ void DecoderFt8::syncdist(double *s81,int *nsmax,int k)
         }
     }
 }
+void DecoderFt8::set_itonedem_s8(int *itonedem,bool *lmatched,double s8_1_[79][8])
+{
+    for (int i = 0; i < 58; ++i)
+    {//do i=1,58
+        if (lmatched[i]) continue;
+        if (i<=28)
+        {
+            int ip1=pomAll.maxloc_da_beg_to_end(s8_1_[i+7],0,8);
+            itonedem[i]=ip1;
+            s8_1_[i+7][ip1]=0.0;
+        }
+        else
+        {
+            int ip1=pomAll.maxloc_da_beg_to_end(s8_1_[i+14],0,8);
+            itonedem[i]=ip1;
+            s8_1_[i+14][ip1]=0.0;
+        }
+    }
+}
 void DecoderFt8::ft8sd1var(double s8_[79][8],int *itone,QString msgd,QString &msg37,bool &lft8sd,bool lcq)
 {	//Tested OK HV
     int itonedem[58+10];//(58)
@@ -1922,18 +1942,8 @@ void DecoderFt8::ft8sd1var(double s8_[79][8],int *itone,QString msgd,QString &ms
     if (!lcq)
     {
         msgd.append("    ");
-        int ispc1=msgd.indexOf(' ');
-        int ispc2=msgd.indexOf(' ',ispc1+1);
-        int ispc3=msgd.indexOf(' ',ispc2+1);
-        if (ispc1<=12 && (ispc2-(ispc1+1))<=12)
-        {
-            c1=msgd.mid(0,ispc1);
-            c2=msgd.mid(ispc1+1,ispc2-(ispc1+1));
-            c1=c1.trimmed();
-            c2=c2.trimmed();
-        }
-        else return;
-        //c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
+        int ispc1,ispc2,ispc3;
+        if (!extract_calls(msgd,c1,c2,ispc1,ispc2,ispc3)) return; //c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
         if (c1.count()<3 || c2.count()<3 || c2==s_MyCall8) return;
         if (msgd.indexOf(" RR73")>0 || msgd.indexOf(" 73")>0) lr73=true;
         if (!lr73 && (ispc3-ispc2)==5 && msgd.mid(ispc2+1,2)!="R+" && msgd.mid(ispc2+1,2)!="R-") lgrid=true;
@@ -1978,7 +1988,7 @@ void DecoderFt8::ft8sd1var(double s8_[79][8],int *itone,QString msgd,QString &ms
     {
         for (int z = 0; z < 8; ++z) s8_1_[i][z]=s8_[i][z];
     }  //c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
-    for (int i = 0; i < 58; ++i)
+    /*for (int i = 0; i < 58; ++i)
     {//do i=1,58
         if (i<=28)
         {
@@ -1992,7 +2002,8 @@ void DecoderFt8::ft8sd1var(double s8_[79][8],int *itone,QString msgd,QString &ms
             itonedem[i]=ip1;
             s8_1_[i+14][ip1]=0.0;//s8_1(ip1(1),i+14)=0.0;
         }
-    }
+    }*/
+    set_itonedem_s8(itonedem,lmatched,s8_1_);
     int imax=-1;
     int nmatch1=0;
     int ncrcpaty1=0;
@@ -2057,7 +2068,7 @@ void DecoderFt8::ft8sd1var(double s8_[79][8],int *itone,QString msgd,QString &ms
         {//do k=1,58
             if (idtone[k]==itonedem[k]) lmatched[k]=true;
         }
-        for (int i = 0; i < 58; ++i)
+        /*for (int i = 0; i < 58; ++i)
         {//do i=1,58
             if (lmatched[i]) continue;
             if (i<=28)
@@ -2070,7 +2081,8 @@ void DecoderFt8::ft8sd1var(double s8_[79][8],int *itone,QString msgd,QString &ms
                 int ip1=pomAll.maxloc_da_beg_to_end(s8_1_[i+14],0,8);//int ip1=maxloc(s8_1(:,i+14))-1;
                 itonedem[i]=ip1;
             }
-        }
+        }*/
+        set_itonedem_s8(itonedem,lmatched,s8_1_);
         int nmatch2=nmatch1;
         int ncrcpaty2=ncrcpaty1;
         if (lcq || lgrid || lr73)
@@ -2124,19 +2136,10 @@ void DecoderFt8::ft8mf1var(double s8_[79][8],int *itone,QString msgd,QString &ms
     bool lrreport=false;
     bool lrrr=false;
     QString c1="";
-    QString c2=""; //msgd = "LZ2HV SP9HWY RRR";
-    msgd.append("             ");
-    int ispc1=msgd.indexOf(' ');
-    int ispc2=msgd.indexOf(' ',ispc1+1);
-    int ispc3=msgd.indexOf(' ',ispc2+1);
-    if (ispc1<=12 && (ispc2-(ispc1+1))<=12)
-    {
-        c1=msgd.mid(0,ispc1);
-        c2=msgd.mid(ispc1+1,ispc2-(ispc1+1));
-        c1=c1.trimmed();
-        c2=c2.trimmed();
-    }
-    else return; //c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
+    QString c2=""; //msgd = "LZ2HV SP9HWY RRR"; //c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.*/
+    msgd.append("    ");
+    int ispc1,ispc2,ispc3;
+    if (!extract_calls(msgd,c1,c2,ispc1,ispc2,ispc3)) return;
     if (c1.count()<3 || c2.count()<3 || c2==s_MyCall8) return;
     if (msgd.indexOf(" RR73")>0 || msgd.indexOf(" 73")>0) lr73=true;
     if (!lr73 && (ispc3-ispc2)==5 && msgd.mid(ispc2+1,2)!="R+" && msgd.mid(ispc2+1,2)!="R-") lgrid=true;
@@ -2435,7 +2438,7 @@ void DecoderFt8::ft8svar(double s8_[79][8],double srr,int *itone,QString &msg37,
         }
         for (int i = 0; i < 79; ++i) itone56[52][i]=itone[i];//(1:79)
     }
-    for (int i = 0; i < 58; ++i)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
+    /*for (int i = 0; i < 58; ++i)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
     {//do i=1,58
         if (i<=28)
         {
@@ -2449,7 +2452,8 @@ void DecoderFt8::ft8svar(double s8_[79][8],double srr,int *itone,QString &msg37,
             itonedem[i]=ip1;
             s8_1_[i+14][ip1]=0.0;
         }
-    }
+    }*/
+    set_itonedem_s8(itonedem,lmatched,s8_1_);
     int nmycall1=0;
     int nbase1=0;
     for (int k = 0; k < 19; ++k)
@@ -2734,7 +2738,7 @@ void DecoderFt8::ft8svar(double s8_[79][8],double srr,int *itone,QString &msg37,
     }
     if (nmatchditer1>=16)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
     {
-        for (int i = 0; i < 58; ++i)
+        /*for (int i = 0; i < 58; ++i)
         {//do i=1,58
             if (lmatched[i]) continue;
             if (i<=28)
@@ -2749,7 +2753,8 @@ void DecoderFt8::ft8svar(double s8_[79][8],double srr,int *itone,QString &msg37,
                 itonedem[i]=ip1;
                 s8_1_[i+14][ip1]=0.0;
             }
-        }
+        }*/
+        set_itonedem_s8(itonedem,lmatched,s8_1_);
         int nmatch2=nmatch1;
         int ncrcpaty2=ncrcpaty1;
         for (int k = 0; k < 58; ++k)
@@ -2771,7 +2776,7 @@ void DecoderFt8::ft8svar(double s8_[79][8],double srr,int *itone,QString &msg37,
             goto c2;
         }
         if (srr>7.0) return;// ! do not process strong signals anymore
-        for (int i = 0; i < 58; ++i)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
+        /*for (int i = 0; i < 58; ++i)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
         {//do i=1,58
             if (lmatched[i]) continue;
             if (i<=28)
@@ -2786,7 +2791,8 @@ void DecoderFt8::ft8svar(double s8_[79][8],double srr,int *itone,QString &msg37,
                 itonedem[i]=ip1;
                 s8_1_[i+14][ip1]=0.0;
             }
-        }
+        }*/
+        set_itonedem_s8(itonedem,lmatched,s8_1_);
         int nmatch3=nmatch2;
         int ncrcpaty3=ncrcpaty2;
         for (int k = 0; k < 58; ++k)
@@ -2807,7 +2813,7 @@ void DecoderFt8::ft8svar(double s8_[79][8],double srr,int *itone,QString &msg37,
             for (int z = 0; z < 79; ++z) itone[z]=itone56[imax][z];//itone(1:79)=itone56(imax,1:79);
             goto c2;
         }
-        for (int i = 0; i < 58; ++i)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
+        /*for (int i = 0; i < 58; ++i)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
         {//do i=1,58
             if (lmatched[i]) continue;
             if (i<=28)
@@ -2822,7 +2828,8 @@ void DecoderFt8::ft8svar(double s8_[79][8],double srr,int *itone,QString &msg37,
                 itonedem[i]=ip1;
                 s8_1_[i+14][ip1]=0.0;
             }
-        }
+        }*/
+        set_itonedem_s8(itonedem,lmatched,s8_1_);
         int nmatch4=nmatch3;
         int ncrcpaty4=ncrcpaty3;
         for (int k = 0; k < 58; ++k)
@@ -2843,7 +2850,7 @@ void DecoderFt8::ft8svar(double s8_[79][8],double srr,int *itone,QString &msg37,
             for (int z = 0; z < 79; ++z) itone[z]=itone56[imax][z];//itone(1:79)=itone56(imax,1:79);
             goto c2;
         }
-        for (int i = 0; i < 58; ++i)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
+        /*for (int i = 0; i < 58; ++i)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
         {//do i=1,58
             if (lmatched[i]) continue;
             if (i<=28)
@@ -2858,7 +2865,8 @@ void DecoderFt8::ft8svar(double s8_[79][8],double srr,int *itone,QString &msg37,
                 itonedem[i]=ip1;
                 s8_1_[i+14][ip1]=0.0;
             }
-        }
+        }*/
+        set_itonedem_s8(itonedem,lmatched,s8_1_);
         int nmatch5=nmatch4;
         int ncrcpaty5=ncrcpaty4;
         for (int k = 0; k < 58; ++k)
@@ -2881,7 +2889,7 @@ void DecoderFt8::ft8svar(double s8_[79][8],double srr,int *itone,QString &msg37,
             for (int z = 0; z < 79; ++z) itone[z]=itone56[imax][z];//itone(1:79)=itone56(imax,1:79);
             goto c2;
         }
-        for (int i = 0; i < 58; ++i)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
+        /*for (int i = 0; i < 58; ++i)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
         {//do i=1,58
             if (lmatched[i]) continue;
             if (i<=28)
@@ -2896,7 +2904,8 @@ void DecoderFt8::ft8svar(double s8_[79][8],double srr,int *itone,QString &msg37,
                 itonedem[i]=ip1;
                 s8_1_[i+14][ip1]=0.0;
             }
-        }
+        }*/
+        set_itonedem_s8(itonedem,lmatched,s8_1_);
         int nmatch6=nmatch5;
         int ncrcpaty6=ncrcpaty5;
         for (int k = 0; k < 58; ++k)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
@@ -3241,7 +3250,7 @@ void DecoderFt8::ft8sdvar(double s8_[79][8],double srr,int *itone,QString msgd,Q
         }
     }//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
     //qDebug()<<"2 ft8sdvar <--"<<msgd;
-    for (int i = 0; i < 58; ++i)
+    /*for (int i = 0; i < 58; ++i)
     {//do i=1,58
         if (i<=28)
         {
@@ -3255,7 +3264,8 @@ void DecoderFt8::ft8sdvar(double s8_[79][8],double srr,int *itone,QString msgd,Q
             itonedem[i]=ip1;
             s8_1_[i+14][ip1]=0.0;
         }
-    }
+    }*/
+    set_itonedem_s8(itonedem,lmatched,s8_1_);
     int imax=0;
     if (lcq)
     {
@@ -3325,7 +3335,7 @@ void DecoderFt8::ft8sdvar(double s8_[79][8],double srr,int *itone,QString msgd,Q
     }
     if (nmatch1>=16) //c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
     {
-        for (int i = 0; i < 58; ++i)
+        /*for (int i = 0; i < 58; ++i)
         {//do i=1,58
             if (lmatched[i]) continue;
             if (i<=28)
@@ -3340,7 +3350,8 @@ void DecoderFt8::ft8sdvar(double s8_[79][8],double srr,int *itone,QString msgd,Q
                 itonedem[i]=ip1;
                 s8_1_[i+14][ip1]=0.0;
             }
-        }
+        }*/
+        set_itonedem_s8(itonedem,lmatched,s8_1_);
         int nmatch2=nmatch1;
         int ncrcpaty2=ncrcpaty1;
         for (int k = 0; k < 58; ++k)
@@ -3364,7 +3375,7 @@ void DecoderFt8::ft8sdvar(double s8_[79][8],double srr,int *itone,QString msgd,Q
             } //qDebug()<<"1 ft8sdvar <--"<<msg37;
             return;
         }//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
-        for (int i = 0; i < 58; ++i)
+        /*for (int i = 0; i < 58; ++i)
         {//do i=1,58
             if (lmatched[i]) continue;
             if (i<=28)
@@ -3379,7 +3390,8 @@ void DecoderFt8::ft8sdvar(double s8_[79][8],double srr,int *itone,QString msgd,Q
                 itonedem[i]=ip1;
                 s8_1_[i+14][ip1]=0.0;
             }
-        }
+        }*/
+        set_itonedem_s8(itonedem,lmatched,s8_1_);
         int nmatch3=nmatch2;
         int ncrcpaty3=ncrcpaty2;
         for (int k = 0; k < 58; ++k)
@@ -3403,7 +3415,7 @@ void DecoderFt8::ft8sdvar(double s8_[79][8],double srr,int *itone,QString msgd,Q
             } //qDebug()<<"2 ft8sdvar <--"<<msg37;
             return;
         }
-        for (int i = 0; i < 58; ++i)
+        /*for (int i = 0; i < 58; ++i)
         {//do i=1,58
             if (lmatched[i]) continue;
             if (i<=28)
@@ -3418,7 +3430,8 @@ void DecoderFt8::ft8sdvar(double s8_[79][8],double srr,int *itone,QString msgd,Q
                 itonedem[i]=ip1;
                 s8_1_[i+14][ip1]=0.0;
             }
-        }
+        }*/
+        set_itonedem_s8(itonedem,lmatched,s8_1_);
         int nmatch4=nmatch3;
         int ncrcpaty4=ncrcpaty3;
         for (int k = 0; k < 58; ++k)
@@ -3442,7 +3455,7 @@ void DecoderFt8::ft8sdvar(double s8_[79][8],double srr,int *itone,QString msgd,Q
             } //qDebug()<<"3 ft8sdvar <--"<<msg37;
             return;
         }
-        for (int i = 0; i < 58; ++i)
+        /*for (int i = 0; i < 58; ++i)
         {//do i=1,58
             if (lmatched[i]) continue;
             if (i<=28)
@@ -3457,7 +3470,8 @@ void DecoderFt8::ft8sdvar(double s8_[79][8],double srr,int *itone,QString msgd,Q
                 itonedem[i]=ip1;
                 s8_1_[i+14][ip1]=0.0;
             }
-        }
+        }*/
+        set_itonedem_s8(itonedem,lmatched,s8_1_);
         int nmatch5=nmatch4;
         int ncrcpaty5=ncrcpaty4;
         for (int k = 0; k < 58; ++k)
@@ -3481,7 +3495,7 @@ void DecoderFt8::ft8sdvar(double s8_[79][8],double srr,int *itone,QString msgd,Q
             } //qDebug()<<"4 ft8sdvar <--"<<msg37;
             return;
         }
-        for (int i = 0; i < 58; ++i)
+        /*for (int i = 0; i < 58; ++i)
         {//do i=1,58
             if (lmatched[i]) continue;
             if (i<=28)
@@ -3496,7 +3510,8 @@ void DecoderFt8::ft8sdvar(double s8_[79][8],double srr,int *itone,QString msgd,Q
                 itonedem[i]=ip1;
                 s8_1_[i+14][ip1]=0.0;
             }
-        }
+        }*/
+        set_itonedem_s8(itonedem,lmatched,s8_1_);
         int nmatch6=nmatch5;
         int ncrcpaty6=ncrcpaty5;
         for (int k = 0; k < 58; ++k)
@@ -3521,6 +3536,17 @@ void DecoderFt8::ft8sdvar(double s8_[79][8],double srr,int *itone,QString msgd,Q
             return;
         }
     }
+}
+//#define DEB_FALSEDEC
+uint8_t DecoderFt8::isFalseDecode(QString msg,int nsnr,double qual,int nharderror)
+{
+    int harde = 39;
+    if (nsnr<-23 || qual<0.2) harde = 35;
+    if (nsnr<-22 && qual<0.55 && nharderror>harde) return 1;
+    harde = 38;
+    if (nsnr<-23 && qual<0.5) harde = 19;
+    if (nsnr<-22 && qual<0.55 && (msg.indexOf("/P")>-1 || msg.indexOf("/R")>-1) && nharderror>harde) return 2;
+    return 0;
 }
 /*static const int maskincallthr[25]=
     {
@@ -3687,7 +3713,10 @@ void DecoderFt8::ft8bvar(bool &newdat1,int nQSOProgress,double nfqso,double nftx
         {
             if (xdt>4.9 || xdt<-4.9)
             {
-                if (lastrxmsg[0].lstate && lastrxmsg[0].lastmsg==msgroot+" RRR") maxlasttx=5;
+                QString rem_lmsg = lastrxmsg[0].lastmsg;
+                rem_lmsg.remove("<");
+                rem_lmsg.remove(">");
+                if (lastrxmsg[0].lstate && rem_lmsg==msgroot+" RRR") maxlasttx=5;
             }
             if (xdt>4.9)
             {
@@ -3986,10 +4015,10 @@ c16:
         {
             if (ipass==2) lreverse=true;
         }
-        else 
-        {	
+        else
+        {
             if (ipass==5 || ipass==7) lreverse=true;
-        }       
+        }
         for (int k = 0; k < 79; ++k)
         {//do k=1,79
             int i1=ibest+(k)*32;
@@ -4008,7 +4037,7 @@ c16:
                 }
             }
             //csymbr(i)=cmplx(real(csymb(33-i)),-aimag(csymb(33-i))) //csymbr[i]=(creal(csymb[31-i])-cimag(csymb[31-i]));
-            for (int i = 0; i < 32; ++i) csymbr[i]=creal(csymb[31-i])+(-cimag(csymb[31-i]))*I;            
+            for (int i = 0; i < 32; ++i) csymbr[i]=creal(csymb[31-i])+(-cimag(csymb[31-i]))*I;
             if (lreverse)//double complex cscs[8][79];
             {
                 f2a.four2a_c2c(csymb,32,-1,1,decid);//call four2avar(csymb,32,1,-1,1)
@@ -4233,8 +4262,8 @@ c128:
         /*if (nsync <= 8)
         {
         	nbadcrc=1;
-        	return;//! bail out        	
-       	}*/
+        	return;//! bail out        
+        }*/
         rscq=0.0;
         if (lcqcand)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
         {
@@ -4296,7 +4325,7 @@ c128:
         }
         else
         {
-        	if (nsync<8)//2.76.7 org = if (nsync<7)            
+            if (nsync<8)//2.76.7 org = if (nsync<7)
             {
                 nbadcrc=1;
                 return;//goto end;
@@ -5068,8 +5097,8 @@ c8:
             //!print *,src
             /*double temp[5];
             double bmete[174];
-        	for (int i = 0; i < 174; ++i)
-        	{
+            for (int i = 0; i < 174; ++i)
+            {
             	temp[0]=bmeta[i];
             	temp[1]=bmetb[i];
             	temp[2]=bmetc[i];
@@ -5085,8 +5114,8 @@ c8:
                 	}
             	}
             	bmete[i]=temp[ip];
-        	}
-        	pomFt.normalizebmetvar(bmete,174);*/                      
+            }
+            pomFt.normalizebmetvar(bmete,174);*/
             pomFt.normalizebmetvar(bmeta,174);
             pomFt.normalizebmetvar(bmetb,174);
             pomFt.normalizebmetvar(bmetc,174);
@@ -5130,7 +5159,7 @@ c8:
             if (maxv_abs<maxval_llrd_abs) maxv_abs=maxval_llrd_abs;
             double apmag = maxv_abs*1.01;
             //if (apmag<0.01) break;
-            //static int hhh=1; 
+            //static int hhh=1;
             //if (apmag<3.0) {printf(" ipass= %d iqso= %d isubp1= %d val= %.7f\n",ipass,iqso,isubp1,apmag); break;}
             //double apmag = maxval_llra_abs*1.01;
             //printf(" isubp1= %d a= %.3f b= %.3f c= %.3f d= %.3f max= %.3f\n",isubp1,maxval_llra_abs,maxval_llrb_abs,maxval_llrc_abs,maxval_llrd_abs,maxv_abs);
@@ -5250,7 +5279,7 @@ c8:
             !  print*,'hisgrid is ',hisgrid*/
             for (int isubp2 = 1; isubp2 <= 31; ++isubp2)
             {//do isubp2=1,31
-            	//if (cont_type>=5) continue;//HV max cont_type=4
+                //if (cont_type>=5) continue;//HV max cont_type=4
                 if (isubp2<5)
                 {
                     if (lapcqonly || lskipnotap) continue;
@@ -5324,7 +5353,7 @@ c8:
                 }
                 else
                 {
-                	//if (apmag<5.0) {printf(" isubp2= %d val= %.7f\n",isubp2,apmag); break;}
+                    //if (apmag<5.0) {printf(" isubp2= %d val= %.7f\n",isubp2,apmag); break;}
                     if (!lhound)
                     {
                         //if (!s_lapon8) continue;//for the moment hv
@@ -6527,8 +6556,8 @@ c8:
                 } //else qDebug()<<"NO DEC"<<sync;
                 //pomFt.decode174_91(llrz,3,2,apmask,message77,cw,nharderrors,dmin);
                 nbadcrc=1;
-                msg37="";                
-                int c_cw = 0; 
+                msg37="";
+                int c_cw = 0;
                 for (int z = 0; z < 174; z++)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
                 {
                     if (cw[z]==0) c_cw++;// 3*ND=174
@@ -6793,8 +6822,7 @@ c2:
             msg37="";
             nbadcrc=1;
             return;//goto end; //return;
-        }
-        //msg37_2="";//??
+        } //msg37_2="";//??
         if (i3bit==1 && !lft8s && !lft8sd)
         {
             //call msgparservar(msg37,msg37_2)//??
@@ -6802,7 +6830,7 @@ c2:
             //!protection against a false FT8Svar decode in Hound mode
             if (lhound && dfqso<2.0) lqsomsgdcd=true; //!$OMP FLUSH (lqsomsgdcd)
         }
-        qual=1.0-(nharderrors+dmin)/60.0;//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
+        qual=1.0-(nharderrors+dmin)/60.0;
         if (qual>1.0) qual=1.0;//HV =1.6 SD
         xsnr=0.001;
         double xnoi=1.E-8;
@@ -6844,21 +6872,36 @@ c2:
         {
             if (xsnr<-24.0) xsnr=-24.0;
         } //if (lft8s || lft8sd || qual<0.3) qDebug()<<"SD OUT="<<msg37<<" -> "<<iaptype2<<lft8s<<lft8sd<<xsnr<<qual<<nharderrors;
+        QString rem_msg37 = msg37;
+        rem_msg37.remove("<");
+        rem_msg37.remove(">");
+        rem_msg37=rem_msg37+" ";
+        uint8_t false_dec = 0;
+#if defined DEB_FALSEDEC
+        printf("  CandDec=%s Snr=%.1f Qual=%.4f nhrr=%d   lft8s=%d lft8sd=%d\n",qPrintable(msg37),xsnr,qual,nharderrors,lft8s,lft8sd);
+#endif
         if (lft8s || lft8sd)
         {
             if (xsnr<-22.0) xsnr=xsnrs-1.0; //! correction offset
-            if (xsnr<-26.0) xsnr=-26.0;
-            ///! -26  0.1 1477 ~ AC1MX AC1MX R-17          ^
-            //if(len_trim(mycall).gt.3 .and. index(msg37,' '//trim(mycall)//' ').gt.1) msg37=''
-            if (s_MyCall8.count()>2 && msg37.indexOf(" "+s_MyCall8+" ")>-1)
+            if (xsnr<-26.0) xsnr=-26.0; //! -26  0.1 1477 ~ AC1MX AC1MX R-17 //if(len_trim(mycall).gt.3 .and. index(msg37,' '//trim(mycall)//' ').gt.1) msg37=''
+            if (s_MyCall8.count()>2 && rem_msg37.indexOf(" "+s_MyCall8+" ")>-1)
             {
                 msg37="";
                 return;//goto end;//return;
             }
-            goto c4;// ! bypass checking to false decode
+            goto c4;//bypass checking to false decode
+        }
+        false_dec = isFalseDecode(msg37,(int)xsnr,qual,nharderrors);
+        if (false_dec>0)
+        {
+#if defined DEB_FALSEDEC
+            printf("->Falsh=%d Snr=%.1f Qual=%.4f FalseDec=%s nhrr=%d\n",false_dec,xsnr,qual,qPrintable(msg37),nharderrors);
+#endif
+            msg37="";
+            nbadcrc=1;
+            return;
         }
         //!if(len_trim(msg37)>0) print*,'line 2371 ',msg37
-
         /*rxdt=xdt-0.5
         if(iaptype.gt.34 .and. iaptype.lt.40) then ! DX Call searching false iaptype 35,36: 'CS7CYU/R FO5QB 73', 'T57KWP/R FO5QB RR73'
            ispc1=index(msg37,' ')
@@ -7241,7 +7284,7 @@ c2:
               endif
            endif
         endif*/
-c4:    
+c4:
         bool ldupemsg=false;
         if (s_ndecodes>0)
         {
@@ -7256,7 +7299,7 @@ c4:
         }
         if (!ldupemsg && dfqso<2.0 && ((i3==1 && !lft8s) || lft8s))
         {
-            if (msg37.mid(0,msgroot.count()+1)==msgroot+" ")
+            if (rem_msg37.startsWith(msgroot+" "))//if (msg37.mid(0,msgroot.count()+1)==msgroot+" ")
             {
                 lasthcall=s_HisCall8;
                 lastrxmsg[0].lastmsg=msg37;
@@ -7266,26 +7309,25 @@ c4:
             }
             else if (!lft8s && mycalllen1>2)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
             {
-                if (msg37.mid(0,mycalllen1+1)!=s_MyCall8+" " && msg37.indexOf(" "+s_HisCall8+" ")>-1) lrepliedother=true;
+                if (rem_msg37.mid(0,mycalllen1+1)!=s_MyCall8+" " && rem_msg37.indexOf(" "+s_HisCall8+" ")>-1) lrepliedother=true;
             }
         }
         if (s_HisCall8.count()>2 && !lqsomsgdcd)//if(msg37(1:msgrootlen+1).eq.trim(msgroot)//' ') then
         {
-            if (msg37.mid(0,msgroot.count()+1)==msgroot+" ") lqsomsgdcd=true;
-        }
 
+            if (rem_msg37.startsWith(msgroot+" ")) lqsomsgdcd=true;//if (msg37.mid(0,msgroot.count()+1)==msgroot+" ") lqsomsgdcd=true;
+        }
         if (!stophint && !ldupemsg && dfqso<2.0 && nlasttx>0 && nlasttx<6 && msg37.mid(0,3)=="CQ ")
         {
             int hcc = s_HisCall8.count();//nlength=len_trim(hiscall) CQ LZ2HV KN23
             if (hcc>2)
             {
-                if (msg37.mid(3,hcc+1)==s_HisCall8+" " || msg37.mid(6,hcc+1)==s_HisCall8+" ") lrepliedother=true;
+                if (rem_msg37.mid(3,hcc+1)==s_HisCall8+" " || rem_msg37.mid(6,hcc+1)==s_HisCall8+" ") lrepliedother=true;
             }
         }
-
         if (mycalllen1>2)
         {
-            if (!ldupemsg && msg37.mid(0,mycalllen1+1)==s_MyCall8+" ")
+            if (!ldupemsg && rem_msg37.mid(0,mycalllen1+1)==s_MyCall8+" ")
             {   //qDebug()<<nindex<<ldupemsg<<mycalllen1<<decid<<msg37;
                 if (nindex<MAXINC_PerDec)
                 {
@@ -7469,13 +7511,13 @@ void DecoderFt8::extract_callvar(QString msg37,QString &call2)
         {
             int ispc4=msgd.indexOf(' ',ispc3+1);
             QString part4=msgd.mid(ispc3+1,ispc4-(ispc3+1));
-            part4.remove("<");
-            part4.remove(">");
-            call2=part4;
+            call2=part4;//part4.remove("<");//part4.remove(">");
         }
     } //qDebug()<<msg37<<"call2="<<call2<<"part2="<<part2<<"part3="<<part3;
+    call2.remove("<");//2.76.7
+    call2.remove(">");//2.76.7
 }
-void DecoderFt8::ft8_SetStart_ev_od_var(bool f_eve0_odd1)
+void DecoderFt8::ft8_SetStart_ev_od_var(bool f_eve0_odd1,uint8_t s0band8)
 {
     nmsgloc=0;
     for (int i = 0; i < MAXStatOEt; ++i)
@@ -7486,7 +7528,7 @@ void DecoderFt8::ft8_SetStart_ev_od_var(bool f_eve0_odd1)
     if (f_statis_all_new_p)
     {
         f_statis_all_new_p = false; //qDebug()<<decid<<"START ALL PREV s_nmsg="<<s_nmsg;
-        if (s_fopen8)
+        if (s_fopen8 || s0band8!=band8var)
         {
             for (int i = 0; i < MAXStatOE; ++i)
             {
@@ -7494,7 +7536,7 @@ void DecoderFt8::ft8_SetStart_ev_od_var(bool f_eve0_odd1)
                 oddcopy[i].lstate =false;
                 even[i].lstate=false;
                 odd[i].lstate =false;
-            }
+            }	//qDebug()<<"Once FT8var Dcid="<<decid<<"Band="<<s0band8<<"OldBand="<<band8var;
             for (int i = 0; i < MAXINC; ++i) incall[i].msg="  ";
         } //int cc = 0;
         if (!f_eve0_odd1)//levenint
@@ -7522,6 +7564,32 @@ void DecoderFt8::ft8_SetStart_ev_od_var(bool f_eve0_odd1)
         s_nmsg=0;
         c_xdtt=0;
     }
+    if (s_fopen8 || s0band8!=band8var)
+    {
+        for (int i = 0; i < numcqsig; ++i)
+        {
+            evencq[i].freq=6000.0;
+            oddcq[i].freq=6000.0;
+            tmpcqsig[i].freq=6000.0;
+        }
+        for (int i = 0; i < nummycsig; ++i)
+        {
+            evenmyc[i].freq=6000.0;
+            oddmyc[i].freq=6000.0;
+            tmpmycsig[i].freq=6000.0;
+        }
+        tmpqsosig[0].freq=6000.0;
+        evenqso[0].freq=6000.0;
+        oddqso[0].freq=6000.0;
+        avexdt=0.0;
+        nintcount = ERSET_IN; //qDebug()<<" FT8var Dcid="<<decid<<"Band="<<s0band8<<"OldBand="<<band8var;
+        /*for (int i = 0; i < ncalldt; ++i)
+        {
+           	calldteven[i].call2="";
+           	calldtodd[i].call2 ="";
+        }*/
+        band8var=s0band8;
+    } 
 }
 void DecoderFt8::ft8_Write_evt_odt_var(QString msg37,int i3,bool f_eve0_odd1,double f1,double xdt,
                                        bool lFreeText,bool lhashmsg,bool lft8sd)
@@ -7626,20 +7694,8 @@ void DecoderFt8::ft8_decodevar(double *dd,int c_dd,double nfa,double nfb,double 
     int ncandthin = 100;//100;//98;//??
     int ndtcenter = 0;//??
     bool lhiscallstd=s_lhiscallstd;
-    bool lmycallstd=s_lmycallstd;    
-    /*lqsomsgdcd=false;//HV if not early decode period, make only if full period
-    msgroot=s_MyCall8+" "+s_HisCall8; //qDebug()<<decid<<"     s_ndecodes="<<s_ndecodes;    
-    if (s_ndecodes>0 && s_HisCall8.count()>2)////2.76.7 protect 3stage decoding cicle
-    {
-        for (int id = 0; id < s_ndecodes; ++id)
-        {
-           if (allmessages[id].startsWith(msgroot+" "))
-           {
-               lqsomsgdcd=true; //qDebug()<<decid<<" 1--->"<<"TRUE";
-               break;
-           }
-        }    	
-   	}*/   	
+    bool lmycallstd=s_lmycallstd;
+    //QString msgd = "LZ2HV SP9HWY RR73"; tonesdvar(msgd,false);
     double candidate[4][512];//double (*candidate)[500] = new double[4][500];//
     bool stophint = false;
 
@@ -7653,7 +7709,7 @@ void DecoderFt8::ft8_decodevar(double *dd,int c_dd,double nfa,double nfb,double 
     ncount=0;
     double qual=0.0;
 
-    if (s_fopen8)// && f_new_p
+    /*if (s_fopen8)// && f_new_p
     {
         for (int i = 0; i < numcqsig; ++i)
         {
@@ -7672,12 +7728,12 @@ void DecoderFt8::ft8_decodevar(double *dd,int c_dd,double nfa,double nfb,double 
         oddqso[0].freq=6000.0;
         avexdt=0.0;
         nintcount = ERSET_IN;
-        /*for (int i = 0; i < ncalldt; ++i)
-        {
-           	calldteven[i].call2="";
-           	calldtodd[i].call2 ="";
-        }*/
-    }    
+        //for (int i = 0; i < ncalldt; ++i)
+        //{
+           	//calldteven[i].call2="";
+           	//calldtodd[i].call2 ="";
+        //}
+    }*/
 
     for (int i = 0; i < numdeccq; ++i) tmpcqdec[i].freq=6000.0;
     for (int i = 0; i < numdecmyc; ++i) tmpmyc[i].freq=6000.0;
@@ -7754,7 +7810,7 @@ void DecoderFt8::ft8_decodevar(double *dd,int c_dd,double nfa,double nfb,double 
     else npass=3;//=100	one dec
     int nQSOProgress = s_nQSOProgress8;
 
-	//agccft8(nfa,nfb); qDebug()<<"-----------------------"<<lagccbail;
+    //agccft8(nfa,nfb); qDebug()<<"-----------------------"<<lagccbail;
     ft8apsetvar(s_lmycallstd,s_lhiscallstd);
 
     double syncmin=1.35;//1.3 ws300rc1 //qDebug()<<"-->"<<s_MyCall8<<s_lmycallstd<<s_HisCall8<<s_lhiscallstd<<nQSOProgress;
@@ -7846,6 +7902,7 @@ void DecoderFt8::ft8_decodevar(double *dd,int c_dd,double nfa,double nfb,double 
             //int n3=16;
             double xsnr=0.0;//bool s_lqsomsgdcd = lqsomsgdcd;
             int nbadcrc=0;  //qDebug()<<"In="<<decid<<ipass<<icand<<ncand<<"---"<<sync<<xdt<<f1;
+            //int nharderrors=0;
             ft8bvar(newdat1,nQSOProgress,nfqso,s_nftx8,lsubtract,nagainfil,f1,xdt,nbadcrc,msg37,xsnr,
                     stophint,lFreeText,ipass,lft8subpass,lspecial,lcqcand,npass,lmycallstd,lhiscallstd,
                     f_eve0_odd1,lft8sd,i3,nft8rxfsens,lhashmsg,lqsothread,lft8lowth,lhighsens,lnohiscall,
@@ -7863,7 +7920,7 @@ void DecoderFt8::ft8_decodevar(double *dd,int c_dd,double nfa,double nfb,double 
                 {//do k=1,nspecial
                     //!ft8md  if(k.eq.2) msg37=msg37_2  ! this splits DXpedition mode msg into 2 lines
                     bool ldupe=false;
-                    if (msg37.mid(0,6)=="      ") ldupe=true; //qDebug()<<decid<<" 2--->"<<s_lqsomsgdcd<<lqsomsgdcd;
+                    if (msg37.mid(0,6)=="      ") ldupe=true; //qDebug()<<decid<<"   Dec --->"<<s_lqsomsgdcd<<lqsomsgdcd;
                     for (int idec = 0; idec < s_ndecodes; ++idec)//c++   ==.EQ. !=.NE. >.GT. <.LT. >=.GE. <=.LE.
                     {
                         if (msg37==allmessages[idec])//2.48 problem 2xRR73 no end QSO && nsnr<=allsnrs[id]
@@ -7872,11 +7929,13 @@ void DecoderFt8::ft8_decodevar(double *dd,int c_dd,double nfa,double nfb,double 
                             break;
                         }
                     } //qDebug()<<ldupe<<lFreeText<<k<<nspecial<<msg37<<"call2="<<call2;
-                    if (msg37.count()<1) ldupe=true;//2.76.6 SD error 
+                    if (msg37.count()<1       ) ldupe=true;//2.76.6 SD error
+                    if (msg37.contains("CQ_") ) ldupe=true;//2.76.7 SD false dec -> CQ CQ_FQJN QE77
+                    //if (ldupe) qDebug()<<decid<<"       DUPE="<<msg37;
                     if (!ldupe)
                     {
-                    	QString call2;
-                        if (!lFreeText && k==1) extract_callvar(msg37,call2);//no in MSHV splits DXpedition mode msg into 2 lines
+                        QString call2;
+                        if (!lFreeText && k==1) extract_callvar(msg37,call2);//qDebug()<<"call2="<<call2;//no in MSHV splits DXpedition mode msg into 2 lines
                         allmessages[s_ndecodes]=msg37;
                         xdt_per_dec[s_ndecodes]=xdt;
                         if (s_ndecodes < (ALL_MSG_SNR-1)) s_ndecodes++;
@@ -7894,8 +7953,8 @@ void DecoderFt8::ft8_decodevar(double *dd,int c_dd,double nfa,double nfb,double 
                             calldtodd[0].call2=call2;
                             calldtodd[0].dt=xdt;
                         }
-                        QString msg26=msg37; //qDebug()<<"SD OUT="<<msg37<<" -> "<<iaptype2<<xsnr<<qual<<msgroot<<lqsomsgdcd;
-                        PrintMsg(s_time8,nsnr,xdt,f1,msg26,iaptype2,(float)qual,(float)qual,have_dec,true,true,true);
+                        QString msg26=msg37; //qDebug()<<decid<<"   SD OUT="<<msg37<<" -> "<<iaptype2<<xsnr<<qual;//<<msgroot<<lqsomsgdcd;
+                        PrintMsg(s_time8,nsnr,xdt,f1,msg26,iaptype2,(float)qual,(float)qual,have_dec,true,true,true); //qDebug()<<"S----------------------";
                         if (msg37.mid(0,3)=="CQ " && nmsgcq<numdeccq)
                         {
                             double xdtr=xdt+0.5;

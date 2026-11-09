@@ -663,21 +663,25 @@ void DecoderMs::SetZap(bool f)
 {
     s_nzap = f; //qDebug()<<s_nzap;
 }
+void DecoderMs::setBand(int ident)//2.76.7 for reset ap7
+{
+	static int prev_band = -1;
+	if (prev_band==ident) return;
+	prev_band=ident;
+	uint8_t iu8 = (uint8_t)prev_band;
+	DecFt2_0->SetBandChangedStaticAll(iu8); //qDebug()<<"BandChenged="<<ident;
+	DecFt4_0->SetBandChangedStaticAll(iu8);
+	DecFt8_0->SetBandChangedStaticAll(iu8);
+}
 void DecoderMs::setMode(int ident)
 {
     static int prev_mod = 2;
     s_mode = ident;
     if (s_mode == 14 || s_mode == 15 || s_mode == 16 || s_mode == 17) allq65 = true;
     else allq65 = false;
-    /*if (s_mode == 0 || s_mode == 7 || s_mode == 8 || s_mode == 9 || s_mode == 10 || s_mode == 11 ||
-            s_mode == 12 || s_mode == 13 || allq65)//jt65abc //zaradi zap msk144 pi4 ft8 ft4
-        DEC_SAMPLE_RATE = DEC_SAMPLE_RATE_12000;
-    else
-        DEC_SAMPLE_RATE = DEC_SAMPLE_RATE_11025;*/
-    if (s_mode>0 && s_mode<7) //2.65
-        DEC_SAMPLE_RATE = DEC_SAMPLE_RATE_11025;
-    else
-        DEC_SAMPLE_RATE = DEC_SAMPLE_RATE_12000;
+    
+    if (s_mode>0 && s_mode<7) DEC_SAMPLE_RATE = DEC_SAMPLE_RATE_11025;//2.65  
+    else DEC_SAMPLE_RATE = DEC_SAMPLE_RATE_12000;
 
     is_new_rpt_msk = false;//reset s_list_rpt_msk QStringList
     f2a.DestroyPlansAll(true);//2.09  true inidiatly

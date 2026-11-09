@@ -59,6 +59,7 @@ DecoderFt4::DecoderFt4(int id)
     {
         for (int j= 0; j < 2; ++j) ndec[i][j] = 0;
     }
+    band4 = 200;
     //////////end AP7//////////////////
 }
 DecoderFt4::~DecoderFt4()
@@ -83,6 +84,11 @@ static bool s_lapon4 = false;// only in mshv
 void DecoderFt4::SetStApDecode(bool f)
 {
     s_lapon4 = f;
+}
+static uint8_t s_band4 = 0;
+void DecoderFt4::SetBandChangedStaticAll(uint8_t i)//2.76.7 for reset ap78
+{
+    s_band4 = i; 
 }
 static int s_nQSOProgress4 = 0;
 void DecoderFt4::SetStQSOProgress(int i)
@@ -1257,7 +1263,7 @@ void DecoderFt4::PrintMsg(QString tmm,int nsnr,double xdt,double f1,QString mess
 void DecoderFt4::ft4_decode(double *dd,double f0a,double f0b,double f0a1,double f0b1,double fqso,bool &have_dec)//,int /*npts no need*/)
 {
     have_dec = false;
-    const int NDOWN=18;                 //!Downsample factor
+    const int NDOWN=18;//!Downsample factor
     const int NSPS=576;
     const int NSS=NSPS/NDOWN;//=32
     const int ND=87;
@@ -1269,7 +1275,7 @@ void DecoderFt4::ft4_decode(double *dd,double f0a,double f0b,double f0a1,double 
     const int c_cb = NDMAX;//=4032
     const int c_cd = NN*NSS;//=3296
     const int c_cd2 = NDMAX;//=4032
-    double fs=DEC_SAMPLE_RATE/(double)NDOWN;                //!Sample rate after downsampling
+    double fs=DEC_SAMPLE_RATE/(double)NDOWN;  //!Sample rate after downsampling
     //double dt=1.0/fs;                         //!Sample interval after downsample (s)
     //tt=NSPS*dt                      //!Duration of "itone" symbols (s)
     //txt=NZ*dt                       //!Transmission length (s) without ramp up/down
@@ -1351,7 +1357,6 @@ void DecoderFt4::ft4_decode(double *dd,double f0a,double f0b,double f0a1,double 
     {
         if (ndec[1][jseq_a7]==0) c_zerop++; //2.66 HV add
         else c_zerop=0;
-
         int iz=ndec[1][jseq_a7];
         for (int i = 0; i < iz; ++i)
         {
@@ -1367,7 +1372,7 @@ void DecoderFt4::ft4_decode(double *dd,double f0a,double f0b,double f0a1,double 
         t_mm1 =  nutc0.midRef(2,2).toInt();
         t_hh1 =  nutc0.midRef(0,2).toInt();
         int t_p0  = (t_hh1*3600)+(t_mm1*60)+t_ss1;
-        if (t_p1-t_p0>22 || c_zerop>2)//2.66 HV add=3p   if (t_p1-t_p0>60 || c_zerop>3)//2.66 HV add=4p
+        if (t_p1-t_p0>22 || c_zerop>2 || s_band4!=band4)//2.66 HV add=3p   if (t_p1-t_p0>60 || c_zerop>3)//2.66 HV add=4p
         {
             //FT4 22 and 3 for 3 periods//30 and 4 for 4 periods ...
             //1. We lost 3 periods (no decode),= data is not actual, ap7 not permitted
@@ -1381,7 +1386,8 @@ void DecoderFt4::ft4_decode(double *dd,double f0a,double f0b,double f0a1,double 
             //dt0[0][1][i]=0.0;
             //f0[0][1][i]=0.0;
             //}
-            c_zerop=0;
+            c_zerop=0; //qDebug()<<"Reset4="<<s_band4<<band4;
+            band4=s_band4;
         }
         else
         {

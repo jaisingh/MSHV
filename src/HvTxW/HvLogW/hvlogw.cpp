@@ -2231,15 +2231,24 @@ void HvLogW::Show_log()// 2.28
 void HvLogW::SetPosXYWH(QString s)//2.48
 {
     QStringList list_s = s.split("#");
-    if (list_s.count()==4)
+    if (list_s.count()>=4)
     {
         move(list_s[0].toInt(),list_s[1].toInt());
         if (!list_s[2].isEmpty() && !list_s[3].isEmpty())
         {
-            if (list_s[2] == "FULL" || list_s[3] == "FULL" )
-                setWindowState(Qt::WindowMaximized);
-            else
-                resize(list_s[2].toInt(), list_s[3].toInt());
+            if (list_s[2] == "FULL" || list_s[3] == "FULL" ) setWindowState(Qt::WindowMaximized);
+            else 
+            {
+            	resize(list_s[2].toInt(), list_s[3].toInt());
+            	if (list_s.count()>=4+THvLogList->model.columnCount())
+            	{
+            		for (int i = 0; i<THvLogList->model.columnCount(); ++i)
+            		{
+            			int width0 = list_s[4+i].toInt();
+            			if (width0>0 && width0<1001) THvLogList->setColumnWidth(i,width0);          		
+           			}             		
+           		}          	
+           	}
         }
     }
 }
