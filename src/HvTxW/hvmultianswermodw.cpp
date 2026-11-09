@@ -50,9 +50,9 @@ ListA::ListA(int ident,bool f,QWidget *parent)
 
     QStringList list_A;
     if (ident==0)//Queue
-        list_A <<tr("Call")<<"dB"<<"Rx dB"<<tr("Dist")<<"Grid"<<"Freq"<<"Time"<<"IDrpt"<<"TTry"<<"GinTxT"<<"s"<<"e";
+        list_A <<tr("Call")<<"dB"<<"Rx dB"<<tr("Dist")<<"Grid"<<"Freq"<<"Time"<<"IDrpt"<<"TTry"<<"GinTxT"<<"s"<<"e"<<tr("Country")<<tr("State");
     else
-        list_A <<tr("Call")<<"dB"<<"Rx dB"<<"Dist"<<"Grid"<<"Freq"<<"Time"<<"IDrpt"<<"TTry"<<"GinTxT"<<"s"<<"e";
+        list_A <<tr("Call")<<"dB"<<"Rx dB"<<"Dist"<<"Grid"<<"Freq"<<"Time"<<"IDrpt"<<"TTry"<<"GinTxT"<<"s"<<"e"<<tr("Country")<<tr("State");
 
     model.setHorizontalHeaderLabels(list_A);
 
@@ -76,6 +76,8 @@ ListA::ListA(int ident,bool f,QWidget *parent)
     THvHeader->resizeSection(9, 20);//GinTxT
     THvHeader->resizeSection(10, 20);//s
     THvHeader->resizeSection(11, 20);//e
+    THvHeader->resizeSection(12, 90);//Country
+    THvHeader->resizeSection(13, 40);//State
 
     if (ident==0)//Queue
     {
@@ -2837,7 +2839,12 @@ void MultiAnswerModW::DecListTextAll(QString tx_rpt,QString str,QString freq,boo
         if (id_0qe_1nw_2ne == 1)     //first upd if Now 1=Now
         {
             QString prev_id_rpt = LsNow->model.item(row_now,7)->text();//qDebug()<<prev_id_rpt<<id_rpt;
-            if (hisCall_inmsg.contains("/")) LsNow->SetItem(row_now,0,hisCall_inmsg);//1.73 update if have slash during QSO
+            if (hisCall_inmsg.contains("/"))//1.73 update if have slash during QSO
+            {
+                LsNow->SetItem(row_now,0,hisCall_inmsg);
+                LsNow->SetItem(row_now,12,THvCty.FindCountry(hisCall_inmsg,false));//KH6/K1ABC changes Country State
+                LsNow->SetItem(row_now,13,THvCty.FindUsState(hisCall_inmsg));
+            }
             if (!tx_rpt.isEmpty()) LsNow->SetItem(row_now,1,tx_rpt);//1.80 no update MyTxRptForHim
             if (!rpt_inmsg.isEmpty()) LsNow->SetItem(row_now,2,rpt_inmsg);
             if (dist!="?") LsNow->SetItem(row_now,3,dist);
@@ -2884,7 +2891,12 @@ void MultiAnswerModW::DecListTextAll(QString tx_rpt,QString str,QString freq,boo
         }
         else if (id_0qe_1nw_2ne == 0)//second upd if Queue 0=Queue
         {
-            if (hisCall_inmsg.contains("/")) LsQueue->SetItem(row_queue,0,hisCall_inmsg);//1.73 update if have slash during QSO
+            if (hisCall_inmsg.contains("/"))//1.73 update if have slash during QSO
+            {
+                LsQueue->SetItem(row_queue,0,hisCall_inmsg);
+                LsQueue->SetItem(row_queue,12,THvCty.FindCountry(hisCall_inmsg,false));//KH6/K1ABC changes Country State
+                LsQueue->SetItem(row_queue,13,THvCty.FindUsState(hisCall_inmsg));
+            }
             if (!tx_rpt.isEmpty()) LsQueue->SetItem(row_queue,1,tx_rpt);//1.80 no update MyTxRptForHim
             if (!rpt_inmsg.isEmpty()) LsQueue->SetItem(row_queue,2,rpt_inmsg);
             if (dist!="?") LsQueue->SetItem(row_queue,3,dist);
@@ -2902,7 +2914,8 @@ void MultiAnswerModW::DecListTextAll(QString tx_rpt,QString str,QString freq,boo
             if (!rpt_inmsg.isEmpty()) rpt_inmsg = format_rpt_ma(rpt_inmsg);
             //QString g_tx_t = "";
             //if (f_multi_answer_mod_std && s_co_id==15 && id_rpt=="2") g_tx_t = "0";
-            lss<<hisCall_inmsg<<tx_rpt<<rpt_inmsg<<dist<<hisLoc_inmsg<<freq<<""<<id_rpt<<""<<""<<sn_inmsg<<arrl_exch_imsg;
+            lss<<hisCall_inmsg<<tx_rpt<<rpt_inmsg<<dist<<hisLoc_inmsg<<freq<<""<<id_rpt<<""<<""<<sn_inmsg<<arrl_exch_imsg
+               <<THvCty.FindCountry(hisCall_inmsg,false)<<THvCty.FindUsState(hisCall_inmsg);//Country State
             LsQueue->InsertItem_hv(lss); //qDebug()<<"IN= "<<hisCall_inmsg<<"id_rpt="<<id_rpt<<"g_tx_t="<<g_tx_t;
             RefreshLists(0);//qDebug()<<"Aa start RefreshLists0";
         }
